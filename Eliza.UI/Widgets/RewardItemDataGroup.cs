@@ -1,17 +1,18 @@
-﻿using Eliza.UI.Helpers;
+﻿using Eliza.Model.World;
+using Eliza.UI.Helpers;
 using Eto.Forms;
 
 namespace Eliza.UI.Widgets
 {
     public class RewardItemDataGroup : VBox
     {
-        private Model.Field.RewardItemData _rewardItemData;
+        private RewardItemData _rewardItemData;
 
         private SpinBox itemId;
         private SpinBox amount;
         private SpinBox level;
 
-        public RewardItemDataGroup(Model.Field.RewardItemData rewardItemData)
+        public RewardItemDataGroup(RewardItemData rewardItemData)
         {
             _rewardItemData = rewardItemData;
 
@@ -53,7 +54,7 @@ namespace Eliza.UI.Widgets
             }
         }
 
-        public void ChangeReferenceValue(Model.Field.RewardItemData rewardItemData)
+        public void ChangeReferenceValue(RewardItemData rewardItemData)
         {
             _rewardItemData = rewardItemData;
             itemId.ChangeReferenceValue(new Ref<int>(() => _rewardItemData.ItemID, v => { _rewardItemData.ItemID = v; }));

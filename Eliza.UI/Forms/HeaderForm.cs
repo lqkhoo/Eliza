@@ -1,4 +1,5 @@
-﻿using Eliza.UI.Helpers;
+﻿using Eliza.Model;
+using Eliza.UI.Helpers;
 using Eliza.UI.Widgets;
 using Eto.Forms;
 
@@ -6,7 +7,7 @@ namespace Eliza.UI.Forms
 {
     class HeaderForm : Form
     {
-        public HeaderForm(Model.SaveData.SaveData save)
+        public HeaderForm(SaveData save)
         {
             Title = "Header";
 

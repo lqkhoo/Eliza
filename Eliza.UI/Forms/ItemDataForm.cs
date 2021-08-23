@@ -1,4 +1,4 @@
-﻿using Eliza.Model.SaveData;
+﻿using Eliza.Model.Item;
 using Eliza.UI.Widgets;
 using Eto.Forms;
 

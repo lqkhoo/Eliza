@@ -1,4 +1,5 @@
 ﻿using Eliza.Model;
+using Eliza.Model.Save;
 using MessagePack;
 using System;
 using System.Buffers;
@@ -46,9 +47,9 @@ namespace Eliza.Core.Serialization
             {
                 WriteSaveFlagStorage((SaveFlagStorage)value);
             }
-            else if (type == typeof(Model.SaveData.SaveDataFooter))
+            else if (type == typeof(SaveDataFooter))
             {
-                WriteSavaDataFooter((Model.SaveData.SaveDataFooter)value);
+                WriteSavaDataFooter((SaveDataFooter)value);
             }
             else if (IsDictionary(type))
             {
@@ -59,7 +60,7 @@ namespace Eliza.Core.Serialization
                 WriteObject(value);
             }
         }
-        
+
         private void WritePrimitive(object value)
         {
             var type = value.GetType();
@@ -80,7 +81,7 @@ namespace Eliza.Core.Serialization
                 case TypeCode.Double: Writer.Write((double)value); break;
             }
         }
-        
+
         private void WriteList(IList list, TypeCode lengthType = TypeCode.Int32, int length = 0, int max = 0, bool isMessagePackList = false)
         {
             if (length == 0)
@@ -154,7 +155,7 @@ namespace Eliza.Core.Serialization
             Writer.Write(saveFlagStorage.Data);
         }
 
-        private void WriteSavaDataFooter(Model.SaveData.SaveDataFooter footer)
+        private void WriteSavaDataFooter(SaveDataFooter footer)
         {
             using (var reader = new BinaryReader(BaseStream))
             {

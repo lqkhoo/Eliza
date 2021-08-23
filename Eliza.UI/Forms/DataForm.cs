@@ -1,4 +1,5 @@
-﻿using Eliza.UI.Widgets;
+﻿using Eliza.Model;
+using Eliza.UI.Widgets;
 using Eto.Forms;
 using System;
 
@@ -6,9 +7,9 @@ namespace Eliza.UI.Forms
 {
     public class DataForm : Form
     {
-        private Model.SaveData.SaveData _saveData;
+        private SaveData _saveData;
 
-        public DataForm(Model.SaveData.SaveData save)
+        public DataForm(SaveData save)
         {
             _saveData = save;
 

@@ -1,4 +1,4 @@
-﻿using Eliza.Model;
+﻿using Eliza.Model.Item;
 using MessagePack;
 using MessagePack.Formatters;
 using System.Collections.Generic;
@@ -407,7 +407,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             }
                             break;
                         }
-                        // 0
+                    // 0
                     case AmountItemData itemData:
                         {
                             //Key

@@ -2,12 +2,13 @@
 using Eto.Forms;
 using System;
 using Eliza.UI.Forms;
+using Eliza.Model;
 
 namespace Eliza.Forms
 {
     public partial class MainForm : Form
     {
-        private Model.SaveData.SaveData _saveData;
+        private SaveData _saveData;
         private string _path;
 
         Button headerButton = new Button { Text = "Header" };
@@ -80,17 +81,17 @@ namespace Eliza.Forms
                 {
                     _path = openFileDialog.FileName;
 
-                    try
-                    {
-                        _saveData = Model.SaveData.SaveData.Read(_path);
+                    // try
+                    // {
+                        _saveData = SaveData.Read(_path);
                         headerButton.Enabled = true;
                         dataButton.Enabled = true;
                         footerButton.Enabled = true;
-                    }
-                    catch
-                    {
-                        MessageBox.Show("Error: Incompatible/invalid save file found. Please report the issue on Github.");
-                    }
+                    // }
+                    // catch
+                    // {
+                    //     MessageBox.Show("Error: Incompatible/invalid save file found. Please report the issue on Github.");
+                    // }
                 }
             }
         }
@@ -106,7 +107,7 @@ namespace Eliza.Forms
                 if (saveFileDialog.ShowDialog(Parent) == DialogResult.Ok)
                 {
                     var path = saveFileDialog.FileName;
-                    Model.SaveData.SaveData.Write(path, _saveData);
+                    SaveData.Write(path, _saveData);
                 }
             }
         }

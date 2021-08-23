@@ -1,5 +1,5 @@
-﻿using Eliza.Model;
-using Eliza.Model.SaveData;
+﻿using Eliza.Model.Item;
+using Eliza.Model.Npc;
 using Eliza.UI.Helpers;
 using Eliza.UI.Widgets;
 using Eto.Forms;

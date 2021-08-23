@@ -1,4 +1,5 @@
-﻿using Eliza.Model;
+﻿using Eliza.Model.Item;
+using Eliza.Model.Status;
 using MessagePack;
 using MessagePack.Formatters;
 using System.Text;

@@ -1,4 +1,5 @@
-﻿using Eliza.UI.Helpers;
+﻿using Eliza.Model.World;
+using Eliza.UI.Helpers;
 using Eliza.UI.Widgets;
 using Eto.Forms;
 using System;
@@ -7,7 +8,7 @@ namespace Eliza.UI.Forms
 {
     internal class WorldDataForm : Form
     {
-        public WorldDataForm(Model.SaveData.RF5WorldData worldData)
+        public WorldDataForm(RF5WorldData worldData)
         {
             Title = "World Data";
 

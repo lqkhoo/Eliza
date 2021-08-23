@@ -13,7 +13,7 @@ namespace Eliza.Core.Serialization
         }
 
         [AttributeUsage(AttributeTargets.Field)]
-        public class MessagePackListAttribute : Attribute {}
+        public class MessagePackListAttribute : Attribute { }
 
         [AttributeUsage(AttributeTargets.Field)]
         public class MessagePackRawAttribute : Attribute { }

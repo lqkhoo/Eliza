@@ -1,5 +1,4 @@
-﻿using Eliza.Model;
-using MessagePack;
+﻿using MessagePack;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,6 +7,9 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using static Eliza.Core.Serialization.Attributes;
+using Eliza.Model.Status;
+using Eliza.Model.Save;
+using Eliza.Model;
 
 namespace Eliza.Core.Serialization
 {
@@ -43,7 +45,7 @@ namespace Eliza.Core.Serialization
             {
                 return ReadSaveFlagStorage();
             }
-            else if (type == typeof(Model.SaveData.SaveDataFooter))
+            else if (type == typeof(SaveDataFooter))
             {
                 return ReadSaveDataFooter(type);
             }
@@ -182,7 +184,7 @@ namespace Eliza.Core.Serialization
                     }
 
                 } while (true);
-                
+
                 return Encoding.Unicode.GetString(
                     dataString.ToArray()
                 );
@@ -204,11 +206,11 @@ namespace Eliza.Core.Serialization
             return new SaveFlagStorage(data.ToArray(), length);
         }
 
-        private Model.SaveData.SaveDataFooter ReadSaveDataFooter(Type type)
+        private SaveDataFooter ReadSaveDataFooter(Type type)
         {
             //Aligned relative to data 256bits due to Rijndael crypto
             BaseStream.Position = ((BaseStream.Position - 0x20 + 0x1F) & ~0x1F) + 0x20;
-            return (Model.SaveData.SaveDataFooter)ReadObject(type);
+            return (SaveDataFooter)ReadObject(type);
         }
 
         private IDictionary ReadDictionary(Type type)

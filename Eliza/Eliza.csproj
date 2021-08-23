@@ -1,18 +1,20 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Model\EventData\**" />
+    <EmbeddedResource Remove="Model\EventData\**" />
+    <None Remove="Model\EventData\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BouncyCastle.NetCore" Version="1.8.8" />
     <PackageReference Include="MessagePack" Version="2.2.85" />
     <PackageReference Include="MessagePack.UnityShims" Version="2.2.85" />
     <PackageReference Include="MessagePackAnalyzer" Version="2.2.85" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Model\EventData\" />
   </ItemGroup>
 
 </Project>

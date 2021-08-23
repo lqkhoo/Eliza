@@ -1,4 +1,5 @@
-﻿using Eliza.UI.Helpers;
+﻿using Eliza.Model;
+using Eliza.UI.Helpers;
 using Eto.Forms;
 using System;
 
@@ -6,9 +7,9 @@ namespace Eliza.UI.Widgets
 {
     class SaveFlagStorageGroup : GenericGroupBox
     {
-        private Model.SaveFlagStorage _saveFlag;
+        private SaveFlagStorage _saveFlag;
 
-        public SaveFlagStorageGroup(Model.SaveFlagStorage saveFlag, string text) : base(text)
+        public SaveFlagStorageGroup(SaveFlagStorage saveFlag, string text) : base(text)
         {
             _saveFlag = saveFlag;
 
