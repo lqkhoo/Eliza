@@ -62,28 +62,17 @@ namespace Eliza.Core.Serialization
 
         protected object ReadValue(Type type)
         {
-            if (type.IsPrimitive)
-            {
+            if (type.IsPrimitive) {
                 return this.ReadPrimitive(Type.GetTypeCode(type));
-            }
-            else if (IsList(type))
-            {
+            } else if (IsList(type)) {
                 return this.ReadList(type);
-            }
-            else if (type == typeof(string))
-            {
+            } else if (type == typeof(string)) {
                 return this.ReadString();
-            }
-            else if (type == typeof(SaveFlagStorage))
-            {
+            } else if (type == typeof(SaveFlagStorage)) {
                 return this.ReadSaveFlagStorage();
-            }
-            else if (IsDictionary(type))
-            {
+            } else if (IsDictionary(type)) {
                 return this.ReadDictionary(type);
-            }
-            else
-            {
+            } else {
                 return this.ReadObject(type);
             }
         }
@@ -109,114 +98,93 @@ namespace Eliza.Core.Serialization
             }
         }
 
-        protected IList ReadList(Type type, TypeCode lengthType = TypeCode.Int32, int length = 0, int max = 0, bool isMessagePackList = false)
+        protected IList ReadList(Type type, TypeCode lengthType=DEFAULT_LENGTH_TYPECODE,
+                                    int length=UNKNOWN_LENGTH, int maxSize=UNKNOWN_LENGTH,
+                                    bool isMessagePackList=false)
         {
             IList ilist;
+            Type contentType;
 
-            length = length == 0 ? Convert.ToInt32(this.ReadPrimitive(lengthType)) : length;
+            // If the list has dynamic length, then read in the length int preceding the data.
+            if (length == UNKNOWN_LENGTH) {
+                length = Convert.ToInt32(this.ReadPrimitive(lengthType));
+                // This can still be zero, in which case it serializes to
+                // just the length int, and we read nothing else.
+            }
 
-            // Overrides length
-            if (max != 0)
-            {
-                if (type.IsArray)
-                {
-                    type = type.GetElementType();
-                    ilist = Array.CreateInstance(type, max);
+            // Even if we know the max size, we still need to read empty data
+            // because they may be encoded differently.
+            if (maxSize != UNKNOWN_LENGTH) {
+                length = maxSize;
+            }
+
+            if (type.IsArray) {
+                contentType = type.GetElementType();
+                ilist = Array.CreateInstance(contentType, length);
+            } else {
+                ilist = (IList)Activator.CreateInstance(type);
+                contentType = type.GetGenericArguments()[0];
+            }
+
+            for (int idx=0; idx<length; idx++) {
+
+                object value;
+                if (isMessagePackList) {
+                    value = this.ReadMessagePackObject(contentType);
+                } else {
+                    value = this.ReadValue(contentType);
                 }
-                else
-                {
-                    ilist = (IList)Activator.CreateInstance(type);
-                    type = type.GetGenericArguments()[0];
-                }
 
-                for (int index = 0; index < max; index++)
-                {
-                    var value = this.ReadValue(type);
-
-                    if (ilist.IsFixedSize)
-                    {
-                        ilist[index] = value;
-                    }
-                    else
-                    {
-                        ilist.Add(value);
-                    }
+                if (ilist.IsFixedSize) {
+                    ilist[idx] = value;
+                } else {
+                    ilist.Add(value);
                 }
             }
-            else
-            {
-                if (type.IsArray)
-                {
-                    type = type.GetElementType();
-                    ilist = Array.CreateInstance(type, length);
-                }
-                else
-                {
-                    ilist = (IList)Activator.CreateInstance(type);
-                    type = type.GetGenericArguments()[0];
-                }
 
-                for (int index = 0; index < length; index++)
-                {
-                    var value = isMessagePackList ? this.ReadMessagePackObject(type) : this.ReadValue(type);
-
-                    if (ilist.IsFixedSize)
-                    {
-                        ilist[index] = value;
-                    }
-                    else
-                    {
-                        ilist.Add(value);
-                    }
-                }
-            }
             return ilist;
         }
 
-        protected string ReadString(int size = 0, int max = 0)
+        protected string ReadString(int size=UNKNOWN_LENGTH,
+                                    int max=UNKNOWN_LENGTH, bool isUtf16Uuid=false)
         {
-            List<byte> dataString = new List<byte>();
+            List<byte> dataString = new();
 
             //Might be deprecated
-            if (size != 0)
-            {
-                var data = this.Reader.ReadBytes(size);
+            if (size != 0) {
+                byte[] data = this.Reader.ReadBytes(size);
+                return Encoding.Unicode.GetString(data);
 
-                return Encoding.Unicode.GetString(
-                    data
-                );
-            }
-            else if (max != 0)
-            {
-                var length = this.Reader.ReadInt32();
-                var data = this.Reader.ReadBytes(length);
+            } else if (max != 0) {
+                int length = this.Reader.ReadInt32();
+                byte[] data = this.Reader.ReadBytes(length);
                 this.BaseStream.Seek(max - length, SeekOrigin.Current);
+                return Encoding.Unicode.GetString(data);
 
-                return Encoding.Unicode.GetString(
-                    data
-                );
-            }
-            else
-            {
-                do
-                {
-                    var character = this.Reader.ReadByte();
-                    var nullCharacter = this.Reader.ReadByte();
+            } else {
 
-                    if (character != 0 & nullCharacter == 0)
-                    {
+                //TODO: handle UUID16
+
+                // This handles stringId in the FurnitureSaveData struct.
+                // These are most likely UUIDs including the hyphens
+                // encoded as UTF-16 to be passed directly into function calls.
+                // Since UUIDs only have ASCII bytes, every other byte will be zero.
+                // We only extract every other (first) byte.
+                // See: https://stackoverflow.com/q/50070289
+
+                do {
+                    byte character = this.Reader.ReadByte();
+                    byte nullCharacter = this.Reader.ReadByte();
+
+                    if (character != 0 & nullCharacter == 0) {
                         dataString.Add(character);
-                    }
-                    else if (character == 0 & nullCharacter == 0)
-                    {
+                    } else if (character == 0 & nullCharacter == 0) {
                         break;
                     }
 
                 } while (true);
 
-                return Encoding.Unicode.GetString(
-                    dataString.ToArray()
-                );
+                return Encoding.Unicode.GetString(dataString.ToArray());
             }
         }
 
@@ -273,107 +241,96 @@ namespace Eliza.Core.Serialization
         {
             var objectValue = Activator.CreateInstance(objectType);
 
-            int fieldCount = 0;
-
-            // MessagePackObject
-            if (objectType.IsDefined(typeof(MessagePackObjectAttribute)))
-            {
+            // If known to be MessagePackObject
+            if (objectType.IsDefined(typeof(MessagePackObjectAttribute))) {
                 objectValue = this.ReadMessagePackObject(objectType);
-            }
-            else
-            {
-                foreach (FieldInfo info in GetFieldsOrdered(objectType))
-                {
-                    fieldCount++;
 
-                    if (!info.IsDefined(typeof(CompilerGeneratedAttribute)))
-                    {
-                        Type fieldType = info.FieldType;
-
-                        object fieldValue = null;
-
-                        var messagePackListAttribute = (ElizaMessagePackListAttribute)info.GetCustomAttribute(typeof(ElizaMessagePackListAttribute));
-                        if (messagePackListAttribute != null)
-                        {
-                            if (IsList(fieldType))
-                            {
-                                fieldValue = this.ReadList(fieldType, isMessagePackList: true);
-                            }
-                        }
-
-                        var messagePackRawAttribute = (ElizaMessagePackRawAttribute)info.GetCustomAttribute(typeof(ElizaMessagePackRawAttribute));
-                        if (messagePackRawAttribute != null)
-                        {
-                            fieldValue = this.ReadMessagePackObject(fieldType);
-                        }
-
-                        var lengthAttribute = (ElizaSizeAttribute)info.GetCustomAttribute(typeof(ElizaSizeAttribute));
-                        if (lengthAttribute != null)
-                        {
-                            if (lengthAttribute.Fixed != 0)
-                            {
-                                if (IsList(fieldType))
-                                {
-                                    fieldValue = this.ReadList(fieldType, length: lengthAttribute.Fixed);
-                                }
-                                else if (fieldType == typeof(string))
-                                {
-                                    fieldValue = this.ReadString(lengthAttribute.Fixed);
-                                }
-                                else
-                                {
-                                    //If attribute was applied by mistake
-                                    fieldValue = null;
-                                }
-                            }
-                            else if (lengthAttribute.LengthType != TypeCode.Empty)
-                            {
-                                if (IsList(fieldType))
-                                {
-                                    fieldValue = this.ReadList(fieldType, lengthType: lengthAttribute.LengthType);
-                                }
-                                else if (fieldType == typeof(string))
-                                {
-                                    //Not supported for strings ATM
-                                    fieldValue = null;
-                                }
-                                else
-                                {
-                                    //If attribute was applied by mistake
-                                    fieldValue = null;
-                                }
-                            }
-                            else if (lengthAttribute.Max != 0)
-                            {
-                                if (IsList(fieldType))
-                                {
-                                    fieldValue = this.ReadList(fieldType, max: lengthAttribute.Max);
-                                }
-                                else if (fieldType == typeof(string))
-                                {
-                                    fieldValue = this.ReadString(max: lengthAttribute.Max);
-                                }
-                                else
-                                {
-                                    //If attribute was applied by mistake
-                                    fieldValue = null;
-                                }
-                            }
-                            else
-                            {
-                                //If attribute was applied by mistake
-                                fieldValue = null;
-                            }
-                        }
-
-                        fieldValue = fieldValue == null ? this.ReadValue(fieldType) : fieldValue;
-
-                        if (fieldValue != null) info.SetValue(objectValue, fieldValue);
+            } else {
+                foreach (FieldInfo fieldInfo in GetFieldsOrdered(objectType)) {
+                    if (!fieldInfo.IsDefined(typeof(CompilerGeneratedAttribute))) {
+                        this.ReadField(objectValue, fieldInfo);
                     }
                 }
             }
             return objectValue;
+
         }
+
+
+        protected void ReadField(object objectValue, FieldInfo fieldInfo)
+        {
+
+            Type fieldType = fieldInfo.FieldType;
+            object fieldValue = null;
+
+            // First, check if the field was decorated with at least one 
+            // ElizaAttribute. This can change how we process the field.
+            if (fieldInfo.IsDefined(typeof(ElizaAttribute), inherit: true)) {
+
+                //TODO: versioning tags
+
+                if (fieldInfo.IsDefined(typeof(ElizaMessagePackListAttribute))) {
+                    if (IsList(fieldType)) {
+                        fieldValue = this.ReadList(fieldType, isMessagePackList: true);
+                    } else {
+                        var messagePackListAttribute = (ElizaMessagePackListAttribute)fieldInfo
+                                                       .GetCustomAttribute(typeof(ElizaMessagePackListAttribute));
+                        throw new UnsupportedAttributeException(messagePackListAttribute, fieldInfo);
+                    }
+                }
+
+                if (fieldInfo.IsDefined(typeof(ElizaMessagePackRawAttribute))) {
+                    fieldValue = this.ReadMessagePackObject(fieldType);
+                    // No type-checking because this is our type coercion.
+                }
+
+                if (fieldInfo.IsDefined(typeof(ElizaSizeAttribute))) {
+                    var lengthAttribute = (ElizaSizeAttribute)fieldInfo.GetCustomAttribute(typeof(ElizaSizeAttribute));
+
+                    if (lengthAttribute.Fixed != 0) {
+                        if (IsList(fieldType)) {
+                            fieldValue = this.ReadList(fieldType, length: lengthAttribute.Fixed);
+                        } else if (fieldType == typeof(string)) {
+                            fieldValue = this.ReadString(lengthAttribute.Fixed);
+                        } else {
+                            throw new UnsupportedAttributeException(lengthAttribute, fieldInfo);
+                        }
+
+                    } else if (lengthAttribute.LengthType != TypeCode.Empty) {
+                        if (IsList(fieldType)) {
+                            fieldValue = this.ReadList(fieldType, lengthType: lengthAttribute.LengthType);
+                        } else if (fieldType == typeof(string)) {
+                            throw new UnsupportedAttributeException(lengthAttribute, fieldInfo);
+                        } else {
+                            throw new UnsupportedAttributeException(lengthAttribute, fieldInfo);
+                        }
+
+                    } else if (lengthAttribute.Max != 0) {
+                        if (IsList(fieldType)) {
+                            fieldValue = this.ReadList(fieldType, maxSize: lengthAttribute.Max);
+                        } else if (fieldType == typeof(string)) {
+                            fieldValue = this.ReadString(max: lengthAttribute.Max);
+                        } else {
+                            throw new UnsupportedAttributeException(lengthAttribute, fieldInfo);
+                        }
+                    } else {
+                        throw new UnsupportedAttributeException(lengthAttribute, fieldInfo);
+                    }
+                }
+
+            }
+
+            // If there were no Eliza attributes, or if the ElizaAttribute
+            // was not a directive that changes how we read the field, do the simplest case.
+            if (fieldValue == null) {
+                fieldValue = this.ReadValue(fieldType);
+            }
+
+            fieldInfo.SetValue(objectValue, fieldValue);
+            return;
+        }
+
+
         protected object ReadMessagePackObject(Type type)
         {
             var length = this.Reader.ReadInt32();

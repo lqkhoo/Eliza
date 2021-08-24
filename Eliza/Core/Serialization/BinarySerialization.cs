@@ -46,12 +46,10 @@ namespace Eliza.Core.Serialization
             while (typeStack.Count > 0) {
                 objectType = typeStack.Pop();
                 foreach (FieldInfo fieldInfo in objectType.GetFields()) {
-                    yield return fieldInfo;
-                    /*
+                    // yield return fieldInfo;
                     if (! fieldInfo.IsDefined(typeof(CompilerGeneratedAttribute))) {
                         yield return fieldInfo;
                     }
-                    */
                     
                 }
             }
