@@ -40,11 +40,15 @@ namespace Eliza.Model
         public RF5SaveData saveData;
         public RF5SaveDataFooter footer;
 
-        public SaveData(RF5SaveDataHeader header, RF5SaveData saveData, RF5SaveDataFooter footer)
+        protected MemoryStream _originalFileCopy;
+
+        public SaveData(RF5SaveDataHeader header, RF5SaveData saveData,
+                            RF5SaveDataFooter footer, MemoryStream originalFileCopy)
         {
             this.header = header;
             this.saveData = saveData;
             this.footer = footer;
+            this._originalFileCopy = originalFileCopy;
         }
 
         public static SaveData FromEncryptedFile(string path, int version=7)
@@ -52,37 +56,24 @@ namespace Eliza.Model
             using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read))
             using (var ms = new MemoryStream())
             {
-                //Don't want to overwrite the actual save
-                fs.CopyTo(ms);
+                // For byte-level reproduction, we need to emulate the Switch
+                // reading and writing to the same file, even though we are 
+                // operating within a buffer. Therefore we need to store a copy
+                // of the original encrypted file, in order to be able to
+                // reproduce it exactly when writing back.
+
+                fs.CopyTo(ms); // Copy file contents to a buffer
                 Decrypt(ms);
 
-                var deserializer = new BinaryDeserializer(ms);
+                BinaryDeserializer deserializer = new(ms);
 
-                // Parse header first, to extract file version
-                var header = deserializer.Deserialize<RF5SaveDataHeader>();
-                // var version = header.version;
-                RF5SaveData data;
+                RF5SaveDataHeader header = deserializer.ReadSaveDataHeader();
+                RF5SaveData data = deserializer.ReadSaveData();
+                RF5SaveDataFooter footer = deserializer.ReadSaveDataFooter();
+                MemoryStream originalFileCopy = new();
+                fs.CopyTo(originalFileCopy);
 
-                // Now parse the rest of the file
-                switch (version)
-                {
-                    case >= 7: // v1.0.7 - ??
-                        data = deserializer.Deserialize<RF5SaveData>();
-                        break;
-                    case >= 4: // v1.0.4 - v1.0.6
-                        // data = deserializer.Deserialize<RF5SaveData>(); // 107 toggle
-                        data = deserializer.Deserialize<RF5SaveDataV106>().AdaptTo(); // 106 toggle
-                        break;
-                    case >= 2: // v1.0.2 - v1.0.3
-                        data = deserializer.Deserialize<RF5SaveDataV102>().AdaptTo();
-                        break;
-                    default:
-                        throw new NotImplementedException("Unsupported version");
-                }
-
-                var footer = deserializer.Deserialize<RF5SaveDataFooter>();
-
-                var save = new SaveData(header, data, footer);
+                SaveData save = new (header, data, footer, originalFileCopy);
                 return save;
             };
         }
@@ -101,6 +92,9 @@ namespace Eliza.Model
 
         // This just concatenates the original header, decrypted data, and
         // the original footer into a file for downstream processing or inspection.
+        // In this case we don't care about byte-for-byte reproduction because
+        // we aren't going to re-encrypt it. This is also useful to ensure that
+        // deserialization is working properly, to troubleshoot the serialization bit.
         public static void JustDecryptFile(string inputPath, string outputPath, int version=7)
         {
 
@@ -109,8 +103,12 @@ namespace Eliza.Model
             using (var fs = new FileStream(outputPath, FileMode.OpenOrCreate, FileAccess.Write)) {
 
                 fs.SetLength(0); // Empty previous file contents.
-
                 var serializer = new BinarySerializer(fs, encrypt: false);
+                serializer.Serialize(save.header);
+                serializer.Serialize(save.saveData);
+                serializer.Serialize(save.footer);
+
+                /*
                 // var version = save.header.version;
                 switch (version) {
                     case >= 7: // v1.0.7 - ??
@@ -134,10 +132,10 @@ namespace Eliza.Model
                     default:
                         throw new NotImplementedException("Unsupported version");
                 }
+                */
+
             }
         }
-
-
 
         public void Write(string path, int version=7)
         {

@@ -15,6 +15,12 @@ namespace Eliza.Test
         [TestMethod]
         public void TestDecryptEncrypt107()
         {
+
+            // Ensure byte-level reproduction when we haven't modified anything.
+            // This is more tricky than it sounds, due to side-effects from
+            // MessagePack and transformed zero-padding from Rijndael. However,
+            // this is the only way to ensure that serialization works end-to-end.
+
             string inputPath = "../../../Saves/107/rf5_gm000";
             string outputPath = inputPath + "_test_decrypt_encrypt_107-mk2";
 
@@ -24,7 +30,7 @@ namespace Eliza.Test
             Assert.IsTrue(TestUtils.AreFilesIdentical(inputPath, outputPath));
         }
 
-        // [TestMethod]
+        [TestMethod]
         public void TestJustDecrypt107()
         {
             string inputPath = "../../../Saves/107/rf5_gm001";
@@ -36,9 +42,10 @@ namespace Eliza.Test
                     version: 7
                 );
 
-            Assert.IsTrue(true);
             // No tests here. Just make sure no exceptions are thrown anywhere.
             // Need to check output manually in hex.
+            // If this fails, nothing else will work, so start here.
+            Assert.IsTrue(true);
         }
     }
 

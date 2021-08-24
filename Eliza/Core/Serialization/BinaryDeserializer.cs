@@ -19,43 +19,72 @@ namespace Eliza.Core.Serialization
 
         public BinaryDeserializer(Stream baseStream) : base(baseStream)
         {
-            Reader = new BinaryReader(baseStream);
+            this.Reader = new BinaryReader(baseStream);
         }
 
+        /*
         public T Deserialize<T>()
         {
             return (T)ReadValue(typeof(T));
+        }
+        */
+
+        // Public read methods preserve the position of this.Reader
+        // from previous reads. For most intents and purposes we stick
+        // with default arguments and simply read the header, data,
+        // and footer sequentially.
+
+        public RF5SaveDataHeader ReadSaveDataHeader(bool reposition=false,
+                                                    long newPosition=0x0)
+        {
+            if (reposition) { this.BaseStream.Position = newPosition; }
+            return (RF5SaveDataHeader)this.ReadObject(typeof(RF5SaveDataHeader));
+        }
+
+        public RF5SaveData ReadSaveData(bool reposition=false,
+                                        long newPosition=BinarySerializer.HEADER_LENGTH_NBYTES)
+        {
+            if (reposition) { this.BaseStream.Position = newPosition; }
+            return (RF5SaveData)this.ReadObject(typeof(RF5SaveData));
+        }
+
+        public RF5SaveDataFooter ReadSaveDataFooter(bool reposition=false, long newPosition=-1)
+        {
+            if (reposition) {
+                newPosition = newPosition == -1 ? this.BaseStream.Position : newPosition;
+                this.BaseStream.Position = newPosition;
+            } else {
+                //Aligned relative to data 256bits due to Rijndael crypto
+                this.BaseStream.Position = ((this.BaseStream.Position - 0x20 + 0x1F) & ~0x1F) + 0x20;
+            }
+            return (RF5SaveDataFooter)this.ReadObject(typeof(RF5SaveDataFooter));
         }
 
         protected object ReadValue(Type type)
         {
             if (type.IsPrimitive)
             {
-                return ReadPrimitive(Type.GetTypeCode(type));
+                return this.ReadPrimitive(Type.GetTypeCode(type));
             }
             else if (IsList(type))
             {
-                return ReadList(type);
+                return this.ReadList(type);
             }
             else if (type == typeof(string))
             {
-                return ReadString();
+                return this.ReadString();
             }
             else if (type == typeof(SaveFlagStorage))
             {
-                return ReadSaveFlagStorage();
-            }
-            else if (type == typeof(RF5SaveDataFooter))
-            {
-                return ReadSaveDataFooter(type);
+                return this.ReadSaveFlagStorage();
             }
             else if (IsDictionary(type))
             {
-                return ReadDictionary(type);
+                return this.ReadDictionary(type);
             }
             else
             {
-                return ReadObject(type);
+                return this.ReadObject(type);
             }
         }
 
@@ -63,18 +92,18 @@ namespace Eliza.Core.Serialization
         {
             switch (type)
             {
-                case TypeCode.Boolean: return Reader.ReadBoolean();
-                case TypeCode.Byte: return Reader.ReadByte();
-                case TypeCode.Char: return Reader.ReadChar();
-                case TypeCode.UInt16: return Reader.ReadUInt16();
-                case TypeCode.UInt32: return Reader.ReadUInt32();
-                case TypeCode.UInt64: return Reader.ReadUInt64();
-                case TypeCode.SByte: return Reader.ReadSByte();
-                case TypeCode.Int16: return Reader.ReadInt16();
-                case TypeCode.Int32: return Reader.ReadInt32();
-                case TypeCode.Int64: return Reader.ReadInt64();
-                case TypeCode.Single: return Reader.ReadSingle();
-                case TypeCode.Double: return Reader.ReadDouble();
+                case TypeCode.Boolean: return this.Reader.ReadBoolean();
+                case TypeCode.Byte: return this.Reader.ReadByte();
+                case TypeCode.Char: return this.Reader.ReadChar();
+                case TypeCode.UInt16: return this.Reader.ReadUInt16();
+                case TypeCode.UInt32: return this.Reader.ReadUInt32();
+                case TypeCode.UInt64: return this.Reader.ReadUInt64();
+                case TypeCode.SByte: return this.Reader.ReadSByte();
+                case TypeCode.Int16: return this.Reader.ReadInt16();
+                case TypeCode.Int32: return this.Reader.ReadInt32();
+                case TypeCode.Int64: return this.Reader.ReadInt64();
+                case TypeCode.Single: return this.Reader.ReadSingle();
+                case TypeCode.Double: return this.Reader.ReadDouble();
 
                 default: return null;
             }
@@ -84,7 +113,7 @@ namespace Eliza.Core.Serialization
         {
             IList ilist;
 
-            length = length == 0 ? Convert.ToInt32(ReadPrimitive(lengthType)) : length;
+            length = length == 0 ? Convert.ToInt32(this.ReadPrimitive(lengthType)) : length;
 
             // Overrides length
             if (max != 0)
@@ -102,7 +131,7 @@ namespace Eliza.Core.Serialization
 
                 for (int index = 0; index < max; index++)
                 {
-                    var value = ReadValue(type);
+                    var value = this.ReadValue(type);
 
                     if (ilist.IsFixedSize)
                     {
@@ -129,7 +158,7 @@ namespace Eliza.Core.Serialization
 
                 for (int index = 0; index < length; index++)
                 {
-                    var value = isMessagePackList ? ReadMessagePackObject(type) : ReadValue(type);
+                    var value = isMessagePackList ? this.ReadMessagePackObject(type) : this.ReadValue(type);
 
                     if (ilist.IsFixedSize)
                     {
@@ -151,7 +180,7 @@ namespace Eliza.Core.Serialization
             //Might be deprecated
             if (size != 0)
             {
-                var data = Reader.ReadBytes(size);
+                var data = this.Reader.ReadBytes(size);
 
                 return Encoding.Unicode.GetString(
                     data
@@ -159,9 +188,9 @@ namespace Eliza.Core.Serialization
             }
             else if (max != 0)
             {
-                var length = Reader.ReadInt32();
-                var data = Reader.ReadBytes(length);
-                BaseStream.Seek(max - length, SeekOrigin.Current);
+                var length = this.Reader.ReadInt32();
+                var data = this.Reader.ReadBytes(length);
+                this.BaseStream.Seek(max - length, SeekOrigin.Current);
 
                 return Encoding.Unicode.GetString(
                     data
@@ -171,8 +200,8 @@ namespace Eliza.Core.Serialization
             {
                 do
                 {
-                    var character = Reader.ReadByte();
-                    var nullCharacter = Reader.ReadByte();
+                    var character = this.Reader.ReadByte();
+                    var nullCharacter = this.Reader.ReadByte();
 
                     if (character != 0 & nullCharacter == 0)
                     {
@@ -194,12 +223,12 @@ namespace Eliza.Core.Serialization
         protected SaveFlagStorage ReadSaveFlagStorage()
         {
             var data = new List<byte>();
-            var length = Reader.ReadInt32();
+            var length = this.Reader.ReadInt32();
             int index = 0;
             bool flag;
             do
             {
-                data.Add(Reader.ReadByte());
+                data.Add(this.Reader.ReadByte());
                 flag = index++ < (length - 1) >> 3;
             } while (flag);
 
@@ -209,8 +238,8 @@ namespace Eliza.Core.Serialization
         protected RF5SaveDataFooter ReadSaveDataFooter(Type type)
         {
             //Aligned relative to data 256bits due to Rijndael crypto
-            BaseStream.Position = ((BaseStream.Position - 0x20 + 0x1F) & ~0x1F) + 0x20;
-            return (RF5SaveDataFooter)ReadObject(type);
+            this.BaseStream.Position = ((this.BaseStream.Position - 0x20 + 0x1F) & ~0x1F) + 0x20;
+            return (RF5SaveDataFooter)this.ReadObject(type);
         }
 
         protected IDictionary ReadDictionary(Type type)
@@ -223,7 +252,7 @@ namespace Eliza.Core.Serialization
 
             var dict = (IDictionary)Activator.CreateInstance(dictType);
 
-            var length = Reader.ReadInt32();
+            var length = this.Reader.ReadInt32();
 
 
             for (int index = 0; index < length; index++)
@@ -232,8 +261,8 @@ namespace Eliza.Core.Serialization
                 {
 
                 }
-                var keyValue = ReadValue(keyType);
-                var valueValue = ReadValue(valueType);
+                var keyValue = this.ReadValue(keyType);
+                var valueValue = this.ReadValue(valueType);
                 dict.Add(keyValue, valueValue);
             }
 
@@ -249,7 +278,7 @@ namespace Eliza.Core.Serialization
             // MessagePackObject
             if (objectType.IsDefined(typeof(MessagePackObjectAttribute)))
             {
-                objectValue = ReadMessagePackObject(objectType);
+                objectValue = this.ReadMessagePackObject(objectType);
             }
             else
             {
@@ -268,14 +297,14 @@ namespace Eliza.Core.Serialization
                         {
                             if (IsList(fieldType))
                             {
-                                fieldValue = ReadList(fieldType, isMessagePackList: true);
+                                fieldValue = this.ReadList(fieldType, isMessagePackList: true);
                             }
                         }
 
                         var messagePackRawAttribute = (ElizaMessagePackRawAttribute)info.GetCustomAttribute(typeof(ElizaMessagePackRawAttribute));
                         if (messagePackRawAttribute != null)
                         {
-                            fieldValue = ReadMessagePackObject(fieldType);
+                            fieldValue = this.ReadMessagePackObject(fieldType);
                         }
 
                         var lengthAttribute = (ElizaSizeAttribute)info.GetCustomAttribute(typeof(ElizaSizeAttribute));
@@ -285,11 +314,11 @@ namespace Eliza.Core.Serialization
                             {
                                 if (IsList(fieldType))
                                 {
-                                    fieldValue = ReadList(fieldType, length: lengthAttribute.Fixed);
+                                    fieldValue = this.ReadList(fieldType, length: lengthAttribute.Fixed);
                                 }
                                 else if (fieldType == typeof(string))
                                 {
-                                    fieldValue = ReadString(lengthAttribute.Fixed);
+                                    fieldValue = this.ReadString(lengthAttribute.Fixed);
                                 }
                                 else
                                 {
@@ -301,7 +330,7 @@ namespace Eliza.Core.Serialization
                             {
                                 if (IsList(fieldType))
                                 {
-                                    fieldValue = ReadList(fieldType, lengthType: lengthAttribute.LengthType);
+                                    fieldValue = this.ReadList(fieldType, lengthType: lengthAttribute.LengthType);
                                 }
                                 else if (fieldType == typeof(string))
                                 {
@@ -318,11 +347,11 @@ namespace Eliza.Core.Serialization
                             {
                                 if (IsList(fieldType))
                                 {
-                                    fieldValue = ReadList(fieldType, max: lengthAttribute.Max);
+                                    fieldValue = this.ReadList(fieldType, max: lengthAttribute.Max);
                                 }
                                 else if (fieldType == typeof(string))
                                 {
-                                    fieldValue = ReadString(max: lengthAttribute.Max);
+                                    fieldValue = this.ReadString(max: lengthAttribute.Max);
                                 }
                                 else
                                 {
@@ -337,7 +366,7 @@ namespace Eliza.Core.Serialization
                             }
                         }
 
-                        fieldValue = fieldValue == null ? ReadValue(fieldType) : fieldValue;
+                        fieldValue = fieldValue == null ? this.ReadValue(fieldType) : fieldValue;
 
                         if (fieldValue != null) info.SetValue(objectValue, fieldValue);
                     }
@@ -347,8 +376,8 @@ namespace Eliza.Core.Serialization
         }
         protected object ReadMessagePackObject(Type type)
         {
-            var length = Reader.ReadInt32();
-            var data = Reader.ReadBytes(length);
+            var length = this.Reader.ReadInt32();
+            var data = this.Reader.ReadBytes(length);
             return MessagePackSerializer.Deserialize(type, data);
         }
     }

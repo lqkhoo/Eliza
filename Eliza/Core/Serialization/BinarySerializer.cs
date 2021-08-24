@@ -14,6 +14,9 @@ namespace Eliza.Core.Serialization
 {
     class BinarySerializer : BinarySerialization
     {
+        public const int HEADER_LENGTH_NBYTES = 0x20;
+        public const int FOOTER_LENGTH_NBYTES = 0x10;
+
         public readonly bool Encrypt;
         public BinaryWriter Writer;
 
