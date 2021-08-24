@@ -47,9 +47,9 @@ namespace Eliza.Model
             this.footer = footer;
         }
 
-        public static SaveData Read(string path)
+        public static SaveData FromEncryptedFile(string path, int version=7)
         {
-            using (var fs = new FileStream(path, FileMode.Open, FileAccess.ReadWrite))
+            using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read))
             using (var ms = new MemoryStream())
             {
                 //Don't want to overwrite the actual save
@@ -57,13 +57,10 @@ namespace Eliza.Model
                 Decrypt(ms);
 
                 var deserializer = new BinaryDeserializer(ms);
-                // var save = deserializer.Deserialize<SaveData>();
-                // var reader = deserializer.Reader;
 
                 // Parse header first, to extract file version
                 var header = deserializer.Deserialize<RF5SaveDataHeader>();
-                var version = header.version;
-
+                // var version = header.version;
                 RF5SaveData data;
 
                 // Now parse the rest of the file
@@ -73,8 +70,8 @@ namespace Eliza.Model
                         data = deserializer.Deserialize<RF5SaveData>();
                         break;
                     case >= 4: // v1.0.4 - v1.0.6
-                        data = deserializer.Deserialize<RF5SaveData>(); // 107 toggle
-                        // data = deserializer.Deserialize<RF5SaveDataV106>().AdaptTo(); // 106 toggle
+                        // data = deserializer.Deserialize<RF5SaveData>(); // 107 toggle
+                        data = deserializer.Deserialize<RF5SaveDataV106>().AdaptTo(); // 106 toggle
                         break;
                     case >= 2: // v1.0.2 - v1.0.3
                         data = deserializer.Deserialize<RF5SaveDataV102>().AdaptTo();
@@ -102,24 +99,31 @@ namespace Eliza.Model
             ms.Seek(0, SeekOrigin.Begin);
         }
 
-        public static void Write(string path, SaveData save)
+        // This just concatenates the original header, decrypted data, and
+        // the original footer into a file for downstream processing or inspection.
+        public static void JustDecryptFile(string inputPath, string outputPath, int version=7)
         {
-            using (var fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite))
-            {
-                var serializer = new BinarySerializer(fs);
-                var version = save.header.version;
 
-                switch (version)
-                {
+            SaveData save = SaveData.FromEncryptedFile(inputPath);
+
+            using (var fs = new FileStream(outputPath, FileMode.OpenOrCreate, FileAccess.Write)) {
+
+                fs.SetLength(0); // Empty previous file contents.
+
+                var serializer = new BinarySerializer(fs, encrypt: false);
+                // var version = save.header.version;
+                switch (version) {
                     case >= 7: // v1.0.7 - ??
-                        serializer.Serialize(save);
+                        serializer.Serialize(save.header);
+                        serializer.Serialize(save.saveData);
+                        serializer.Serialize(save.footer);
                         break;
                     case >= 4: // v1.0.4 - v1.0.6
-                        serializer.Serialize(save); // 107 toggle
-                        // RF5SaveDataV106 data106 = new RF5SaveDataV106().AdaptFrom(save.saveData);
-                        // serializer.Serialize(save.header);
-                        // serializer.Serialize(data106);
-                        // serializer.Serialize(save.footer);
+                        // serializer.Serialize(save); // 107 toggle
+                        RF5SaveDataV106 data106 = new RF5SaveDataV106().AdaptFrom(save.saveData);
+                        serializer.Serialize(save.header);
+                        serializer.Serialize(data106);
+                        serializer.Serialize(save.footer);
                         break;
                     case >= 2: // v1.0.2 - v1.0.3
                         RF5SaveDataV102 data102 = new RF5SaveDataV102().AdaptFrom(save.saveData);
@@ -130,8 +134,43 @@ namespace Eliza.Model
                     default:
                         throw new NotImplementedException("Unsupported version");
                 }
+            }
+        }
 
-                // var writer = serializer.Writer;
+
+
+        public void Write(string path, int version=7)
+        {
+            using (var fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite))
+            {
+                var serializer = new BinarySerializer(fs);
+
+                serializer.Serialize(this);
+
+                /*
+                // var version = save.header.version;
+                switch (version)
+                {
+                    case >= 7: // v1.0.7 - ??
+                        serializer.Serialize(this);
+                        break;
+                    case >= 4: // v1.0.4 - v1.0.6
+                        // serializer.Serialize(save); // 107 toggle
+                        RF5SaveDataV106 data106 = new RF5SaveDataV106().AdaptFrom(this.saveData);
+                        serializer.Serialize(this.header);
+                        serializer.Serialize(data106);
+                        serializer.Serialize(this.footer);
+                        break;
+                    case >= 2: // v1.0.2 - v1.0.3
+                        RF5SaveDataV102 data102 = new RF5SaveDataV102().AdaptFrom(this.saveData);
+                        serializer.Serialize(this.header);
+                        serializer.Serialize(data102);
+                        serializer.Serialize(this.footer);
+                        break;
+                    default:
+                        throw new NotImplementedException("Unsupported version");
+                }
+                */
             }
         }
     }

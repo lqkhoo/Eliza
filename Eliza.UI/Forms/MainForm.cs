@@ -83,7 +83,7 @@ namespace Eliza.Forms
 
                     // try
                     // {
-                    this._saveData = SaveData.Read(this._path);
+                    this._saveData = SaveData.FromEncryptedFile(this._path);
                     this.headerButton.Enabled = true;
                     this.dataButton.Enabled = true;
                     this.footerButton.Enabled = true;
@@ -107,7 +107,7 @@ namespace Eliza.Forms
                 if (saveFileDialog.ShowDialog(this.Parent) == DialogResult.Ok)
                 {
                     var path = saveFileDialog.FileName;
-                    SaveData.Write(path, this._saveData);
+                    this._saveData.Write(path);
                 }
             }
         }

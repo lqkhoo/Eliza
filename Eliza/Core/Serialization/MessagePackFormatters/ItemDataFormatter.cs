@@ -249,7 +249,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                     case PotToolItemData itemData:
                         {
                             //Key
-                            writer.Write(6);
+                            writer.WriteInt32(6); // These int32 writes are the whole point here.
                             //Items
                             writer.WriteArrayHeader(13);
 
@@ -295,7 +295,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                     case FishItemData itemData:
                         {
                             //Key
-                            writer.Write(5);
+                            writer.WriteInt32(5);
                             //Items
                             writer.WriteArrayHeader(3);
 
@@ -312,7 +312,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                     case RuneAbilityItemData itemData:
                         {
                             //Key
-                            writer.Write(4);
+                            writer.WriteInt32(4);
                             //Items
                             writer.WriteArrayHeader(2);
 
@@ -326,7 +326,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                     case EquipItemData itemData:
                         {
                             //Key
-                            writer.Write(3);
+                            writer.WriteInt32(3);
                             //Items
                             writer.WriteArrayHeader(12);
 
@@ -369,7 +369,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                     case FoodItemData itemData:
                         {
                             //Key
-                            writer.Write(2);
+                            writer.WriteInt32(2);
                             //Items
                             writer.WriteArrayHeader(4);
 
@@ -394,7 +394,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                     case SeedItemData itemData:
                         {
                             //Key
-                            writer.Write(1);
+                            writer.WriteInt32(1);
                             //Items
                             writer.WriteArrayHeader(2);
 
@@ -411,7 +411,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                     case AmountItemData itemData:
                         {
                             //Key
-                            writer.Write(0);
+                            writer.WriteInt32(0);
                             //Items
                             writer.WriteArrayHeader(2);
 

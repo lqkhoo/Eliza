@@ -14,11 +14,13 @@ namespace Eliza.Core.Serialization
 {
     class BinarySerializer : BinarySerialization
     {
+        public readonly bool Encrypt;
         public BinaryWriter Writer;
 
-        public BinarySerializer(Stream baseStream) : base(baseStream)
+        public BinarySerializer(Stream baseStream, bool encrypt=true) : base(baseStream)
         {
-            Writer = new BinaryWriter(baseStream);
+            this.Encrypt = encrypt;
+            this.Writer = new BinaryWriter(baseStream);
         }
 
         public void Serialize<T>(T obj)
@@ -26,7 +28,7 @@ namespace Eliza.Core.Serialization
             WriteValue(obj);
         }
 
-        private void WriteValue(object value)
+        protected void WriteValue(object value)
         {
             var type = value.GetType();
 
@@ -60,7 +62,7 @@ namespace Eliza.Core.Serialization
             }
         }
 
-        private void WritePrimitive(object value)
+        protected void WritePrimitive(object value)
         {
             var type = value.GetType();
 
@@ -81,7 +83,7 @@ namespace Eliza.Core.Serialization
             }
         }
 
-        private void WriteList(IList list, TypeCode lengthType = TypeCode.Int32, int length = 0, int max = 0, bool isMessagePackList = false)
+        protected void WriteList(IList list, TypeCode lengthType = TypeCode.Int32, int length = 0, int max = 0, bool isMessagePackList = false)
         {
             if (length == 0)
             {
@@ -113,7 +115,7 @@ namespace Eliza.Core.Serialization
             //The only instance of the use of max, doesn't seem to have an effect regardless of the length is (i.e. FurnitureData)
         }
 
-        private void WriteString(string value, int max = 0)
+        protected void WriteString(string value, int max = 0)
         {
             var data = Encoding.Unicode.GetBytes(value);
             if (max != 0)
@@ -148,47 +150,59 @@ namespace Eliza.Core.Serialization
             }
             return;
         }
-        private void WriteSaveFlagStorage(SaveFlagStorage saveFlagStorage)
+        protected void WriteSaveFlagStorage(SaveFlagStorage saveFlagStorage)
         {
             Writer.Write(saveFlagStorage.Length);
             Writer.Write(saveFlagStorage.Data);
         }
 
-        private void WriteSavaDataFooter(RF5SaveDataFooter footer)
+        protected void WriteSavaDataFooter(RF5SaveDataFooter footer)
         {
-            using (var reader = new BinaryReader(BaseStream))
-            {
-                var bodyLength = BaseStream.Length;
-                //Aligned relative to data 256 bits due to Rijndael crypto
-                var paddedSize = (int)((BaseStream.Position - 0x20 + 0x1F) & ~0x1F) + 0x20;
-                BaseStream.SetLength(paddedSize);
+            if (this.Encrypt == false) {
+                Writer.Write(footer.BodyLength);
+                Writer.Write(footer.Length);
+                Writer.Write(footer.Sum);
+                Writer.Write(footer.Blank);
+            } else {
 
-                BaseStream.Position = 0x0;
-                var headerSize = 0x20;
-                var header = reader.ReadBytes(headerSize);
+                using (var reader = new BinaryReader(BaseStream)) {
+                    var bodyLength = BaseStream.Length;
+                    //Aligned relative to data 256 bits due to Rijndael crypto
+                    var paddedSize = (int)((BaseStream.Position - 0x20 + 0x1F) & ~0x1F) + 0x20;
+                    BaseStream.SetLength(paddedSize);
 
-                var data = reader.ReadBytes(paddedSize - headerSize);
+                    BaseStream.Position = 0x0;
+                    var headerSize = 0x20;
+                    var header = reader.ReadBytes(headerSize);
 
-                var encryptedData = Cryptography.Encrypt(data);
+                    var data = reader.ReadBytes(paddedSize - headerSize);
+
+                    var encryptedData = Cryptography.Encrypt(data);
+
+                    //Overwrite save data with encrypted data
+                    BaseStream.Position = headerSize;
+                    Writer.Write(encryptedData);
+
+                    var bodyData = new List<byte>();
+                    bodyData.AddRange(header);
+                    bodyData.AddRange(encryptedData);
+                    var checksum = Cryptography.Checksum(bodyData.ToArray());
+
+                    Writer.Write((int)bodyLength);
+                    Writer.Write(paddedSize);
+                    Writer.Write(checksum);
+                    // Writer.Write((int)0x0);
+                    Writer.Write((int)footer.Blank); // Make the files exactly identical.
+
+                }
 
 
-                //Overwrite save data with encrypted data
-                BaseStream.Position = headerSize;
-                Writer.Write(encryptedData);
-
-                var bodyData = new List<byte>();
-                bodyData.AddRange(header);
-                bodyData.AddRange(encryptedData);
-                var checksum = Cryptography.Checksum(bodyData.ToArray());
-
-                Writer.Write((int)bodyLength);
-                Writer.Write(paddedSize);
-                Writer.Write(checksum);
-                Writer.Write((int)0x0);
             }
+
+
         }
 
-        private void WriteDictionary(IDictionary dictionary)
+        protected void WriteDictionary(IDictionary dictionary)
         {
             Writer.Write(dictionary.Count);
 
@@ -199,7 +213,7 @@ namespace Eliza.Core.Serialization
             }
         }
 
-        private void WriteObject(object objectValue)
+        protected void WriteObject(object objectValue)
         {
             var objectType = objectValue.GetType();
 
@@ -287,7 +301,7 @@ namespace Eliza.Core.Serialization
 
         }
 
-        private void WriteMessagePackObject(object value)
+        protected void WriteMessagePackObject(object value)
         {
             var bytes = MessagePackSerializer.Serialize(value);
             Writer.Write(bytes.Length);

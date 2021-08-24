@@ -27,7 +27,7 @@ namespace Eliza.Core.Serialization
             return (T)ReadValue(typeof(T));
         }
 
-        private object ReadValue(Type type)
+        protected object ReadValue(Type type)
         {
             if (type.IsPrimitive)
             {
@@ -59,7 +59,7 @@ namespace Eliza.Core.Serialization
             }
         }
 
-        private object ReadPrimitive(TypeCode type)
+        protected object ReadPrimitive(TypeCode type)
         {
             switch (type)
             {
@@ -80,7 +80,7 @@ namespace Eliza.Core.Serialization
             }
         }
 
-        IList ReadList(Type type, TypeCode lengthType = TypeCode.Int32, int length = 0, int max = 0, bool isMessagePackList = false)
+        protected IList ReadList(Type type, TypeCode lengthType = TypeCode.Int32, int length = 0, int max = 0, bool isMessagePackList = false)
         {
             IList ilist;
 
@@ -144,7 +144,7 @@ namespace Eliza.Core.Serialization
             return ilist;
         }
 
-        private string ReadString(int size = 0, int max = 0)
+        protected string ReadString(int size = 0, int max = 0)
         {
             List<byte> dataString = new List<byte>();
 
@@ -191,7 +191,7 @@ namespace Eliza.Core.Serialization
             }
         }
 
-        private SaveFlagStorage ReadSaveFlagStorage()
+        protected SaveFlagStorage ReadSaveFlagStorage()
         {
             var data = new List<byte>();
             var length = Reader.ReadInt32();
@@ -206,14 +206,14 @@ namespace Eliza.Core.Serialization
             return new SaveFlagStorage(data.ToArray(), length);
         }
 
-        private RF5SaveDataFooter ReadSaveDataFooter(Type type)
+        protected RF5SaveDataFooter ReadSaveDataFooter(Type type)
         {
             //Aligned relative to data 256bits due to Rijndael crypto
             BaseStream.Position = ((BaseStream.Position - 0x20 + 0x1F) & ~0x1F) + 0x20;
             return (RF5SaveDataFooter)ReadObject(type);
         }
 
-        private IDictionary ReadDictionary(Type type)
+        protected IDictionary ReadDictionary(Type type)
         {
             Type[] arguments = type.GetGenericArguments();
             Type keyType = arguments[0];
@@ -240,7 +240,7 @@ namespace Eliza.Core.Serialization
             return dict;
         }
 
-        private object ReadObject(Type objectType)
+        protected object ReadObject(Type objectType)
         {
             var objectValue = Activator.CreateInstance(objectType);
 
@@ -345,7 +345,7 @@ namespace Eliza.Core.Serialization
             }
             return objectValue;
         }
-        private object ReadMessagePackObject(Type type)
+        protected object ReadMessagePackObject(Type type)
         {
             var length = Reader.ReadInt32();
             var data = Reader.ReadBytes(length);
