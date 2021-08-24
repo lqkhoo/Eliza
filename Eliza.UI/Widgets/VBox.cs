@@ -6,9 +6,9 @@ namespace Eliza.UI.Widgets
     {
         public VBox() : base()
         {
-            Orientation = Orientation.Vertical;
-            Padding = 5;
-            Spacing = 5;
+            this.Orientation = Orientation.Vertical;
+            this.Padding = 5;
+            this.Spacing = 5;
         }
     }
 }

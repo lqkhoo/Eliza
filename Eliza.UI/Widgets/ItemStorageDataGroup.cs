@@ -8,8 +8,8 @@ namespace Eliza.UI.Widgets
     public class ItemStorageDataGroup : GenericGroupBox
     {
         private ItemStorageData _itemStorageData;
-        ListBox list = new ListBox();
-        HBox parentHBox = new HBox();
+        ListBox list = new();
+        HBox parentHBox = new();
 
         delegate void PageUpdate(ItemData item);
         PageUpdate amountItemDataPageUpdate;
@@ -23,7 +23,7 @@ namespace Eliza.UI.Widgets
 
         public ItemStorageDataGroup(ItemStorageData itemStorageData, string text = "Item Storage Data") : base(text)
         {
-            _itemStorageData = itemStorageData;
+            this._itemStorageData = itemStorageData;
 
             for (int i = 0; i < itemStorageData.ItemDatas.Length; i++)
             {
@@ -31,55 +31,55 @@ namespace Eliza.UI.Widgets
                 {
                     case PotToolItemData:
                         {
-                            list.Items.Add($"Pot Tool Item {i}");
+                            this.list.Items.Add($"Pot Tool Item {i}");
                             break;
                         }
                     case FishItemData:
                         {
-                            list.Items.Add($"Fish Item {i}");
+                            this.list.Items.Add($"Fish Item {i}");
                             break;
                         }
                     case RuneAbilityItemData:
                         {
-                            list.Items.Add($"Rune Ability Item {i}");
+                            this.list.Items.Add($"Rune Ability Item {i}");
                             break;
                         }
                     case EquipItemData:
                         {
-                            list.Items.Add($"Equip Item {i}");
+                            this.list.Items.Add($"Equip Item {i}");
                             break;
                         }
                     case FoodItemData:
                         {
-                            list.Items.Add($"Food Item {i}");
+                            this.list.Items.Add($"Food Item {i}");
                             break;
                         }
                     case SeedItemData:
                         {
-                            list.Items.Add($"Seed Item {i}");
+                            this.list.Items.Add($"Seed Item {i}");
                             break;
                         }
                     case AmountItemData:
                         {
-                            list.Items.Add($"Amount Item {i}");
+                            this.list.Items.Add($"Amount Item {i}");
                             break;
                         }
                     default:
                         {
-                            list.Items.Add($"Item {i}");
+                            this.list.Items.Add($"Item {i}");
                             break;
                         }
                 }
             }
 
-            list.SelectedIndexChanged += (object sender, EventArgs e) =>
+            this.list.SelectedIndexChanged += (object sender, EventArgs e) =>
             {
-                tabUpdate(_itemStorageData.ItemDatas[list.SelectedIndex]);
+                this.tabUpdate(this._itemStorageData.ItemDatas[this.list.SelectedIndex]);
             };
 
-            list.MouseDown += List_MouseDown;
+            this.list.MouseDown += this.List_MouseDown;
 
-            Setup();
+            this.Setup();
         }
 
         private void List_MouseDown(object sender, MouseEventArgs e)
@@ -123,64 +123,64 @@ namespace Eliza.UI.Widgets
 
             amountItemDataMenuItem.Click += (object sender, EventArgs e) =>
             {
-                if (list.SelectedIndex >= 0 && (_itemStorageData.ItemDatas[list.SelectedIndex] == null || _itemStorageData.ItemDatas[list.SelectedIndex].GetType() == typeof(AmountItemData)))
+                if (this.list.SelectedIndex >= 0 && (this._itemStorageData.ItemDatas[this.list.SelectedIndex] == null || this._itemStorageData.ItemDatas[this.list.SelectedIndex].GetType() == typeof(AmountItemData)))
                 {
-                    _itemStorageData.ItemDatas[list.SelectedIndex] = new AmountItemData();
-                    tabUpdate(_itemStorageData.ItemDatas[list.SelectedIndex]);
+                    this._itemStorageData.ItemDatas[this.list.SelectedIndex] = new AmountItemData();
+                    this.tabUpdate(this._itemStorageData.ItemDatas[this.list.SelectedIndex]);
                 }
             };
 
             seedItemDataMenuItem.Click += (object sender, EventArgs e) =>
             {
-                if (list.SelectedIndex >= 0 && (_itemStorageData.ItemDatas[list.SelectedIndex] == null || _itemStorageData.ItemDatas[list.SelectedIndex].GetType() == typeof(SeedItemData)))
+                if (this.list.SelectedIndex >= 0 && (this._itemStorageData.ItemDatas[this.list.SelectedIndex] == null || this._itemStorageData.ItemDatas[this.list.SelectedIndex].GetType() == typeof(SeedItemData)))
                 {
-                    _itemStorageData.ItemDatas[list.SelectedIndex] = new SeedItemData();
-                    tabUpdate(_itemStorageData.ItemDatas[list.SelectedIndex]);
+                    this._itemStorageData.ItemDatas[this.list.SelectedIndex] = new SeedItemData();
+                    this.tabUpdate(this._itemStorageData.ItemDatas[this.list.SelectedIndex]);
                 }
             };
 
             foodItemDataMenuItem.Click += (object sender, EventArgs e) =>
             {
-                if (list.SelectedIndex >= 0 && (_itemStorageData.ItemDatas[list.SelectedIndex] == null || _itemStorageData.ItemDatas[list.SelectedIndex].GetType() == typeof(FoodItemData)))
+                if (this.list.SelectedIndex >= 0 && (this._itemStorageData.ItemDatas[this.list.SelectedIndex] == null || this._itemStorageData.ItemDatas[this.list.SelectedIndex].GetType() == typeof(FoodItemData)))
                 {
-                    _itemStorageData.ItemDatas[list.SelectedIndex] = new FoodItemData();
-                    tabUpdate(_itemStorageData.ItemDatas[list.SelectedIndex]);
+                    this._itemStorageData.ItemDatas[this.list.SelectedIndex] = new FoodItemData();
+                    this.tabUpdate(this._itemStorageData.ItemDatas[this.list.SelectedIndex]);
                 }
             };
 
             equipItemDataMenuItem.Click += (object sender, EventArgs e) =>
             {
-                if (list.SelectedIndex >= 0 && (_itemStorageData.ItemDatas[list.SelectedIndex] == null || _itemStorageData.ItemDatas[list.SelectedIndex].GetType() == typeof(EquipItemData)))
+                if (this.list.SelectedIndex >= 0 && (this._itemStorageData.ItemDatas[this.list.SelectedIndex] == null || this._itemStorageData.ItemDatas[this.list.SelectedIndex].GetType() == typeof(EquipItemData)))
                 {
-                    _itemStorageData.ItemDatas[list.SelectedIndex] = new EquipItemData();
-                    tabUpdate(_itemStorageData.ItemDatas[list.SelectedIndex]);
+                    this._itemStorageData.ItemDatas[this.list.SelectedIndex] = new EquipItemData();
+                    this.tabUpdate(this._itemStorageData.ItemDatas[this.list.SelectedIndex]);
                 }
             };
 
             runeAbilityItemDataMenuItem.Click += (object sender, EventArgs e) =>
             {
-                if (list.SelectedIndex >= 0 && (_itemStorageData.ItemDatas[list.SelectedIndex] == null || _itemStorageData.ItemDatas[list.SelectedIndex].GetType() != typeof(RuneAbilityItemData)))
+                if (this.list.SelectedIndex >= 0 && (this._itemStorageData.ItemDatas[this.list.SelectedIndex] == null || this._itemStorageData.ItemDatas[this.list.SelectedIndex].GetType() != typeof(RuneAbilityItemData)))
                 {
-                    _itemStorageData.ItemDatas[list.SelectedIndex] = new RuneAbilityItemData();
-                    tabUpdate(_itemStorageData.ItemDatas[list.SelectedIndex]);
+                    this._itemStorageData.ItemDatas[this.list.SelectedIndex] = new RuneAbilityItemData();
+                    this.tabUpdate(this._itemStorageData.ItemDatas[this.list.SelectedIndex]);
                 }
             };
 
             fishItemDataMenuItem.Click += (object sender, EventArgs e) =>
             {
-                if (list.SelectedIndex >= 0 && (_itemStorageData.ItemDatas[list.SelectedIndex] == null || _itemStorageData.ItemDatas[list.SelectedIndex].GetType() != typeof(FishItemData)))
+                if (this.list.SelectedIndex >= 0 && (this._itemStorageData.ItemDatas[this.list.SelectedIndex] == null || this._itemStorageData.ItemDatas[this.list.SelectedIndex].GetType() != typeof(FishItemData)))
                 {
-                    _itemStorageData.ItemDatas[list.SelectedIndex] = new FishItemData();
-                    tabUpdate(_itemStorageData.ItemDatas[list.SelectedIndex]);
+                    this._itemStorageData.ItemDatas[this.list.SelectedIndex] = new FishItemData();
+                    this.tabUpdate(this._itemStorageData.ItemDatas[this.list.SelectedIndex]);
                 }
             };
 
             potToolItemDataMenuItem.Click += (object sender, EventArgs e) =>
             {
-                if (list.SelectedIndex >= 0 && (_itemStorageData.ItemDatas[list.SelectedIndex] == null || _itemStorageData.ItemDatas[list.SelectedIndex].GetType() != typeof(PotToolItemData)))
+                if (this.list.SelectedIndex >= 0 && (this._itemStorageData.ItemDatas[this.list.SelectedIndex] == null || this._itemStorageData.ItemDatas[this.list.SelectedIndex].GetType() != typeof(PotToolItemData)))
                 {
-                    _itemStorageData.ItemDatas[list.SelectedIndex] = new PotToolItemData();
-                    tabUpdate(_itemStorageData.ItemDatas[list.SelectedIndex]);
+                    this._itemStorageData.ItemDatas[this.list.SelectedIndex] = new PotToolItemData();
+                    this.tabUpdate(this._itemStorageData.ItemDatas[this.list.SelectedIndex]);
                 }
             };
             contextMenu.Items.Add(amountItemDataMenuItem);
@@ -191,17 +191,17 @@ namespace Eliza.UI.Widgets
             contextMenu.Items.Add(fishItemDataMenuItem);
             contextMenu.Items.Add(potToolItemDataMenuItem);
 
-            list.ContextMenu = contextMenu;
+            this.list.ContextMenu = contextMenu;
         }
 
         public ItemStorageDataGroup(string text = "Item Storage Data") : base(text)
         {
-            Setup();
+            this.Setup();
         }
 
         public void ChangeReferenceValue(ItemStorageData itemStorageData)
         {
-            _itemStorageData = itemStorageData;
+            this._itemStorageData = itemStorageData;
 
             for (int i = 0; i < itemStorageData.ItemDatas.Length; i++)
             {
@@ -209,50 +209,50 @@ namespace Eliza.UI.Widgets
                 {
                     case PotToolItemData:
                         {
-                            list.Items.Add($"Pot Tool Item {i}");
+                            this.list.Items.Add($"Pot Tool Item {i}");
                             break;
                         }
                     case FishItemData:
                         {
-                            list.Items.Add($"Fish Item {i}");
+                            this.list.Items.Add($"Fish Item {i}");
                             break;
                         }
                     case RuneAbilityItemData:
                         {
-                            list.Items.Add($"Rune Ability Item {i}");
+                            this.list.Items.Add($"Rune Ability Item {i}");
                             break;
                         }
                     case EquipItemData:
                         {
-                            list.Items.Add($"Equip Item {i}");
+                            this.list.Items.Add($"Equip Item {i}");
                             break;
                         }
                     case FoodItemData:
                         {
-                            list.Items.Add($"Food Item {i}");
+                            this.list.Items.Add($"Food Item {i}");
                             break;
                         }
                     case SeedItemData:
                         {
-                            list.Items.Add($"Seed Item {i}");
+                            this.list.Items.Add($"Seed Item {i}");
                             break;
                         }
                     case AmountItemData:
                         {
-                            list.Items.Add($"Amount Item {i}");
+                            this.list.Items.Add($"Amount Item {i}");
                             break;
                         }
                     default:
                         {
-                            list.Items.Add($"Item {i}");
+                            this.list.Items.Add($"Item {i}");
                             break;
                         }
                 }
             }
 
-            list.SelectedIndexChanged += (object sender, EventArgs e) =>
+            this.list.SelectedIndexChanged += (object sender, EventArgs e) =>
             {
-                tabUpdate(_itemStorageData.ItemDatas[list.SelectedIndex]);
+                this.tabUpdate(this._itemStorageData.ItemDatas[this.list.SelectedIndex]);
             };
         }
 
@@ -284,7 +284,7 @@ namespace Eliza.UI.Widgets
                 levelAmountList.SelectedIndexChanged += (object sender, EventArgs e) =>
                 {
                     spinBox.ChangeReferenceValue(
-                        new Ref<int>(() => ((AmountItemData)_itemStorageData.ItemDatas[list.SelectedIndex]).LevelAmount[levelAmountList.SelectedIndex], v => { ((AmountItemData)_itemStorageData.ItemDatas[list.SelectedIndex]).LevelAmount[levelAmountList.SelectedIndex] = v; })
+                        new Ref<int>(() => ((AmountItemData)this._itemStorageData.ItemDatas[this.list.SelectedIndex]).LevelAmount[levelAmountList.SelectedIndex], v => { ((AmountItemData)this._itemStorageData.ItemDatas[this.list.SelectedIndex]).LevelAmount[levelAmountList.SelectedIndex] = v; })
                     );
                 };
                levelAmountData.Items.Add(spinBox);
@@ -294,14 +294,14 @@ namespace Eliza.UI.Widgets
 
                 levelAmount.Content = levelAmountHBox;
 
-                amountItemDataPageUpdate = delegate (ItemData item)
+                this.amountItemDataPageUpdate = delegate (ItemData item)
                 {
                     levelAmountList.Items.Clear();
                     itemID.ChangeReferenceValue(
                         new Ref<int>(() => item.ItemID, v => { item.ItemID = v; })
                     );
 
-                    if (list.SelectedIndex >= 0)
+                    if (this.list.SelectedIndex >= 0)
                     {
                         for (int i = 0; i < ((AmountItemData)item).LevelAmount.Count; i++)
                         {
@@ -354,7 +354,7 @@ namespace Eliza.UI.Widgets
                 levelAmountList.SelectedIndexChanged += (object sender, EventArgs e) =>
                 {
                     spinBox.ChangeReferenceValue(
-                        new Ref<int>(() => ((SeedItemData)_itemStorageData.ItemDatas[list.SelectedIndex]).LevelAmount[levelAmountList.SelectedIndex], v => { ((SeedItemData)_itemStorageData.ItemDatas[list.SelectedIndex]).LevelAmount[levelAmountList.SelectedIndex] = v; })
+                        new Ref<int>(() => ((SeedItemData)this._itemStorageData.ItemDatas[this.list.SelectedIndex]).LevelAmount[levelAmountList.SelectedIndex], v => { ((SeedItemData)this._itemStorageData.ItemDatas[this.list.SelectedIndex]).LevelAmount[levelAmountList.SelectedIndex] = v; })
                     );
                 };
 
@@ -365,14 +365,14 @@ namespace Eliza.UI.Widgets
 
                 levelAmount.Content = levelAmountHBox;
 
-                seedItemDataPageUpdate = delegate (ItemData item)
+                this.seedItemDataPageUpdate = delegate (ItemData item)
                 {
                     levelAmountList.Items.Clear();
                     itemID.ChangeReferenceValue(
                         new Ref<int>(() => item.ItemID, v => { item.ItemID = v; })
                     );
 
-                    if (list.SelectedIndex >= 0)
+                    if (this.list.SelectedIndex >= 0)
                     {
                         for (int i = 0; i < ((SeedItemData)item).LevelAmount.Count; i++)
                         {
@@ -428,7 +428,7 @@ namespace Eliza.UI.Widgets
                 sourceItemsList.SelectedIndexChanged += (object sender, EventArgs e) =>
                 {
                     sourceItemsSpinBox.ChangeReferenceValue(
-                        new Ref<int>(() => ((FoodItemData)_itemStorageData.ItemDatas[list.SelectedIndex]).SourceItems[sourceItemsList.SelectedIndex], v => { ((FoodItemData)_itemStorageData.ItemDatas[list.SelectedIndex]).SourceItems[sourceItemsList.SelectedIndex] = v; })
+                        new Ref<int>(() => ((FoodItemData)this._itemStorageData.ItemDatas[this.list.SelectedIndex]).SourceItems[sourceItemsList.SelectedIndex], v => { ((FoodItemData)this._itemStorageData.ItemDatas[this.list.SelectedIndex]).SourceItems[sourceItemsList.SelectedIndex] = v; })
                     );
                 };
 
@@ -442,7 +442,7 @@ namespace Eliza.UI.Widgets
                 //FoodItemData
                 var isArange = new Widgets.CheckBox("Arrange");
 
-                foodItemDataPageUpdate = delegate(ItemData item)
+                this.foodItemDataPageUpdate = delegate(ItemData item)
                 {
                     sourceItemsList.Items.Clear();
                     //ItemData
@@ -456,7 +456,7 @@ namespace Eliza.UI.Widgets
                     );
 
                     //SynthesisItemData
-                    if (list.SelectedIndex >= 0)
+                    if (this.list.SelectedIndex >= 0)
                     {
                         for (int i = 0; i < ((FoodItemData)item).SourceItems.Length; i++)
                         {
@@ -573,25 +573,25 @@ namespace Eliza.UI.Widgets
                 sourceItemsList.SelectedIndexChanged += (object sender, EventArgs e) =>
                 {
                     sourceItemsSpinBox.ChangeReferenceValue(
-                        new Ref<int>(() => ((EquipItemData)_itemStorageData.ItemDatas[list.SelectedIndex]).SourceItems[sourceItemsList.SelectedIndex], v => { ((EquipItemData)_itemStorageData.ItemDatas[list.SelectedIndex]).SourceItems[sourceItemsList.SelectedIndex] = v; })
+                        new Ref<int>(() => ((EquipItemData)this._itemStorageData.ItemDatas[this.list.SelectedIndex]).SourceItems[sourceItemsList.SelectedIndex], v => { ((EquipItemData)this._itemStorageData.ItemDatas[this.list.SelectedIndex]).SourceItems[sourceItemsList.SelectedIndex] = v; })
                     );
                 };
 
                 addedItemsList.SelectedIndexChanged += (object sender, EventArgs e) =>
                 {
                     addedItemsSpinBox.ChangeReferenceValue(
-                        new Ref<int>(() => ((EquipItemData)_itemStorageData.ItemDatas[list.SelectedIndex]).AddedItems[addedItemsList.SelectedIndex], v => { ((EquipItemData)_itemStorageData.ItemDatas[list.SelectedIndex]).AddedItems[addedItemsList.SelectedIndex] = v; })
+                        new Ref<int>(() => ((EquipItemData)this._itemStorageData.ItemDatas[this.list.SelectedIndex]).AddedItems[addedItemsList.SelectedIndex], v => { ((EquipItemData)this._itemStorageData.ItemDatas[this.list.SelectedIndex]).AddedItems[addedItemsList.SelectedIndex] = v; })
                     );
                 };
 
                 arrangedItemsList.SelectedIndexChanged += (object sender, EventArgs e) =>
                 {
                     arrangedItemsSpinBox.ChangeReferenceValue(
-                        new Ref<int>(() => ((EquipItemData)_itemStorageData.ItemDatas[list.SelectedIndex]).ArrangeItems[arrangedItemsList.SelectedIndex], v => { ((EquipItemData)_itemStorageData.ItemDatas[list.SelectedIndex]).ArrangeItems[arrangedItemsList.SelectedIndex] = v; })
+                        new Ref<int>(() => ((EquipItemData)this._itemStorageData.ItemDatas[this.list.SelectedIndex]).ArrangeItems[arrangedItemsList.SelectedIndex], v => { ((EquipItemData)this._itemStorageData.ItemDatas[this.list.SelectedIndex]).ArrangeItems[arrangedItemsList.SelectedIndex] = v; })
                     );
                 };
 
-                equipItemDataPageUpdate = delegate (ItemData item)
+                this.equipItemDataPageUpdate = delegate (ItemData item)
                 {
                     sourceItemsList.Items.Clear();
                     addedItemsList.Items.Clear();
@@ -607,7 +607,7 @@ namespace Eliza.UI.Widgets
                     );
 
                     //SynthesisItemData
-                    if (list.SelectedIndex >= 0)
+                    if (this.list.SelectedIndex >= 0)
                     {
                         for (int i = 0; i < ((EquipItemData)item).SourceItems.Length; i++)
                         {
@@ -616,7 +616,7 @@ namespace Eliza.UI.Widgets
                     }
 
                     //EquipItemData
-                    if (list.SelectedIndex >= 0)
+                    if (this.list.SelectedIndex >= 0)
                     {
                         for (int i = 0; i < ((EquipItemData)item).SourceItems.Length; i++)
                         {
@@ -624,7 +624,7 @@ namespace Eliza.UI.Widgets
                         }
                     }
 
-                    if (list.SelectedIndex >= 0)
+                    if (this.list.SelectedIndex >= 0)
                     {
                         for (int i = 0; i < ((EquipItemData)item).SourceItems.Length; i++)
                         {
@@ -704,7 +704,7 @@ namespace Eliza.UI.Widgets
                 //NotAmountItemData
                 var level = new SpinBox("Level");
 
-                runeAbilityItemDataPageUpdate = delegate (ItemData item)
+                this.runeAbilityItemDataPageUpdate = delegate (ItemData item)
                 {
                     //ItemData
                     itemID.ChangeReferenceValue(
@@ -748,7 +748,7 @@ namespace Eliza.UI.Widgets
                 //NotAmountItemData
                 var level = new SpinBox("Level");
 
-                fishItemDataPageUpdate = delegate (ItemData item)
+                this.fishItemDataPageUpdate = delegate (ItemData item)
                 {
                     //ItemData
                     itemID.ChangeReferenceValue(
@@ -863,25 +863,25 @@ namespace Eliza.UI.Widgets
                 sourceItemsList.SelectedIndexChanged += (object sender, EventArgs e) =>
                 {
                     sourceItemsSpinBox.ChangeReferenceValue(
-                        new Ref<int>(() => ((PotToolItemData)_itemStorageData.ItemDatas[list.SelectedIndex]).SourceItems[sourceItemsList.SelectedIndex], v => { ((PotToolItemData)_itemStorageData.ItemDatas[list.SelectedIndex]).SourceItems[sourceItemsList.SelectedIndex] = v; })
+                        new Ref<int>(() => ((PotToolItemData)this._itemStorageData.ItemDatas[this.list.SelectedIndex]).SourceItems[sourceItemsList.SelectedIndex], v => { ((PotToolItemData)this._itemStorageData.ItemDatas[this.list.SelectedIndex]).SourceItems[sourceItemsList.SelectedIndex] = v; })
                     );
                 };
 
                 addedItemsList.SelectedIndexChanged += (object sender, EventArgs e) =>
                 {
                     addedItemsSpinBox.ChangeReferenceValue(
-                        new Ref<int>(() => ((PotToolItemData)_itemStorageData.ItemDatas[list.SelectedIndex]).AddedItems[addedItemsList.SelectedIndex], v => { ((PotToolItemData)_itemStorageData.ItemDatas[list.SelectedIndex]).AddedItems[addedItemsList.SelectedIndex] = v; })
+                        new Ref<int>(() => ((PotToolItemData)this._itemStorageData.ItemDatas[this.list.SelectedIndex]).AddedItems[addedItemsList.SelectedIndex], v => { ((PotToolItemData)this._itemStorageData.ItemDatas[this.list.SelectedIndex]).AddedItems[addedItemsList.SelectedIndex] = v; })
                     );
                 };
 
                 arrangedItemsList.SelectedIndexChanged += (object sender, EventArgs e) =>
                 {
                     arrangedItemsSpinBox.ChangeReferenceValue(
-                        new Ref<int>(() => ((PotToolItemData)_itemStorageData.ItemDatas[list.SelectedIndex]).ArrangeItems[arrangedItemsList.SelectedIndex], v => { ((PotToolItemData)_itemStorageData.ItemDatas[list.SelectedIndex]).ArrangeItems[arrangedItemsList.SelectedIndex] = v; })
+                        new Ref<int>(() => ((PotToolItemData)this._itemStorageData.ItemDatas[this.list.SelectedIndex]).ArrangeItems[arrangedItemsList.SelectedIndex], v => { ((PotToolItemData)this._itemStorageData.ItemDatas[this.list.SelectedIndex]).ArrangeItems[arrangedItemsList.SelectedIndex] = v; })
                     );
                 };
 
-                potToolItemDataPageUpdate = delegate (ItemData item)
+                this.potToolItemDataPageUpdate = delegate (ItemData item)
                 {
                     sourceItemsList.Items.Clear();
                     addedItemsList.Items.Clear();
@@ -897,7 +897,7 @@ namespace Eliza.UI.Widgets
                     );
 
                     //SynthesisItemData
-                    if (list.SelectedIndex >= 0)
+                    if (this.list.SelectedIndex >= 0)
                     {
                         for (int i = 0; i < ((PotToolItemData)item).SourceItems.Length; i++)
                         {
@@ -906,7 +906,7 @@ namespace Eliza.UI.Widgets
                     }
 
                     //PotToolItemData
-                    if (list.SelectedIndex >= 0)
+                    if (this.list.SelectedIndex >= 0)
                     {
                         for (int i = 0; i < ((PotToolItemData)item).SourceItems.Length; i++)
                         {
@@ -914,7 +914,7 @@ namespace Eliza.UI.Widgets
                         }
                     }
 
-                    if (list.SelectedIndex >= 0)
+                    if (this.list.SelectedIndex >= 0)
                     {
                         for (int i = 0; i < ((PotToolItemData)item).SourceItems.Length; i++)
                         {
@@ -997,7 +997,7 @@ namespace Eliza.UI.Widgets
             fishItemDataPage.Enabled = false;
             potToolItemDataPage.Enabled = false;
 
-            tabUpdate = delegate (ItemData itemData)
+            this.tabUpdate = delegate (ItemData itemData)
             {
                 switch (itemData)
                 {
@@ -1011,7 +1011,7 @@ namespace Eliza.UI.Widgets
                             fishItemDataPage.Enabled = false;
                             potToolItemDataPage.Enabled = true;
 
-                            potToolItemDataPageUpdate(item);
+                            this.potToolItemDataPageUpdate(item);
                             break;
                         }
                     case FishItemData item:
@@ -1024,7 +1024,7 @@ namespace Eliza.UI.Widgets
                             fishItemDataPage.Enabled = true;
                             potToolItemDataPage.Enabled = false;
 
-                            fishItemDataPageUpdate(item);
+                            this.fishItemDataPageUpdate(item);
                             break;
                         }
                     case RuneAbilityItemData item:
@@ -1037,7 +1037,7 @@ namespace Eliza.UI.Widgets
                             fishItemDataPage.Enabled = false;
                             potToolItemDataPage.Enabled = false;
 
-                            runeAbilityItemDataPageUpdate(item);
+                            this.runeAbilityItemDataPageUpdate(item);
                             break;
                         }
                     case EquipItemData item:
@@ -1050,7 +1050,7 @@ namespace Eliza.UI.Widgets
                             fishItemDataPage.Enabled = false;
                             potToolItemDataPage.Enabled = false;
 
-                            equipItemDataPageUpdate(item);
+                            this.equipItemDataPageUpdate(item);
                             break;
                         }
                     case FoodItemData item:
@@ -1063,7 +1063,7 @@ namespace Eliza.UI.Widgets
                             fishItemDataPage.Enabled = false;
                             potToolItemDataPage.Enabled = false;
 
-                            foodItemDataPageUpdate(item);
+                            this.foodItemDataPageUpdate(item);
                             break;
                         }
                     case SeedItemData item:
@@ -1076,7 +1076,7 @@ namespace Eliza.UI.Widgets
                             fishItemDataPage.Enabled = false;
                             potToolItemDataPage.Enabled = false;
 
-                            seedItemDataPageUpdate(item);
+                            this.seedItemDataPageUpdate(item);
                             break;
                         }
                     case AmountItemData item:
@@ -1089,7 +1089,7 @@ namespace Eliza.UI.Widgets
                             fishItemDataPage.Enabled = false;
                             potToolItemDataPage.Enabled = false;
 
-                            amountItemDataPageUpdate(item);
+                            this.amountItemDataPageUpdate(item);
                             break;
                         }
                     default:
@@ -1117,10 +1117,10 @@ namespace Eliza.UI.Widgets
             tabControl.Width = 500;
             tabControl.Height = 500;
 
-            parentHBox.Items.Add(list);
-            parentHBox.Items.Add(tabControl);
+            this.parentHBox.Items.Add(this.list);
+            this.parentHBox.Items.Add(tabControl);
 
-            Content = parentHBox;
+            this.Content = this.parentHBox;
             
         }
 

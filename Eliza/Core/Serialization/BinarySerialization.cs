@@ -3,49 +3,60 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Eliza.Core.Serialization
 {
+
     class BinarySerialization
     {
         public readonly Stream BaseStream;
+        protected const int UNKNOWN_LENGTH = 0;
+        // In the serialized stream, the default type of the number
+        // representing the length of the array that follows.
+        protected const TypeCode DEFAULT_LENGTH_TYPECODE = TypeCode.Int32;
 
         public BinarySerialization(Stream baseStream)
         {
-            BaseStream = baseStream;
+            this.BaseStream = baseStream;
         }
 
-        protected bool IsList(Type type)
+        protected static bool IsList(Type type)
         {
             return typeof(IList).IsAssignableFrom(type);
         }
 
-        protected bool IsDictionary(Type type)
+        protected static bool IsDictionary(Type type)
         {
             return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
         }
 
-        protected IEnumerable<FieldInfo> GetFieldsSorted(Type objectType)
+        protected static IEnumerable<FieldInfo> GetFieldsOrdered(Type objectType)
         {
-            Stack<Type> typeStack = new Stack<Type>();
+            // This returns all public fields of a class as an enumerable,
+            // starting from the base object. They're not ordered in the alphabetical sense.
 
-            do
-            {
+            Stack<Type> typeStack = new();
+
+            do {
                 typeStack.Push(objectType);
-
                 objectType = objectType.BaseType;
-            }
-            while (objectType != null);
+            } while (objectType != null);
 
-            while (typeStack.Count > 0)
-            {
+            while (typeStack.Count > 0) {
                 objectType = typeStack.Pop();
-
-                foreach (FieldInfo Info in objectType.GetFields())
-                {
-                    yield return Info;
+                foreach (FieldInfo fieldInfo in objectType.GetFields()) {
+                    yield return fieldInfo;
+                    /*
+                    if (! fieldInfo.IsDefined(typeof(CompilerGeneratedAttribute))) {
+                        yield return fieldInfo;
+                    }
+                    */
+                    
                 }
             }
+
         }
+
     }
 }

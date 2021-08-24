@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using static Eliza.Core.Serialization.Attributes;
+using static Eliza.Core.Serialization.ElizaAttribute;
 
 namespace Eliza.Model.Lpocket
 {
@@ -8,7 +8,7 @@ namespace Eliza.Model.Lpocket
         public bool SyncToCampEquip;
         public int QuickLastFocus;
         public int CampLastFocus;
-        [Length(Size = 38)]
+        [ElizaSize(Fixed = 38)]
         public List<int> Unk;
         //public List<int> UIEMCategoriesCustomNo;
         //public List<int> UIEMQuckCategories;

@@ -10,7 +10,7 @@ namespace Eliza.UI.Widgets
 
         public GenericGroupBox(string text) : base()
         {
-            Text = text;
+            this.Text = text;
         }
     }
 }

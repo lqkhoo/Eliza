@@ -36,11 +36,11 @@ namespace Eliza.Model
 {
     public class SaveData
     {
-        public SaveDataHeader header;
+        public RF5SaveDataHeader header;
         public RF5SaveData saveData;
-        public SaveDataFooter footer;
+        public RF5SaveDataFooter footer;
 
-        public SaveData(SaveDataHeader header, RF5SaveData saveData, SaveDataFooter footer)
+        public SaveData(RF5SaveDataHeader header, RF5SaveData saveData, RF5SaveDataFooter footer)
         {
             this.header = header;
             this.saveData = saveData;
@@ -61,7 +61,7 @@ namespace Eliza.Model
                 // var reader = deserializer.Reader;
 
                 // Parse header first, to extract file version
-                var header = deserializer.Deserialize<SaveDataHeader>();
+                var header = deserializer.Deserialize<RF5SaveDataHeader>();
                 var version = header.version;
 
                 RF5SaveData data;
@@ -73,8 +73,8 @@ namespace Eliza.Model
                         data = deserializer.Deserialize<RF5SaveData>();
                         break;
                     case >= 4: // v1.0.4 - v1.0.6
-                        // data = deserializer.Deserialize<RF5SaveData>();
-                        data = deserializer.Deserialize<RF5SaveDataV106>().AdaptTo();
+                        data = deserializer.Deserialize<RF5SaveData>(); // 107 toggle
+                        // data = deserializer.Deserialize<RF5SaveDataV106>().AdaptTo(); // 106 toggle
                         break;
                     case >= 2: // v1.0.2 - v1.0.3
                         data = deserializer.Deserialize<RF5SaveDataV102>().AdaptTo();
@@ -83,7 +83,7 @@ namespace Eliza.Model
                         throw new NotImplementedException("Unsupported version");
                 }
 
-                var footer = deserializer.Deserialize<SaveDataFooter>();
+                var footer = deserializer.Deserialize<RF5SaveDataFooter>();
 
                 var save = new SaveData(header, data, footer);
                 return save;
@@ -115,10 +115,11 @@ namespace Eliza.Model
                         serializer.Serialize(save);
                         break;
                     case >= 4: // v1.0.4 - v1.0.6
-                        RF5SaveDataV106 data106 = new RF5SaveDataV106().AdaptFrom(save.saveData);
-                        serializer.Serialize(save.header);
-                        serializer.Serialize(data106);
-                        serializer.Serialize(save.footer);
+                        serializer.Serialize(save); // 107 toggle
+                        // RF5SaveDataV106 data106 = new RF5SaveDataV106().AdaptFrom(save.saveData);
+                        // serializer.Serialize(save.header);
+                        // serializer.Serialize(data106);
+                        // serializer.Serialize(save.footer);
                         break;
                     case >= 2: // v1.0.2 - v1.0.3
                         RF5SaveDataV102 data102 = new RF5SaveDataV102().AdaptFrom(save.saveData);

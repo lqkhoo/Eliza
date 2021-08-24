@@ -8,9 +8,9 @@ namespace Eliza.UI.Forms
     {
         public SaveFlagForm(SaveFlagStorage saveFlag)
         {
-            Title = "Save Flag";
+            this.Title = "Save Flag";
 
-            Content = new SaveFlagStorageGroup(saveFlag, "Save Flag");
+            this.Content = new SaveFlagStorageGroup(saveFlag, "Save Flag");
         }
 
     }

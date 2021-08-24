@@ -1,11 +1,11 @@
-﻿using static Eliza.Core.Serialization.Attributes;
+﻿using static Eliza.Core.Serialization.ElizaAttribute;
 
 namespace Eliza.Model.Player
 {
     public class RF5PlayerData
     {
         public int PlayerGold;
-        [Length(Max = 32)]
+        [ElizaSize(Max = 32)]
         public string PlayerName;
         public bool IsPlayerMale;
         public bool IsPlayerModelMale;

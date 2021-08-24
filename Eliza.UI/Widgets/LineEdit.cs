@@ -7,25 +7,25 @@ namespace Eliza.UI.Widgets
 {
     class LineEdit : GenericWidget
     {
-        public TextBox textBox = new TextBox();
+        public TextBox textBox = new();
 
         public LineEdit(Ref<char[]> value, string text = "") : base(text)
         {
-            _valueType = value.Value.GetType();
-            _value = value;
-            Setup();
+            this._valueType = value.Value.GetType();
+            this._value = value;
+            this.Setup();
         }
 
         public LineEdit(Ref<string> value, string text = "") : base(text)
         {
-            _valueType = value.Value.GetType();
-            _value = value;
-            Setup();
+            this._valueType = value.Value.GetType();
+            this._value = value;
+            this.Setup();
         }
 
         public LineEdit(string text = "") : base(text)
         {
-            Items.Add(textBox);
+            this.Items.Add(this.textBox);
         }
 
         public void ChangeReferenceValue(Ref<char[]> value)
@@ -34,9 +34,9 @@ namespace Eliza.UI.Widgets
             {
                 if (value.Value != null)
                 {
-                    _value = value;
-                    _valueType = value.Value.GetType();
-                    SetValue();
+                    this._value = value;
+                    this._valueType = value.Value.GetType();
+                    this.SetValue();
                 }
             }
         }
@@ -47,44 +47,44 @@ namespace Eliza.UI.Widgets
             {
                 if (value.Value != null)
                 {
-                    _value = value;
-                    _valueType = value.Value.GetType();
-                    SetValue();
+                    this._value = value;
+                    this._valueType = value.Value.GetType();
+                    this.SetValue();
                 }
             }
         }
 
         private void Setup()
         {
-            Items.Add(textBox);
-            textBox.TextChanged += LineEdit_TextChanged;
-            SetValue();
+            this.Items.Add(this.textBox);
+            this.textBox.TextChanged += this.LineEdit_TextChanged;
+            this.SetValue();
         }
 
         private void SetValue()
         {
-            if (_valueType == typeof(char[]))
+            if (this._valueType == typeof(char[]))
             {
-                textBox.Text = Encoding.UTF8.GetString(
-                    Encoding.UTF8.GetBytes(((Ref<char[]>)_value).Value)
+                this.textBox.Text = Encoding.UTF8.GetString(
+                    Encoding.UTF8.GetBytes(((Ref<char[]>)this._value).Value)
                  );
             }
             else
             {
-                textBox.Text = ((Ref<string>)_value).Value;
+                this.textBox.Text = ((Ref<string>)this._value).Value;
             }
         }
 
         private void LineEdit_TextChanged(object sender, EventArgs e)
         {
-            if (_valueType == typeof(char[]))
+            if (this._valueType == typeof(char[]))
             {
                 // Need to check on encoding, but should be fine
-                ((Ref<char[]>)_value).Value = textBox.Text.ToCharArray();
+                ((Ref<char[]>)this._value).Value = this.textBox.Text.ToCharArray();
             }
             else
             {
-                ((Ref<string>)_value).Value = textBox.Text;
+                ((Ref<string>)this._value).Value = this.textBox.Text;
             }
         }
     }

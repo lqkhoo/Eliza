@@ -6,9 +6,9 @@ namespace Eliza.UI.Widgets
     {
         public HBox() : base()
         {
-            Orientation = Orientation.Horizontal;
-            Padding = 5;
-            Spacing = 5;
+            this.Orientation = Orientation.Horizontal;
+            this.Padding = 5;
+            this.Spacing = 5;
         }
     }
 }

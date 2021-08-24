@@ -10,7 +10,7 @@ namespace Eliza.Model.Item
 
         public FoodItemData()
         {
-            SourceItems = new int[0];
+            this.SourceItems = new int[0];
         }
     }
 }

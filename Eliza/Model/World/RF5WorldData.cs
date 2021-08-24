@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using static Eliza.Core.Serialization.ElizaAttribute;
 
 namespace Eliza.Model.World
 {
@@ -25,8 +26,9 @@ namespace Eliza.Model.World
         public int SeedPointElapsedDay;
         public int SeedPointMonsterAddedCount;
         public float SeedSupportCoolTime;
+        // public int[] MeteorPosition;
+        //// I'm not sure what this is atm. Placeholder for meteor maybe?
         public int[] MeteorPosition;
-        // I'm not sure what this is atm. Placeholder for meteor maybe?
         public int unk1;
         public int OffsetFiveYearAgo;
         public int PunchCount;

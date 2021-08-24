@@ -1,6 +1,6 @@
 ﻿namespace Eliza.Model.Save
 {
-    public class SaveDataFooter
+    public class RF5SaveDataFooter
     {
         public int BodyLength;
         public int Length;

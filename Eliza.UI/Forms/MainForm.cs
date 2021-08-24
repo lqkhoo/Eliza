@@ -11,31 +11,31 @@ namespace Eliza.Forms
         private SaveData _saveData;
         private string _path;
 
-        Button headerButton = new Button { Text = "Header" };
-        Button dataButton = new Button { Text = "Data" };
-        Button footerButton = new Button { Text = "Footer" };
+        Button headerButton = new() { Text = "Header" };
+        Button dataButton = new() { Text = "Data" };
+        Button footerButton = new() { Text = "Footer" };
 
         public MainForm()
         {
-            Title = "Eliza";
-            MinimumSize = new Size(200, 200);
+            this.Title = "Eliza";
+            this.MinimumSize = new Size(200, 200);
 
-            headerButton.Enabled = false;
-            headerButton.Click += HeaderButton_Click;
+            this.headerButton.Enabled = false;
+            this.headerButton.Click += this.HeaderButton_Click;
 
-            dataButton.Enabled = false;
-            dataButton.Click += DataButton_Click;
+            this.dataButton.Enabled = false;
+            this.dataButton.Click += this.DataButton_Click;
 
-            footerButton.Enabled = false;
-            footerButton.Click += FooterButton_Click;
+            this.footerButton.Enabled = false;
+            this.footerButton.Click += this.FooterButton_Click;
 
             var layout = new StackLayout { Orientation = Orientation.Vertical, HorizontalContentAlignment = HorizontalAlignment.Center, Spacing = 5, Padding = new Padding(10) };
 
             StackLayoutItem[] stackLayoutItems =
             {
-                headerButton,
-                dataButton,
-                footerButton
+                this.headerButton,
+                this.dataButton,
+                this.footerButton
             };
 
             foreach (var item in stackLayoutItems)
@@ -44,15 +44,15 @@ namespace Eliza.Forms
             }
 
             //Need this, so it doesn't an error of no instance
-            Content = layout;
+            this.Content = layout;
             
             var openMenuButton = new Command { MenuText = "Open", Shortcut = Keys.Control | Keys.O };
-            openMenuButton.Executed += (sender, e) => OpenMenuButton_Executed(sender, e);
+            openMenuButton.Executed += (sender, e) => this.OpenMenuButton_Executed(sender, e);
 
             var saveMenuButton = new Command { MenuText = "Save", Shortcut = Keys.Control | Keys.S };
-            saveMenuButton.Executed += SaveMenuButton_Executed;
+            saveMenuButton.Executed += this.SaveMenuButton_Executed;
 
-            Menu = new MenuBar
+            this.Menu = new MenuBar
             {
                 Items =
                 {
@@ -77,16 +77,16 @@ namespace Eliza.Forms
                     new FileFilter("All Files", ".*")
                 );
 
-                if (openFileDialog.ShowDialog(Parent) == DialogResult.Ok)
+                if (openFileDialog.ShowDialog(this.Parent) == DialogResult.Ok)
                 {
-                    _path = openFileDialog.FileName;
+                    this._path = openFileDialog.FileName;
 
                     // try
                     // {
-                        _saveData = SaveData.Read(_path);
-                        headerButton.Enabled = true;
-                        dataButton.Enabled = true;
-                        footerButton.Enabled = true;
+                    this._saveData = SaveData.Read(this._path);
+                    this.headerButton.Enabled = true;
+                    this.dataButton.Enabled = true;
+                    this.footerButton.Enabled = true;
                     // }
                     // catch
                     // {
@@ -104,23 +104,23 @@ namespace Eliza.Forms
                     new FileFilter("All Files", ".*")
                 );
 
-                if (saveFileDialog.ShowDialog(Parent) == DialogResult.Ok)
+                if (saveFileDialog.ShowDialog(this.Parent) == DialogResult.Ok)
                 {
                     var path = saveFileDialog.FileName;
-                    SaveData.Write(path, _saveData);
+                    SaveData.Write(path, this._saveData);
                 }
             }
         }
 
         void HeaderButton_Click(object sender, EventArgs e)
         {
-            var headerForm = new HeaderForm(_saveData);
+            var headerForm = new HeaderForm(this._saveData);
             headerForm.Show();
         }
 
         void DataButton_Click(object sender, EventArgs e)
         {
-            var dataForm = new DataForm(_saveData);
+            var dataForm = new DataForm(this._saveData);
             dataForm.Show();
         }
 

@@ -8,7 +8,7 @@ namespace Eliza.Model.Item
     {
         public SeedItemData()
         {
-            LevelAmount = new List<int>();
+            this.LevelAmount = new List<int>();
         }
     }
 }

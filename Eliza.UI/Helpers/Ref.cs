@@ -13,8 +13,8 @@ namespace Eliza.UI.Helpers
         }
         public T Value
         {
-            get { return getter(); }
-            set { setter(value); }
+            get { return this.getter(); }
+            set { this.setter(value); }
         }
     }
 }

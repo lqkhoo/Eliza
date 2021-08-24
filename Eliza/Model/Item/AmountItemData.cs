@@ -11,7 +11,7 @@ namespace Eliza.Model.Item
 
         public AmountItemData()
         {
-            LevelAmount = new List<int>();
+            this.LevelAmount = new List<int>();
         }
     }
 }

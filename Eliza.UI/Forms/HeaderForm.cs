@@ -9,7 +9,7 @@ namespace Eliza.UI.Forms
     {
         public HeaderForm(SaveData save)
         {
-            Title = "Header";
+            this.Title = "Header";
 
             var header = save.header;
             var stackLayout = new VBox();
@@ -75,7 +75,7 @@ namespace Eliza.UI.Forms
 
             }
 
-            Content = stackLayout;
+            this.Content = stackLayout;
         }
     }
 }

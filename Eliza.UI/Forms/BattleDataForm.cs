@@ -12,7 +12,7 @@ namespace Eliza.UI.Forms
 
         public BattleDataForm(RF5BattleData battleData)
         {
-            Title = "Battle Data";
+            this.Title = "Battle Data";
 
             var partyData = new GroupBox()
             {
@@ -111,7 +111,7 @@ namespace Eliza.UI.Forms
             var scroll = new Scrollable();
             scroll.Content = vBox;
 
-            Content = scroll;
+            this.Content = scroll;
         }
     }
 }

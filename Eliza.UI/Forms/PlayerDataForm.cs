@@ -12,7 +12,7 @@ namespace Eliza.UI.Forms
     {
         public PlayerDataForm(RF5PlayerData playerData)
         {
-            Title = "Player Data";
+            this.Title = "Player Data";
 
             var vBox = new VBox();
 
@@ -144,7 +144,7 @@ namespace Eliza.UI.Forms
 
             var scroll = new Scrollable();
             scroll.Content = vBox;
-            Content = scroll;
+            this.Content = scroll;
         }
     }
 }

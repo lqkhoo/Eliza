@@ -17,7 +17,7 @@ namespace Eliza.UI.Forms
 
         public NPCDataForm(RF5NPCData npcData)
         {
-            Title = "NPC Data";
+            this.Title = "NPC Data";
 
             var vBox = new VBox();
 
@@ -586,7 +586,7 @@ namespace Eliza.UI.Forms
 
             var scroll = new Scrollable();
             scroll.Content = vBox;
-            Content = scroll;
+            this.Content = scroll;
         }
     }
 }

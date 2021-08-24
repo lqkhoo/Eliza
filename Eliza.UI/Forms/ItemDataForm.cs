@@ -8,7 +8,7 @@ namespace Eliza.UI.Forms
     {
         public ItemDataForm(RF5ItemData itemData)
         {
-            Title = "Item Data";
+            this.Title = "Item Data";
 
             var partyData = new GroupBox()
             {
@@ -44,7 +44,7 @@ namespace Eliza.UI.Forms
             var scroll = new Scrollable();
             scroll.Content = vBox;
 
-            Content = scroll;
+            this.Content = scroll;
         }
     }
 }

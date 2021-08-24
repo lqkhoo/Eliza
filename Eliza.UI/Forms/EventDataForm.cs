@@ -12,7 +12,7 @@ namespace Eliza.UI.Forms
 
         public EventDataForm(RF5EventData eventData)
         {
-            Title = "Event Data";
+            this.Title = "Event Data";
 
             var scroll = new Scrollable();
             var vBox = new VBox();
@@ -1885,7 +1885,7 @@ namespace Eliza.UI.Forms
             }
 
             scroll.Content = vBox;
-            Content = scroll;
+            this.Content = scroll;
         }
     }
 }

@@ -7,14 +7,14 @@ namespace Eliza.UI.Widgets
     {
         protected Type _valueType;
         protected object _value;
-        protected Label Label = new Label();
+        protected Label Label = new();
 
         public GenericWidget(string text) : base()
         {
-            Orientation = Orientation.Horizontal;
-            Items.Add(Label);
-            Label.Text = text;
-            Label.Width = 200;
+            this.Orientation = Orientation.Horizontal;
+            this.Items.Add(this.Label);
+            this.Label.Text = text;
+            this.Label.Width = 200;
         }
     }
 }

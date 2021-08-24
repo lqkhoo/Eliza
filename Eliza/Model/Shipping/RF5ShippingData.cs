@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using static Eliza.Core.Serialization.Attributes;
+using static Eliza.Core.Serialization.ElizaAttribute;
 
 namespace Eliza.Model.Shipping
 {
@@ -7,26 +7,26 @@ namespace Eliza.Model.Shipping
     {
         public int completedPercent;
         public long totalIncome;
-        [MessagePackList]
+        [ElizaMessagePackList]
         //List<ShipmentItemRecords>[]
         public List<ShipmentItemRecords> ItemRecordList1;
-        [MessagePackList]
+        [ElizaMessagePackList]
         public List<ShipmentItemRecords> ItemRecordList2;
-        [MessagePackList]
+        [ElizaMessagePackList]
         public List<ShipmentItemRecords> ItemRecordList3;
-        [MessagePackList]
+        [ElizaMessagePackList]
         public List<ShipmentItemRecords> ItemRecordList4;
-        [MessagePackList]
+        [ElizaMessagePackList]
         public List<ShipmentItemRecords> ItemRecordList5;
-        [MessagePackList]
+        [ElizaMessagePackList]
         public List<ShipmentItemRecords> ItemRecordList6;
-        [MessagePackList]
+        [ElizaMessagePackList]
         public List<ShipmentItemRecords> ItemRecordList7;
-        [MessagePackList]
+        [ElizaMessagePackList]
         public List<ShipmentItemRecords> ItemRecordList8;
-        [MessagePackList]
+        [ElizaMessagePackList]
         public List<FishShipmentRecords> FishRecordList;
-        [MessagePackList]
+        [ElizaMessagePackList]
         public List<SeedLevelRecords> SeedLevelRecordList;
 
     }

@@ -10,7 +10,7 @@ namespace Eliza.UI.Forms
     {
         public FishingDataForm(RF5FishingData fishingData)
         {
-            Title = "Fishing Data";
+            this.Title = "Fishing Data";
 
             var fishRecord = new GroupBox()
             {
@@ -64,7 +64,7 @@ namespace Eliza.UI.Forms
             var scroll = new Scrollable();
             scroll.Content = vBox;
 
-            Content = scroll;
+            this.Content = scroll;
         }
     }
 }

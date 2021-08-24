@@ -6,7 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
-using static Eliza.Core.Serialization.Attributes;
+using static Eliza.Core.Serialization.ElizaAttribute;
 using Eliza.Model.Status;
 using Eliza.Model.Save;
 using Eliza.Model;
@@ -45,7 +45,7 @@ namespace Eliza.Core.Serialization
             {
                 return ReadSaveFlagStorage();
             }
-            else if (type == typeof(SaveDataFooter))
+            else if (type == typeof(RF5SaveDataFooter))
             {
                 return ReadSaveDataFooter(type);
             }
@@ -206,11 +206,11 @@ namespace Eliza.Core.Serialization
             return new SaveFlagStorage(data.ToArray(), length);
         }
 
-        private SaveDataFooter ReadSaveDataFooter(Type type)
+        private RF5SaveDataFooter ReadSaveDataFooter(Type type)
         {
             //Aligned relative to data 256bits due to Rijndael crypto
             BaseStream.Position = ((BaseStream.Position - 0x20 + 0x1F) & ~0x1F) + 0x20;
-            return (SaveDataFooter)ReadObject(type);
+            return (RF5SaveDataFooter)ReadObject(type);
         }
 
         private IDictionary ReadDictionary(Type type)
@@ -253,7 +253,7 @@ namespace Eliza.Core.Serialization
             }
             else
             {
-                foreach (FieldInfo info in GetFieldsSorted(objectType))
+                foreach (FieldInfo info in GetFieldsOrdered(objectType))
                 {
                     fieldCount++;
 
@@ -263,7 +263,7 @@ namespace Eliza.Core.Serialization
 
                         object fieldValue = null;
 
-                        var messagePackListAttribute = (MessagePackListAttribute)info.GetCustomAttribute(typeof(MessagePackListAttribute));
+                        var messagePackListAttribute = (ElizaMessagePackListAttribute)info.GetCustomAttribute(typeof(ElizaMessagePackListAttribute));
                         if (messagePackListAttribute != null)
                         {
                             if (IsList(fieldType))
@@ -272,24 +272,24 @@ namespace Eliza.Core.Serialization
                             }
                         }
 
-                        var messagePackRawAttribute = (MessagePackRawAttribute)info.GetCustomAttribute(typeof(MessagePackRawAttribute));
+                        var messagePackRawAttribute = (ElizaMessagePackRawAttribute)info.GetCustomAttribute(typeof(ElizaMessagePackRawAttribute));
                         if (messagePackRawAttribute != null)
                         {
                             fieldValue = ReadMessagePackObject(fieldType);
                         }
 
-                        var lengthAttribute = (LengthAttribute)info.GetCustomAttribute(typeof(LengthAttribute));
+                        var lengthAttribute = (ElizaSizeAttribute)info.GetCustomAttribute(typeof(ElizaSizeAttribute));
                         if (lengthAttribute != null)
                         {
-                            if (lengthAttribute.Size != 0)
+                            if (lengthAttribute.Fixed != 0)
                             {
                                 if (IsList(fieldType))
                                 {
-                                    fieldValue = ReadList(fieldType, length: lengthAttribute.Size);
+                                    fieldValue = ReadList(fieldType, length: lengthAttribute.Fixed);
                                 }
                                 else if (fieldType == typeof(string))
                                 {
-                                    fieldValue = ReadString(lengthAttribute.Size);
+                                    fieldValue = ReadString(lengthAttribute.Fixed);
                                 }
                                 else
                                 {
@@ -297,11 +297,11 @@ namespace Eliza.Core.Serialization
                                     fieldValue = null;
                                 }
                             }
-                            else if (lengthAttribute.Type != TypeCode.Empty)
+                            else if (lengthAttribute.LengthType != TypeCode.Empty)
                             {
                                 if (IsList(fieldType))
                                 {
-                                    fieldValue = ReadList(fieldType, lengthType: lengthAttribute.Type);
+                                    fieldValue = ReadList(fieldType, lengthType: lengthAttribute.LengthType);
                                 }
                                 else if (fieldType == typeof(string))
                                 {

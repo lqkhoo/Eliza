@@ -10,7 +10,7 @@ namespace Eliza.UI.Forms
     {
         public WorldDataForm(RF5WorldData worldData)
         {
-            Title = "World Data";
+            this.Title = "World Data";
 
             var scroll = new Scrollable();
             var stackLayout = new VBox();
@@ -385,7 +385,7 @@ namespace Eliza.UI.Forms
 
             }
 
-            var unk1 = new SpinBox(new Ref<int>(() => worldData.unk1, v => { worldData.unk1 = v; }), "Unk 1");
+            // var unk1 = new SpinBox(new Ref<int>(() => worldData.unk1, v => { worldData.unk1 = v; }), "Unk 1");
             var offsetFiveYearAgo = new SpinBox(new Ref<int>(() => worldData.OffsetFiveYearAgo, v => { worldData.OffsetFiveYearAgo = v; }), "Offset Five Year Ago");
             var punchCount = new SpinBox(new Ref<int>(() => worldData.PunchCount, v => { worldData.PunchCount = v; }), "Punch Count");
 
@@ -413,7 +413,7 @@ namespace Eliza.UI.Forms
                 seedPointMonsterAddedCount,
                 seedSupportCoolTime,
                 meteorPosition,
-                unk1,
+                // unk1,
                 offsetFiveYearAgo,
                 punchCount
             };
@@ -424,7 +424,7 @@ namespace Eliza.UI.Forms
             }
 
             scroll.Content = stackLayout;
-            Content = scroll;
+            this.Content = scroll;
         }
     }
 }

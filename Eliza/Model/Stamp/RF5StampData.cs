@@ -1,10 +1,10 @@
-﻿using static Eliza.Core.Serialization.Attributes;
+﻿using static Eliza.Core.Serialization.ElizaAttribute;
 
 namespace Eliza.Model.Stamp
 {
     public class RF5StampData
     {
-        [Length(Max = 80)]
+        [ElizaSize(Max = 80)]
         public StampRecordData[] StampRecordData;
     }
 }

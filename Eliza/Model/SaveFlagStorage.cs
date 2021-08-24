@@ -10,8 +10,8 @@
 
         public SaveFlagStorage(byte[] data, int length)
         {
-            Data = data;
-            Length = length;
+            this.Data = data;
+            this.Length = length;
         }
     }
 }

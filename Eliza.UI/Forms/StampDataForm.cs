@@ -10,7 +10,7 @@ namespace Eliza.UI.Forms
     {
         public StampDataForm(RF5StampData stampData)
         {
-            Title = "Stamp Data";
+            this.Title = "Stamp Data";
 
             var stampRecordData = new GroupBox()
             {
@@ -60,7 +60,7 @@ namespace Eliza.UI.Forms
             var scroll = new Scrollable();
             scroll.Content = vBox;
 
-            Content = scroll;
+            this.Content = scroll;
         }
     }
 }

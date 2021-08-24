@@ -11,11 +11,11 @@ namespace Eliza.UI.Widgets
 
         public SaveFlagStorageGroup(SaveFlagStorage saveFlag, string text) : base(text)
         {
-            _saveFlag = saveFlag;
+            this._saveFlag = saveFlag;
 
             var stackLayout = new VBox();
 
-            var length = new SpinBox(new Ref<int>(() => _saveFlag.Length, v => { _saveFlag.Length = v; }), "Length");
+            var length = new SpinBox(new Ref<int>(() => this._saveFlag.Length, v => { this._saveFlag.Length = v; }), "Length");
 
             var dataBox = new GroupBox()
             {
@@ -26,7 +26,7 @@ namespace Eliza.UI.Widgets
 
             var list = new ListBox();
 
-            for (int i = 0; i < _saveFlag.Data.Length; i++)
+            for (int i = 0; i < this._saveFlag.Data.Length; i++)
             {
                 list.Items.Add($"Flag {i}");
             }
@@ -37,7 +37,7 @@ namespace Eliza.UI.Widgets
 
             void List_SelectedIndexChanged(object sender, EventArgs e)
             {
-                data.ChangeReferenceValue(new Ref<byte>(() => _saveFlag.Data[list.SelectedIndex], v => { _saveFlag.Data[list.SelectedIndex] = v; }));
+                data.ChangeReferenceValue(new Ref<byte>(() => this._saveFlag.Data[list.SelectedIndex], v => { this._saveFlag.Data[list.SelectedIndex] = v; }));
             }
 
             StackLayoutItem[] datastackLayoutItems =
@@ -64,7 +64,7 @@ namespace Eliza.UI.Widgets
                 stackLayout.Items.Add(item);
             }
 
-            Content = stackLayout;
+            this.Content = stackLayout;
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Eliza.UI.Forms
     {
         public FurnitureDataForm(RF5FurnitureData furnitureData)
         {
-            Title = "Furniture Data";
+            this.Title = "Furniture Data";
 
             var unk1 = new SpinBox(
                 new Ref<int>(() => furnitureData.Unk1, v => { furnitureData.Unk1 = v; }),
@@ -110,7 +110,7 @@ namespace Eliza.UI.Forms
             var scroll = new Scrollable();
             scroll.Content = vBox;
 
-            Content = scroll;
+            this.Content = scroll;
         }
     }
 }

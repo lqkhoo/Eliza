@@ -1,29 +1,29 @@
 ﻿using System.Collections.Generic;
-using static Eliza.Core.Serialization.Attributes;
+using static Eliza.Core.Serialization.ElizaAttribute;
 
 namespace Eliza.Model.Farm
 {
     public class RF5FarmData
     {
-        [MessagePackList]
+        [ElizaMessagePackList]
         public bool[] FirstVisitFarm;
-        [MessagePackList]
+        [ElizaMessagePackList]
         public int[] FarmSizeLevels;
-        [MessagePackList]
+        [ElizaMessagePackList]
         public FarmCropData[] FarmCropDatas;
-        [MessagePackList]
+        [ElizaMessagePackList]
         public int[] CrystalUseCounts;
-        [MessagePackList]
+        [ElizaMessagePackList]
         public RF4_CROP_STATE[] Crop;
-        [MessagePackList]
+        [ElizaMessagePackList]
         public RF4_SOIL_INFO[] Soil;
-        [MessagePackList]
+        [ElizaMessagePackList]
         public bool[] MonsterHutReleaseFlags;
-        [MessagePackList]
+        [ElizaMessagePackList]
         public int[] HarvestCount;
-        [MessagePackList]
+        [ElizaMessagePackList]
         public List<int> ItemHarvestIdList;
-        [MessagePackList]
+        [ElizaMessagePackList]
         public MonsterHutSaveData[] MonsterHutSaveDatas;
     }
 }

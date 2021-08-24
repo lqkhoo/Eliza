@@ -1,12 +1,12 @@
-﻿using static Eliza.Core.Serialization.Attributes;
+﻿using static Eliza.Core.Serialization.ElizaAttribute;
 
 namespace Eliza.Model.Save
 {
-    public class SaveDataHeader
+    public class RF5SaveDataHeader
     {
         public ulong uid;
         public uint version;
-        [Length(Size = 4)]
+        [ElizaSize(Fixed = 4)]
         public char[] project;
         public uint wCnt;
         public uint wOpt;

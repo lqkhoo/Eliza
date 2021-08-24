@@ -10,9 +10,9 @@ namespace Eliza.Model.Item
 
         public PotToolItemData()
         {
-            AddedItems = new int[0];
-            ArrangeItems = new int[0];
-            SourceItems = new int[0];
+            this.AddedItems = new int[0];
+            this.ArrangeItems = new int[0];
+            this.SourceItems = new int[0];
         }
     }
 }

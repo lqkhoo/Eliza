@@ -9,8 +9,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
-using static Eliza.Core.Serialization.Attributes;
-
+using static Eliza.Core.Serialization.ElizaAttribute;
 namespace Eliza.Core.Serialization
 {
     class BinarySerializer : BinarySerialization
@@ -47,9 +46,9 @@ namespace Eliza.Core.Serialization
             {
                 WriteSaveFlagStorage((SaveFlagStorage)value);
             }
-            else if (type == typeof(SaveDataFooter))
+            else if (type == typeof(RF5SaveDataFooter))
             {
-                WriteSavaDataFooter((SaveDataFooter)value);
+                this.WriteSavaDataFooter((RF5SaveDataFooter)value);
             }
             else if (IsDictionary(type))
             {
@@ -155,7 +154,7 @@ namespace Eliza.Core.Serialization
             Writer.Write(saveFlagStorage.Data);
         }
 
-        private void WriteSavaDataFooter(SaveDataFooter footer)
+        private void WriteSavaDataFooter(RF5SaveDataFooter footer)
         {
             using (var reader = new BinaryReader(BaseStream))
             {
@@ -213,7 +212,7 @@ namespace Eliza.Core.Serialization
 
             int fieldCount = 0;
 
-            foreach (FieldInfo info in GetFieldsSorted(objectType))
+            foreach (FieldInfo info in GetFieldsOrdered(objectType))
             {
                 fieldCount++;
 
@@ -223,7 +222,7 @@ namespace Eliza.Core.Serialization
 
                     Type fieldType = info.FieldType;
 
-                    var messagePackListAttribute = (MessagePackListAttribute)info.GetCustomAttribute(typeof(MessagePackListAttribute));
+                    var messagePackListAttribute = (ElizaMessagePackListAttribute)info.GetCustomAttribute(typeof(ElizaMessagePackListAttribute));
                     if (messagePackListAttribute != null)
                     {
                         if (IsList(fieldType))
@@ -233,34 +232,34 @@ namespace Eliza.Core.Serialization
                         }
                     }
 
-                    var messagePackRawAttribute = (MessagePackRawAttribute)info.GetCustomAttribute(typeof(MessagePackRawAttribute));
+                    var messagePackRawAttribute = (ElizaMessagePackRawAttribute)info.GetCustomAttribute(typeof(ElizaMessagePackRawAttribute));
                     if (messagePackRawAttribute != null)
                     {
                         WriteMessagePackObject(fieldValue);
                         continue;
                     }
 
-                    var lengthAttribute = (LengthAttribute)info.GetCustomAttribute(typeof(LengthAttribute));
+                    var lengthAttribute = (ElizaSizeAttribute)info.GetCustomAttribute(typeof(ElizaSizeAttribute));
                     if (lengthAttribute != null)
                     {
-                        if (lengthAttribute.Size != 0)
+                        if (lengthAttribute.Fixed != 0)
                         {
                             if (IsList(fieldType))
                             {
-                                WriteList((IList)fieldValue, length: lengthAttribute.Size);
+                                WriteList((IList)fieldValue, length: lengthAttribute.Fixed);
                                 continue;
                             }
                             else if (fieldType == typeof(string))
                             {
-                                WriteString((string)fieldValue, lengthAttribute.Size);
+                                WriteString((string)fieldValue, lengthAttribute.Fixed);
                                 continue;
                             }
                         }
-                        else if (lengthAttribute.Type != TypeCode.Empty)
+                        else if (lengthAttribute.LengthType != TypeCode.Empty)
                         {
                             if (IsList(fieldType))
                             {
-                                WriteList((IList)fieldValue, lengthType: lengthAttribute.Type);
+                                WriteList((IList)fieldValue, lengthType: lengthAttribute.LengthType);
                                 continue;
                             }
                             else if (fieldType == typeof(string))

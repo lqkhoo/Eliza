@@ -14,22 +14,22 @@ namespace Eliza.UI.Widgets
 
         public RewardItemDataGroup(RewardItemData rewardItemData)
         {
-            _rewardItemData = rewardItemData;
+            this._rewardItemData = rewardItemData;
 
-            itemId = new SpinBox(new Ref<int>(() => _rewardItemData.ItemID, v => { _rewardItemData.ItemID = v; }), "Item ID");
-            amount = new SpinBox(new Ref<int>(() => _rewardItemData.Amount, v => { _rewardItemData.Amount = v; }), "Amount");
-            level = new SpinBox(new Ref<int>(() => _rewardItemData.Level, v => { _rewardItemData.Level = v; }), "Level");
+            this.itemId = new SpinBox(new Ref<int>(() => this._rewardItemData.ItemID, v => { this._rewardItemData.ItemID = v; }), "Item ID");
+            this.amount = new SpinBox(new Ref<int>(() => this._rewardItemData.Amount, v => { this._rewardItemData.Amount = v; }), "Amount");
+            this.level = new SpinBox(new Ref<int>(() => this._rewardItemData.Level, v => { this._rewardItemData.Level = v; }), "Level");
 
             StackLayoutItem[] vBoxItems =
             {
-                itemId,
-                amount,
-                level
+                this.itemId,
+                this.amount,
+                this.level
             };
 
             foreach (var item in vBoxItems)
             {
-                Items.Add(item);
+                this.Items.Add(item);
             }
         }
 
@@ -37,29 +37,29 @@ namespace Eliza.UI.Widgets
         {
             var vBox = new VBox();
 
-            itemId = new SpinBox("Item ID");
-            amount = new SpinBox("Amount");
-            level = new SpinBox("Level");
+            this.itemId = new SpinBox("Item ID");
+            this.amount = new SpinBox("Amount");
+            this.level = new SpinBox("Level");
 
             StackLayoutItem[] vBoxItems =
             {
-                itemId,
-                amount,
-                level
+                this.itemId,
+                this.amount,
+                this.level
             };
 
             foreach (var item in vBoxItems)
             {
-                Items.Add(item);
+                this.Items.Add(item);
             }
         }
 
         public void ChangeReferenceValue(RewardItemData rewardItemData)
         {
-            _rewardItemData = rewardItemData;
-            itemId.ChangeReferenceValue(new Ref<int>(() => _rewardItemData.ItemID, v => { _rewardItemData.ItemID = v; }));
-            amount.ChangeReferenceValue(new Ref<int>(() => _rewardItemData.Amount, v => { _rewardItemData.Amount = v; }));
-            level.ChangeReferenceValue(new Ref<int>(() => _rewardItemData.Level, v => { _rewardItemData.Level = v; }));
+            this._rewardItemData = rewardItemData;
+            this.itemId.ChangeReferenceValue(new Ref<int>(() => this._rewardItemData.ItemID, v => { this._rewardItemData.ItemID = v; }));
+            this.amount.ChangeReferenceValue(new Ref<int>(() => this._rewardItemData.Amount, v => { this._rewardItemData.Amount = v; }));
+            this.level.ChangeReferenceValue(new Ref<int>(() => this._rewardItemData.Level, v => { this._rewardItemData.Level = v; }));
         }
     }
 }
