@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using static Eliza.Core.Serialization.ElizaAttribute;
+using Eliza.Model;
 
 namespace Eliza.Model.Farm
 {
@@ -8,11 +9,11 @@ namespace Eliza.Model.Farm
         [ElizaMessagePackList]
         public bool[] FirstVisitFarm;
         [ElizaMessagePackList]
-        public FarmSizeLevel[] FarmSizeLevels;
+        public MessagePackInt[] FarmSizeLevels;
         [ElizaMessagePackList]
         public FarmCropData[] FarmCropDatas;
         [ElizaMessagePackList]
-        public CrystalUseCount[] CrystalUseCounts;
+        public MessagePackInt[] CrystalUseCounts;
         [ElizaMessagePackList]
         public RF4_CROP_STATE[] Crop;
         [ElizaMessagePackList]
@@ -20,9 +21,9 @@ namespace Eliza.Model.Farm
         [ElizaMessagePackList]
         public bool[] MonsterHutReleaseFlags;
         [ElizaMessagePackList]
-        public HarvestCount[] HarvestCounts;
+        public MessagePackInt[] HarvestCounts;
         [ElizaMessagePackList]
-        public List<int> ItemHarvestIdList;
+        public MessagePackInt[] ItemHarvestIdList;
         [ElizaMessagePackList]
         public MonsterHutSaveData[] MonsterHutSaveDatas;
     }
