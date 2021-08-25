@@ -13,21 +13,16 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
             IFormatterResolver resolver = options.Resolver;
             options.Security.DepthStep(ref reader);
 
-            if (reader.TryReadNil())
-            {
+            if (reader.TryReadNil()) {
                 return null;
-            }
-            else
-            {
+            } else {
                 //Key, Value
                 var d = reader.ReadArrayHeader();
                 var id = reader.ReadByte();
                 reader.ReadArrayHeader();
-                switch (id)
-                {
+                switch (id) {
                     //AmountItemData
-                    case 0:
-                        {
+                    case 0: {
                             var itemData = new AmountItemData();
                             var list = new List<int>();
 
@@ -36,8 +31,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             //AmountItemDataBase
                             var length = reader.ReadArrayHeader();
 
-                            for (int i = 0; i < length; i++)
-                            {
+                            for (int i = 0; i < length; i++) {
                                 list.Add(reader.ReadInt32());
                             }
 
@@ -46,8 +40,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             return itemData;
                         }
                     //SeedItemData
-                    case 1:
-                        {
+                    case 1: {
                             var itemData = new SeedItemData();
                             var list = new List<int>();
 
@@ -56,8 +49,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             //AmountItemData
                             var length = reader.ReadArrayHeader();
 
-                            for (int i = 0; i < length; i++)
-                            {
+                            for (int i = 0; i < length; i++) {
                                 list.Add(reader.ReadInt32());
                             }
 
@@ -66,8 +58,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             return itemData;
                         }
                     //FoodItemData
-                    case 2:
-                        {
+                    case 2: {
                             var itemData = new FoodItemData();
 
                             itemData.ItemID = reader.ReadInt32();
@@ -79,8 +70,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             var length = reader.ReadArrayHeader();
                             var list = new int[length];
 
-                            for (int i = 0; i < length; i++)
-                            {
+                            for (int i = 0; i < length; i++) {
                                 list[i] = reader.ReadInt32();
                             }
 
@@ -92,8 +82,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             return itemData;
                         }
                     //EquipItemData
-                    case 3:
-                        {
+                    case 3: {
                             var itemData = new EquipItemData();
 
                             itemData.ItemID = reader.ReadInt32();
@@ -105,8 +94,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             var length = reader.ReadArrayHeader();
                             var list = new int[length];
 
-                            for (int i = 0; i < length; i++)
-                            {
+                            for (int i = 0; i < length; i++) {
                                 list[i] = reader.ReadInt32();
                             }
 
@@ -116,8 +104,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             length = reader.ReadArrayHeader();
                             var addedItems = new int[length];
 
-                            for (int i = 0; i < length; i++)
-                            {
+                            for (int i = 0; i < length; i++) {
                                 addedItems[i] = reader.ReadInt32();
                             }
 
@@ -126,8 +113,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             length = reader.ReadArrayHeader();
                             var arrangeItems = new int[length];
 
-                            for (int i = 0; i < length; i++)
-                            {
+                            for (int i = 0; i < length; i++) {
                                 arrangeItems[i] = reader.ReadInt32();
                             }
 
@@ -144,8 +130,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             return itemData;
                         }
                     //RuneAbilityItemData
-                    case 4:
-                        {
+                    case 4: {
                             var itemData = new RuneAbilityItemData();
 
                             itemData.ItemID = reader.ReadInt32();
@@ -156,8 +141,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             return itemData;
                         }
                     //FishItemData
-                    case 5:
-                        {
+                    case 5: {
                             var itemData = new FishItemData();
 
                             itemData.ItemID = reader.ReadInt32();
@@ -171,8 +155,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             return itemData;
                         }
                     //PotToolItemData
-                    case 6:
-                        {
+                    case 6: {
                             var itemData = new PotToolItemData();
 
                             itemData.ItemID = reader.ReadInt32();
@@ -186,8 +169,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             var length = reader.ReadArrayHeader();
                             var list = new int[length];
 
-                            for (int i = 0; i < length; i++)
-                            {
+                            for (int i = 0; i < length; i++) {
                                 list[i] = reader.ReadInt32();
                             }
 
@@ -197,8 +179,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             length = reader.ReadArrayHeader();
                             var addedItems = new int[length];
 
-                            for (int i = 0; i < length; i++)
-                            {
+                            for (int i = 0; i < length; i++) {
                                 addedItems[i] = reader.ReadInt32();
                             }
 
@@ -207,8 +188,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             length = reader.ReadArrayHeader();
                             var arrangeItems = new int[length];
 
-                            for (int i = 0; i < length; i++)
-                            {
+                            for (int i = 0; i < length; i++) {
                                 arrangeItems[i] = reader.ReadInt32();
                             }
 
@@ -235,19 +215,14 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
         public void Serialize(ref MessagePackWriter writer, ItemData value, MessagePackSerializerOptions options)
         {
             IFormatterResolver resolver = options.Resolver;
-            if (value == null)
-            {
+            if (value == null) {
                 writer.WriteNil();
-            }
-            else
-            {
+            } else {
                 writer.WriteArrayHeader(2);
                 // It's reversed due to for example seedItemData deriving amountItemData
-                switch (value)
-                {
+                switch (value) {
                     //6
-                    case PotToolItemData itemData:
-                        {
+                    case PotToolItemData itemData: {
                             //Key
                             writer.WriteInt32(6); // These int32 writes are the whole point here.
                             //Items
@@ -260,22 +235,18 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
 
                             //SynthesisItemData
                             writer.WriteArrayHeader(itemData.SourceItems.Length);
-
-                            foreach (var item in itemData.SourceItems)
-                            {
+                            foreach (var item in itemData.SourceItems) {
                                 writer.Write(item);
                             }
 
                             //EquipItemDataBase
                             writer.WriteArrayHeader(itemData.AddedItems.Length);
-                            foreach (var item in itemData.AddedItems)
-                            {
+                            foreach (var item in itemData.AddedItems) {
                                 writer.Write(item);
                             }
 
                             writer.WriteArrayHeader(itemData.ArrangeItems.Length);
-                            foreach (var item in itemData.ArrangeItems)
-                            {
+                            foreach (var item in itemData.ArrangeItems) {
                                 writer.Write(item);
                             }
 
@@ -292,8 +263,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             break;
                         }
                     //5
-                    case FishItemData itemData:
-                        {
+                    case FishItemData itemData: {
                             //Key
                             writer.WriteInt32(5);
                             //Items
@@ -309,8 +279,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             break;
                         }
                     //4
-                    case RuneAbilityItemData itemData:
-                        {
+                    case RuneAbilityItemData itemData: {
                             //Key
                             writer.WriteInt32(4);
                             //Items
@@ -323,8 +292,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             break;
                         }
                     //3
-                    case EquipItemData itemData:
-                        {
+                    case EquipItemData itemData: {
                             //Key
                             writer.WriteInt32(3);
                             //Items
@@ -337,22 +305,18 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
 
                             //SynthesisItemData
                             writer.WriteArrayHeader(itemData.SourceItems.Length);
-
-                            foreach (var item in itemData.SourceItems)
-                            {
+                            foreach (var item in itemData.SourceItems) {
                                 writer.Write(item);
                             }
 
                             //EquipItemDataBase
                             writer.WriteArrayHeader(itemData.AddedItems.Length);
-                            foreach (var item in itemData.AddedItems)
-                            {
+                            foreach (var item in itemData.AddedItems) {
                                 writer.Write(item);
                             }
 
                             writer.WriteArrayHeader(itemData.ArrangeItems.Length);
-                            foreach (var item in itemData.ArrangeItems)
-                            {
+                            foreach (var item in itemData.ArrangeItems) {
                                 writer.Write(item);
                             }
 
@@ -366,8 +330,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             break;
                         }
                     //2
-                    case FoodItemData itemData:
-                        {
+                    case FoodItemData itemData: {
                             //Key
                             writer.WriteInt32(2);
                             //Items
@@ -380,9 +343,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
 
                             //SynthesisItemData
                             writer.WriteArrayHeader(itemData.SourceItems.Length);
-
-                            foreach (var item in itemData.SourceItems)
-                            {
+                            foreach (var item in itemData.SourceItems) {
                                 writer.Write(item);
                             }
 
@@ -391,8 +352,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             break;
                         }
                     //1
-                    case SeedItemData itemData:
-                        {
+                    case SeedItemData itemData: {
                             //Key
                             writer.WriteInt32(1);
                             //Items
@@ -401,15 +361,13 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             writer.Write(itemData.ItemID);
                             writer.WriteArrayHeader(itemData.LevelAmount.Count);
 
-                            foreach (var item in itemData.LevelAmount)
-                            {
+                            foreach (var item in itemData.LevelAmount) {
                                 writer.Write(item);
                             }
                             break;
                         }
                     // 0
-                    case AmountItemData itemData:
-                        {
+                    case AmountItemData itemData: {
                             //Key
                             writer.WriteInt32(0);
                             //Items
@@ -417,9 +375,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
 
                             writer.Write(itemData.ItemID);
                             writer.WriteArrayHeader(itemData.LevelAmount.Count);
-
-                            foreach (var item in itemData.LevelAmount)
-                            {
+                            foreach (var item in itemData.LevelAmount) {
                                 writer.Write(item);
                             }
                             break;

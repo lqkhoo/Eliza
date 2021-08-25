@@ -6,16 +6,18 @@ using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using static Eliza.Core.Serialization.ElizaAttribute;
+using Eliza.Core;
+
 namespace Eliza.Core.Serialization
 {
     class BinarySerializer : BinarySerialization
     {
-        public const int HEADER_LENGTH_NBYTES = 0x20;
-        public const int FOOTER_LENGTH_NBYTES = 0x10;
+
 
         public readonly bool Encrypt;
         public BinaryWriter Writer;
@@ -26,42 +28,79 @@ namespace Eliza.Core.Serialization
             this.Writer = new BinaryWriter(baseStream);
         }
 
+        // TODO: deprecate
         public void Serialize<T>(T obj)
         {
-            WriteValue(obj);
+            this.WriteValue(obj);
         }
+
+        public void WriteSaveFile(SaveData save, bool encrypt=true)
+        {
+            if (! encrypt) {
+                this.WriteObject(save.header);
+                this.WriteObject(save.saveData);
+                this.WriteObject(save.footer);
+                long pos = this.BaseStream.Position;
+                this.BaseStream.SetLength(pos); // Truncate rest of file
+                return;
+            } else {
+
+                this.WriteObject(save.header);
+                this.WriteObject(save.saveData);
+
+                using (var reader = new BinaryReader(this.BaseStream)) {
+                    var bodyLength = this.BaseStream.Length;
+                    //Aligned relative to data 256 bits due to Rijndael crypto
+                    var paddedSize = (int)((this.BaseStream.Position - 0x20 + 0x1F) & ~0x1F) + 0x20;
+                    this.BaseStream.SetLength(paddedSize);
+
+                    this.BaseStream.Position = 0x0;
+                    var headerSize = 0x20;
+                    var header = reader.ReadBytes(headerSize);
+
+                    var data = reader.ReadBytes(paddedSize - headerSize);
+
+                    var encryptedData = Cryptography.Encrypt(data);
+
+                    //Overwrite save data with encrypted data
+                    this.BaseStream.Position = headerSize;
+                    this.Writer.Write(encryptedData);
+
+                    var bodyData = new List<byte>();
+                    bodyData.AddRange(header);
+                    bodyData.AddRange(encryptedData);
+                    var checksum = Cryptography.Checksum(bodyData.ToArray());
+
+                    this.Writer.Write((int)bodyLength);
+                    this.Writer.Write(paddedSize);
+                    this.Writer.Write(checksum);
+                    // Writer.Write((int)0x0);
+                    this.Writer.Write((int)save.footer.Blank); // Files will be identical if content unchanged.
+
+                }
+
+            }
+
+        }
+
+
 
         protected void WriteValue(object value)
         {
             var type = value.GetType();
 
-            if (type.IsPrimitive)
-            {
-                WritePrimitive(value);
-            }
-            else if (IsList(type))
-            {
-                WriteList((IList)value);
-            }
-            else if (type == typeof(string))
-            {
-                WriteString((string)value);
-            }
-            else if (type == typeof(SaveFlagStorage))
-            {
-                WriteSaveFlagStorage((SaveFlagStorage)value);
-            }
-            else if (type == typeof(RF5SaveDataFooter))
-            {
-                this.WriteSavaDataFooter((RF5SaveDataFooter)value);
-            }
-            else if (IsDictionary(type))
-            {
-                WriteDictionary((IDictionary)value);
-            }
-            else
-            {
-                WriteObject(value);
+            if (type.IsPrimitive) {
+                this.WritePrimitive(value);
+            } else if (IsList(type)) {
+                this.WriteList((IList)value);
+            } else if (type == typeof(string)) {
+                this.WriteString((string)value);
+            } else if (type == typeof(SaveFlagStorage)) {
+                this.WriteSaveFlagStorage((SaveFlagStorage)value);
+            } else if (IsDictionary(type)) {
+                this.WriteDictionary((IDictionary)value);
+            } else {
+                this.WriteObject(value);
             }
         }
 
@@ -69,50 +108,43 @@ namespace Eliza.Core.Serialization
         {
             var type = value.GetType();
 
-            switch (Type.GetTypeCode(type))
-            {
-                case TypeCode.Boolean: Writer.Write((bool)value); break;
-                case TypeCode.Byte: Writer.Write((byte)value); break;
-                case TypeCode.Char: Writer.Write((char)value); break;
-                case TypeCode.UInt16: Writer.Write((ushort)value); break;
-                case TypeCode.UInt32: Writer.Write((uint)value); break;
-                case TypeCode.UInt64: Writer.Write((ulong)value); break;
-                case TypeCode.SByte: Writer.Write((sbyte)value); break;
-                case TypeCode.Int16: Writer.Write((short)value); break;
-                case TypeCode.Int32: Writer.Write((int)value); break;
-                case TypeCode.Int64: Writer.Write((long)value); break;
-                case TypeCode.Single: Writer.Write((float)value); break;
-                case TypeCode.Double: Writer.Write((double)value); break;
+            switch (Type.GetTypeCode(type)) {
+                case TypeCode.Boolean: this.Writer.Write((bool)value); break;
+                case TypeCode.Byte: this.Writer.Write((byte)value); break;
+                case TypeCode.Char: this.Writer.Write((char)value); break;
+                case TypeCode.UInt16: this.Writer.Write((ushort)value); break;
+                case TypeCode.UInt32: this.Writer.Write((uint)value); break;
+                case TypeCode.UInt64: this.Writer.Write((ulong)value); break;
+                case TypeCode.SByte: this.Writer.Write((sbyte)value); break;
+                case TypeCode.Int16: this.Writer.Write((short)value); break;
+                case TypeCode.Int32: this.Writer.Write((int)value); break;
+                case TypeCode.Int64: this.Writer.Write((long)value); break;
+                case TypeCode.Single: this.Writer.Write((float)value); break;
+                case TypeCode.Double: this.Writer.Write((double)value); break;
             }
         }
 
         protected void WriteList(IList list, TypeCode lengthType = TypeCode.Int32, int length = 0, int max = 0, bool isMessagePackList = false)
         {
-            if (length == 0)
-            {
-                switch (lengthType)
-                {
-                    case TypeCode.Byte: Writer.Write((byte)list.Count); break;
-                    case TypeCode.Char: Writer.Write((char)list.Count); break;
-                    case TypeCode.UInt16: Writer.Write((ushort)list.Count); break;
-                    case TypeCode.UInt32: Writer.Write((uint)list.Count); break;
-                    case TypeCode.UInt64: Writer.Write((ulong)list.Count); break;
-                    case TypeCode.SByte: Writer.Write((sbyte)list.Count); break;
-                    case TypeCode.Int16: Writer.Write((short)list.Count); break;
-                    case TypeCode.Int32: Writer.Write((int)list.Count); break;
-                    case TypeCode.Int64: Writer.Write((long)list.Count); break;
+            if (length == 0) {
+                switch (lengthType) {
+                    case TypeCode.Byte: this.Writer.Write((byte)list.Count); break;
+                    case TypeCode.Char: this.Writer.Write((char)list.Count); break;
+                    case TypeCode.UInt16: this.Writer.Write((ushort)list.Count); break;
+                    case TypeCode.UInt32: this.Writer.Write((uint)list.Count); break;
+                    case TypeCode.UInt64: this.Writer.Write((ulong)list.Count); break;
+                    case TypeCode.SByte: this.Writer.Write((sbyte)list.Count); break;
+                    case TypeCode.Int16: this.Writer.Write((short)list.Count); break;
+                    case TypeCode.Int32: this.Writer.Write((int)list.Count); break;
+                    case TypeCode.Int64: this.Writer.Write((long)list.Count); break;
                 }
             }
 
-            foreach (object value in list)
-            {
-                if (isMessagePackList)
-                {
-                    WriteMessagePackObject(value);
-                }
-                else
-                {
-                    WriteValue(value);
+            foreach (object value in list) {
+                if (isMessagePackList) {
+                    this.WriteMessagePackObject(value);
+                } else {
+                    this.WriteValue(value);
                 }
             }
             //The only instance of the use of max, doesn't seem to have an effect regardless of the length is (i.e. FurnitureData)
@@ -121,31 +153,23 @@ namespace Eliza.Core.Serialization
         protected void WriteString(string value, int max = 0)
         {
             var data = Encoding.Unicode.GetBytes(value);
-            if (max != 0)
-            {
-                Writer.Write(data.Length);
-                for (int index = 0; index < max; index++)
-                {
-                    if (index < data.Length)
-                    {
-                        Writer.Write(data[index]);
-                    }
-                    else
-                    {
-                        Writer.Write((byte)0x0);
+            if (max != 0) {
+                this.Writer.Write(data.Length);
+                for (int index = 0; index < max; index++) {
+                    if (index < data.Length) {
+                        this.Writer.Write(data[index]);
+                    } else {
+                        this.Writer.Write((byte)0x0);
                     }
                 }
-            }
-            else
-            {
+            } else {
                 // This assumes everything else adds 0 to the end. Might need another attribute
-                for (int index = 0; index < data.Length; index++)
-                {
-                    Writer.Write(data[index]);
-                    Writer.Write((byte)0x0);
+                for (int index = 0; index < data.Length; index++) {
+                    this.Writer.Write(data[index]);
+                    this.Writer.Write((byte)0x0);
                 }
-                Writer.Write((byte)0x0);
-                Writer.Write((byte)0x0);
+                this.Writer.Write((byte)0x0);
+                this.Writer.Write((byte)0x0);
                 //for (int index = 0; index < data.Length; index++)
                 //{
                 //    Writer.Write(data[index]);
@@ -155,65 +179,73 @@ namespace Eliza.Core.Serialization
         }
         protected void WriteSaveFlagStorage(SaveFlagStorage saveFlagStorage)
         {
-            Writer.Write(saveFlagStorage.Length);
-            Writer.Write(saveFlagStorage.Data);
+            this.Writer.Write(saveFlagStorage.Length);
+            this.Writer.Write(saveFlagStorage.Data);
         }
 
-        protected void WriteSavaDataFooter(RF5SaveDataFooter footer)
-        {
-            if (this.Encrypt == false) {
-                Writer.Write(footer.BodyLength);
-                Writer.Write(footer.Length);
-                Writer.Write(footer.Sum);
-                Writer.Write(footer.Blank);
-            } else {
-
-                using (var reader = new BinaryReader(BaseStream)) {
-                    var bodyLength = BaseStream.Length;
-                    //Aligned relative to data 256 bits due to Rijndael crypto
-                    var paddedSize = (int)((BaseStream.Position - 0x20 + 0x1F) & ~0x1F) + 0x20;
-                    BaseStream.SetLength(paddedSize);
-
-                    BaseStream.Position = 0x0;
-                    var headerSize = 0x20;
-                    var header = reader.ReadBytes(headerSize);
-
-                    var data = reader.ReadBytes(paddedSize - headerSize);
-
-                    var encryptedData = Cryptography.Encrypt(data);
-
-                    //Overwrite save data with encrypted data
-                    BaseStream.Position = headerSize;
-                    Writer.Write(encryptedData);
-
-                    var bodyData = new List<byte>();
-                    bodyData.AddRange(header);
-                    bodyData.AddRange(encryptedData);
-                    var checksum = Cryptography.Checksum(bodyData.ToArray());
-
-                    Writer.Write((int)bodyLength);
-                    Writer.Write(paddedSize);
-                    Writer.Write(checksum);
-                    // Writer.Write((int)0x0);
-                    Writer.Write((int)footer.Blank); // Make the files exactly identical.
-
-                }
-
-
-            }
-
-
-        }
 
         protected void WriteDictionary(IDictionary dictionary)
         {
-            Writer.Write(dictionary.Count);
+            this.Writer.Write(dictionary.Count);
 
-            foreach (DictionaryEntry item in dictionary)
-            {
-                WriteValue(item.Key);
-                WriteValue(item.Value);
+            foreach (DictionaryEntry item in dictionary) {
+                this.WriteValue(item.Key);
+                this.WriteValue(item.Value);
             }
+        }
+
+        protected void WriteField(object fieldValue, FieldInfo fieldInfo)
+        {
+
+            Type fieldType = fieldInfo.FieldType;
+
+            if (fieldInfo.IsDefined(typeof(ElizaAttribute), inherit: true)) {
+
+                //TODO: Versioning tags
+
+                if (fieldInfo.IsDefined(typeof(ElizaMessagePackListAttribute))) {
+                    if (IsList(fieldType)) {
+                        this.WriteList((IList)fieldValue, isMessagePackList: true);
+                        return;
+                    }
+                }
+
+                if (fieldInfo.IsDefined(typeof(ElizaMessagePackRawAttribute))) {
+                    this.WriteMessagePackObject(fieldValue);
+                    return;
+                }
+
+                if (fieldInfo.IsDefined(typeof(ElizaSizeAttribute))) {
+                    var lengthAttribute = (ElizaSizeAttribute)fieldInfo.GetCustomAttribute(typeof(ElizaSizeAttribute));
+                    if (lengthAttribute.Fixed != 0) {
+                        if (IsList(fieldType)) {
+                            this.WriteList((IList)fieldValue, length: lengthAttribute.Fixed);
+                            return;
+                        } else if (fieldType == typeof(string)) {
+                            this.WriteString((string)fieldValue, lengthAttribute.Fixed);
+                            return;
+                        }
+                    } else if (lengthAttribute.LengthType != TypeCode.Empty) {
+                        if (IsList(fieldType)) {
+                            this.WriteList((IList)fieldValue, lengthType: lengthAttribute.LengthType);
+                            return;
+                        } else if (fieldType == typeof(string)) {
+                            // Not supported for strings
+                        }
+                    } else if (lengthAttribute.Max != 0) {
+                        if (IsList(fieldType)) {
+                            this.WriteList((IList)fieldValue, max: lengthAttribute.Max);
+                            return;
+                        } else if (fieldType == typeof(string)) {
+                            this.WriteString((string)fieldValue, max: lengthAttribute.Max);
+                            return;
+                        }
+                    }
+                }
+
+            }
+
+            this.WriteValue(fieldValue);
         }
 
         protected void WriteObject(object objectValue)
@@ -221,85 +253,14 @@ namespace Eliza.Core.Serialization
             var objectType = objectValue.GetType();
 
             // MessagePackObject
-            if (objectType.IsDefined(typeof(MessagePackObjectAttribute)))
-            {
-                WriteMessagePackObject(objectValue);
+            if (objectType.IsDefined(typeof(MessagePackObjectAttribute))) {
+                this.WriteMessagePackObject(objectValue);
                 return;
             }
 
-            int fieldCount = 0;
-
-            foreach (FieldInfo info in GetFieldsOrdered(objectType))
-            {
-                fieldCount++;
-
-                if (!info.IsDefined(typeof(CompilerGeneratedAttribute)))
-                {
-                    object fieldValue = info.GetValue(objectValue);
-
-                    Type fieldType = info.FieldType;
-
-                    var messagePackListAttribute = (ElizaMessagePackListAttribute)info.GetCustomAttribute(typeof(ElizaMessagePackListAttribute));
-                    if (messagePackListAttribute != null)
-                    {
-                        if (IsList(fieldType))
-                        {
-                            WriteList((IList)fieldValue, isMessagePackList: true);
-                            continue;
-                        }
-                    }
-
-                    var messagePackRawAttribute = (ElizaMessagePackRawAttribute)info.GetCustomAttribute(typeof(ElizaMessagePackRawAttribute));
-                    if (messagePackRawAttribute != null)
-                    {
-                        WriteMessagePackObject(fieldValue);
-                        continue;
-                    }
-
-                    var lengthAttribute = (ElizaSizeAttribute)info.GetCustomAttribute(typeof(ElizaSizeAttribute));
-                    if (lengthAttribute != null)
-                    {
-                        if (lengthAttribute.Fixed != 0)
-                        {
-                            if (IsList(fieldType))
-                            {
-                                WriteList((IList)fieldValue, length: lengthAttribute.Fixed);
-                                continue;
-                            }
-                            else if (fieldType == typeof(string))
-                            {
-                                WriteString((string)fieldValue, lengthAttribute.Fixed);
-                                continue;
-                            }
-                        }
-                        else if (lengthAttribute.LengthType != TypeCode.Empty)
-                        {
-                            if (IsList(fieldType))
-                            {
-                                WriteList((IList)fieldValue, lengthType: lengthAttribute.LengthType);
-                                continue;
-                            }
-                            else if (fieldType == typeof(string))
-                            {
-                                //Not supported for strings ATM
-                            }
-                        }
-                        else if (lengthAttribute.Max != 0)
-                        {
-                            if (IsList(fieldType))
-                            {
-                                WriteList((IList)fieldValue, max: lengthAttribute.Max);
-                                continue;
-                            }
-                            else if (fieldType == typeof(string))
-                            {
-                                WriteString((string)fieldValue, max: lengthAttribute.Max);
-                                continue;
-                            }
-                        }
-                    }
-                    WriteValue(fieldValue);
-                }
+            foreach (FieldInfo fieldInfo in GetFieldsOrdered(objectType)) {
+                object fieldValue = fieldInfo.GetValue(objectValue);
+                this.WriteField(fieldValue, fieldInfo);
             }
 
         }
@@ -307,8 +268,8 @@ namespace Eliza.Core.Serialization
         protected void WriteMessagePackObject(object value)
         {
             var bytes = MessagePackSerializer.Serialize(value);
-            Writer.Write(bytes.Length);
-            Writer.Write(bytes);
+            this.Writer.Write(bytes.Length);
+            this.Writer.Write(bytes);
         }
     }
 }

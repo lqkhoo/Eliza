@@ -11,10 +11,15 @@ namespace Eliza.Core.Serialization
     class BinarySerialization
     {
         public readonly Stream BaseStream;
+
         protected const int UNKNOWN_LENGTH = 0;
         // In the serialized stream, the default type of the number
         // representing the length of the array that follows.
         protected const TypeCode DEFAULT_LENGTH_TYPECODE = TypeCode.Int32;
+
+        public const int HEADER_LENGTH_NBYTES = 0x20;
+        public const int FOOTER_LENGTH_NBYTES = 0x10;
+
 
         public BinarySerialization(Stream baseStream)
         {
@@ -31,10 +36,10 @@ namespace Eliza.Core.Serialization
             return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
         }
 
+        // This returns all public fields of a class as a lazy enumerable,
+        // starting from the base object. They're not ordered in the alphabetical sense.
         protected static IEnumerable<FieldInfo> GetFieldsOrdered(Type objectType)
         {
-            // This returns all public fields of a class as an enumerable,
-            // starting from the base object. They're not ordered in the alphabetical sense.
 
             Stack<Type> typeStack = new();
 

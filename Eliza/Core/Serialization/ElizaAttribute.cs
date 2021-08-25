@@ -67,10 +67,6 @@ namespace Eliza.Core.Serialization
             public byte[] Undefined { get; set; }
         }
 
-        /// <summary>
-        /// Denotes a list of a type that requires MessagePack serialization support,
-        /// because we can't annotate individual items in the list itself.
-        /// </summary>
         [AttributeUsage(AttributeTargets.Field)]
         public class ElizaMessagePackListAttribute : ElizaFlowControlAttribute { }
 

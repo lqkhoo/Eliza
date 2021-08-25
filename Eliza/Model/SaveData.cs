@@ -40,135 +40,65 @@ namespace Eliza.Model
         public RF5SaveData saveData;
         public RF5SaveDataFooter footer;
 
-        protected MemoryStream _originalFileCopy;
-
-        public SaveData(RF5SaveDataHeader header, RF5SaveData saveData,
-                            RF5SaveDataFooter footer, MemoryStream originalFileCopy)
+        protected SaveData(byte[] headerBytes, byte[] decryptedDataBytes, byte[] footerBytes)
         {
-            this.header = header;
-            this.saveData = saveData;
-            this.footer = footer;
-            this._originalFileCopy = originalFileCopy;
+            this.header = new BinaryDeserializer(new MemoryStream(headerBytes)).ReadSaveDataHeader();
+            this.saveData = new BinaryDeserializer(new MemoryStream(decryptedDataBytes)).ReadSaveData();
+            this.footer = new BinaryDeserializer(new MemoryStream(footerBytes)).ReadSaveDataFooter();
         }
+
+        protected static Tuple<byte[], byte[], byte[]> DecryptFile(string path)
+        {
+            const int HEADER_NBYTES = 0x20;
+            const int FOOTER_NBYTES = 0x10;
+            byte[] header;
+            byte[] encrypted_data;
+            byte[] decrypted_data;
+            byte[] footer;
+
+            using (FileStream fs = new(path, FileMode.Open, FileAccess.Read)) {
+                BinaryReader reader = new(fs);
+                int total_nbytes = (int)fs.Length;
+                int data_length = total_nbytes - HEADER_NBYTES - FOOTER_NBYTES;
+                header = reader.ReadBytes(HEADER_NBYTES);
+                encrypted_data = reader.ReadBytes(data_length);
+                footer = reader.ReadBytes(FOOTER_NBYTES);
+                decrypted_data = Cryptography.Decrypt(encrypted_data);
+            }
+            return new Tuple<byte[], byte[], byte[]>(header, decrypted_data, footer);
+        }
+
 
         public static SaveData FromEncryptedFile(string path, int version=7)
         {
-            using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read))
-            using (var ms = new MemoryStream())
-            {
-                // For byte-level reproduction, we need to emulate the Switch
-                // reading and writing to the same file, even though we are 
-                // operating within a buffer. Therefore we need to store a copy
-                // of the original encrypted file, in order to be able to
-                // reproduce it exactly when writing back.
-
-                fs.CopyTo(ms); // Copy file contents to a buffer
-                Decrypt(ms);
-
-                BinaryDeserializer deserializer = new(ms);
-
-                RF5SaveDataHeader header = deserializer.ReadSaveDataHeader();
-                RF5SaveData data = deserializer.ReadSaveData();
-                RF5SaveDataFooter footer = deserializer.ReadSaveDataFooter();
-                MemoryStream originalFileCopy = new();
-                fs.CopyTo(originalFileCopy);
-
-                SaveData save = new (header, data, footer, originalFileCopy);
-                return save;
-            };
+            var (header, data, footer) = DecryptFile(path);
+            return new SaveData(header, data, footer);
         }
 
-        private static void Decrypt(MemoryStream ms)
-        {
-            var reader = new BinaryReader(ms);
-            var pos = ms.Seek(0x20, SeekOrigin.Begin);
-            var encryptedData = reader.ReadBytes((int)(ms.Length - (0x20 + 0x10)));
 
-            ms.Seek(pos, SeekOrigin.Begin);
-            var decryptedData = Cryptography.Decrypt(encryptedData);
-            ms.Write(decryptedData, 0, decryptedData.Length);
-            ms.Seek(0, SeekOrigin.Begin);
-        }
-
-        // This just concatenates the original header, decrypted data, and
-        // the original footer into a file for downstream processing or inspection.
         // In this case we don't care about byte-for-byte reproduction because
         // we aren't going to re-encrypt it. This is also useful to ensure that
         // deserialization is working properly, to troubleshoot the serialization bit.
         public static void JustDecryptFile(string inputPath, string outputPath, int version=7)
         {
-
+            // Note that we're not just concatenating the contents from
+            // DecryptFile() together. We actually want to test serialization.
             SaveData save = SaveData.FromEncryptedFile(inputPath);
-
             using (var fs = new FileStream(outputPath, FileMode.OpenOrCreate, FileAccess.Write)) {
 
                 fs.SetLength(0); // Empty previous file contents.
                 var serializer = new BinarySerializer(fs, encrypt: false);
-                serializer.Serialize(save.header);
-                serializer.Serialize(save.saveData);
-                serializer.Serialize(save.footer);
-
-                /*
-                // var version = save.header.version;
-                switch (version) {
-                    case >= 7: // v1.0.7 - ??
-                        serializer.Serialize(save.header);
-                        serializer.Serialize(save.saveData);
-                        serializer.Serialize(save.footer);
-                        break;
-                    case >= 4: // v1.0.4 - v1.0.6
-                        // serializer.Serialize(save); // 107 toggle
-                        RF5SaveDataV106 data106 = new RF5SaveDataV106().AdaptFrom(save.saveData);
-                        serializer.Serialize(save.header);
-                        serializer.Serialize(data106);
-                        serializer.Serialize(save.footer);
-                        break;
-                    case >= 2: // v1.0.2 - v1.0.3
-                        RF5SaveDataV102 data102 = new RF5SaveDataV102().AdaptFrom(save.saveData);
-                        serializer.Serialize(save.header);
-                        serializer.Serialize(data102);
-                        serializer.Serialize(save.footer);
-                        break;
-                    default:
-                        throw new NotImplementedException("Unsupported version");
-                }
-                */
-
+                serializer.WriteSaveFile(save, encrypt: false);
             }
         }
+
 
         public void Write(string path, int version=7)
         {
             using (var fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite))
             {
                 var serializer = new BinarySerializer(fs);
-
-                serializer.Serialize(this);
-
-                /*
-                // var version = save.header.version;
-                switch (version)
-                {
-                    case >= 7: // v1.0.7 - ??
-                        serializer.Serialize(this);
-                        break;
-                    case >= 4: // v1.0.4 - v1.0.6
-                        // serializer.Serialize(save); // 107 toggle
-                        RF5SaveDataV106 data106 = new RF5SaveDataV106().AdaptFrom(this.saveData);
-                        serializer.Serialize(this.header);
-                        serializer.Serialize(data106);
-                        serializer.Serialize(this.footer);
-                        break;
-                    case >= 2: // v1.0.2 - v1.0.3
-                        RF5SaveDataV102 data102 = new RF5SaveDataV102().AdaptFrom(this.saveData);
-                        serializer.Serialize(this.header);
-                        serializer.Serialize(data102);
-                        serializer.Serialize(this.footer);
-                        break;
-                    default:
-                        throw new NotImplementedException("Unsupported version");
-                }
-                */
+                serializer.WriteSaveFile(this, encrypt: true);
             }
         }
     }
