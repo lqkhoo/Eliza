@@ -10,7 +10,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
     {
         public FriendMonsterStatusData Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
         {
-            var friendMonsterStatusData = new FriendMonsterStatusData();
+            FriendMonsterStatusData friendMonsterStatusData = new();
 
             IFormatterResolver resolver = options.Resolver;
             options.Security.DepthStep(ref reader);

@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MessagePack;
+﻿using MessagePack;
 using MessagePack.Formatters;
 
 using Eliza.Model.Farm;
 
 namespace Eliza.Core.Serialization.MessagePackFormatters
 {
+    // This class is required because the game writes the int as a single byte (ufixedint 0x0-0x7)
+
     class FarmSizeLevelFormatter : IMessagePackFormatter<FarmSizeLevel>
     {
         public FarmSizeLevel Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)

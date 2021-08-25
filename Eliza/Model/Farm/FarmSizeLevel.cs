@@ -16,6 +16,6 @@ namespace Eliza.Model.Farm
     public class FarmSizeLevel
     {
         [Key(0)]
-        public int Level; // Fixedint 0x0-0x7
+        public int Level;
     }
 }

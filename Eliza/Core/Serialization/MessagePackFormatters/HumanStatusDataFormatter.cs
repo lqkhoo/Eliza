@@ -10,7 +10,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
     {
         public HumanStatusData Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
         {
-            var humanStatusData = new HumanStatusData();
+            HumanStatusData humanStatusData = new();
 
             IFormatterResolver resolver = options.Resolver;
             options.Security.DepthStep(ref reader);
@@ -39,7 +39,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
             reader.ReadMapHeader();
             reader.ReadString();  //E
 
-            var humanEquip = new HumanEquip();
+            HumanEquip humanEquip = new();
             humanEquip.EquipItems = resolver.GetFormatterWithVerify<ItemData[]>().Deserialize(ref reader, options);
             humanStatusData.HumanEquip = humanEquip;
             humanStatusData.PartnerMovementOrderType = reader.TryReadNil() ? -1 : reader.ReadInt32();

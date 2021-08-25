@@ -1,15 +1,12 @@
-﻿using Eliza.Model.Item;
+﻿using UnityEngine;
 using MessagePack;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+using Eliza.Model.Item;
+using Eliza.Core.Serialization.MessagePackFormatters;
 
 namespace Eliza.Model.Farm
 {
     [MessagePackObject]
+    [MessagePackFormatter(typeof(FarmCropDataFormatter))]
     public class FarmCropData
     {
         // Fields
