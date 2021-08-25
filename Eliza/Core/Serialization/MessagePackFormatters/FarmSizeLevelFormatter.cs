@@ -11,8 +11,9 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
     {
         public FarmSizeLevel Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
         {
-            FarmSizeLevel farmSizeLevel = new();
             options.Security.DepthStep(ref reader);
+
+            FarmSizeLevel farmSizeLevel = new();
             farmSizeLevel.Level = reader.ReadByte();
             return farmSizeLevel;
         }

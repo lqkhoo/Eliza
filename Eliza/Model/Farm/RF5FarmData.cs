@@ -20,7 +20,7 @@ namespace Eliza.Model.Farm
         [ElizaMessagePackList]
         public bool[] MonsterHutReleaseFlags;
         [ElizaMessagePackList]
-        public int[] HarvestCount;
+        public HarvestCount[] HarvestCounts;
         [ElizaMessagePackList]
         public List<int> ItemHarvestIdList;
         [ElizaMessagePackList]

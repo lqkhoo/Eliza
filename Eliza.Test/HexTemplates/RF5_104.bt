@@ -340,7 +340,6 @@ struct RF5FARMSUPPORTMONSTERDATA {
     FarmSupportMonsterDataList FarmSupportMonsterDataLists[FarmSupportMonsterDataListCount];
 };
 
-// This doesn't match disassembly, but this matches perfectly soo...
 struct RF5FARMDATA {
     // Lol I really don't know what these are
     MESSAGEPACKOBJLIST firstVisitFarm;
@@ -349,9 +348,9 @@ struct RF5FARMDATA {
     MESSAGEPACKOBJLIST crystalUseCounts;
     MESSAGEPACKOBJLIST crop;
     MESSAGEPACKOBJLIST soil;
+    MESSAGEPACKOBJLIST monsterHutReleaseFlags;
     MESSAGEPACKOBJLIST harvestCount;
     MESSAGEPACKOBJLIST itemHarvestIdList;
-    MESSAGEPACKOBJLIST monsterHutReleaseFlags;
     MESSAGEPACKOBJLIST monsterHutSaveDatas;
 };
 
