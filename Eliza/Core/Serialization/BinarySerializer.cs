@@ -1,17 +1,13 @@
 ﻿using Eliza.Model;
-using Eliza.Model.Save;
 using MessagePack;
 using System;
-using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text;
 using static Eliza.Core.Serialization.ElizaAttribute;
-using Eliza.Core;
 
 namespace Eliza.Core.Serialization
 {
@@ -82,7 +78,6 @@ namespace Eliza.Core.Serialization
             }
 
         }
-
 
 
         protected void WriteValue(object value)

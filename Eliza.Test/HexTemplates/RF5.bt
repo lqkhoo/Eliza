@@ -1,0 +1,476 @@
+//------------------------------------------------
+//--- 010 Editor v9.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+LittleEndian();
+
+local int i;
+local int ii;
+struct Vector3 {
+    float x;
+    float y;
+    float z;
+};
+
+struct Quaternion {
+float x; // 0x0
+	 float y; // 0x4
+	 float z; // 0x8
+	 float w; // 0xC
+};
+
+struct Vector3Int {
+// Something is wrong w/ this being an int, so changing to ushort for now;
+    int x;
+    int y;
+    int z;
+};
+
+struct SaveFlagStorage {
+    local int test = 0;
+    local int z = 0;
+        int Length;
+        do {
+        byte Data;
+        test = z < (Length- 1) >> 3;
+        z += 1;
+    } while (test);
+};
+struct WeatherData {
+    byte WeatherId; // 0x0
+	 byte WeatherDayId; // 0x1
+	 byte TodayRate; // 0x2
+	 byte TyphoonDayCount; // 0x3
+	 byte RuneyDayCount; // 0x4
+	 byte MeteorShowerDayCount; // 0x5
+	 byte NextWeatherDayId; // 0x6
+	 byte WeatherHourCount; // 0x8 This is an array
+    byte WeatherHour[WeatherHourCount];
+};
+
+struct MiningPointSaveData {
+    int FarmId; // 0x0
+	int UID; // 0x4
+	Vector3 Position; // 0x8
+	int CropId; // 0x14
+    int MineTypeId; // 0x18
+    int ItemId; // 0x1C
+    int HP; // 0x20
+};
+
+struct RewardItemData {
+int ItemID; // 0x10
+	 int Amount; // 0x14
+	 int Level; // 0x18
+};
+
+struct RewardBoxSaveData {
+    int RewardItemDataCount;
+    //int Version; // 0x10 Is not used??
+    RewardItemData OrderRewardItemData[RewardItemDataCount]; // 0x18
+    int OrderRewardRecipeDataCount;
+    int OrderRewardRecipeData[OrderRewardRecipeDataCount]; // 0x20
+    int OrderRewardGold; // 0x28
+    int WantedRewardItemDataCount;
+    RewardItemData WantedRewardItemData[WantedRewardItemDataCount]; // 0x30
+    int FestivalRewardItemDataCount;
+    RewardItemData FestivalRewardItemData[FestivalRewardItemDataCount]; // 0x38
+};
+
+struct SkillData {
+	int Exp; // 0x10
+	int Level; // 0x14
+
+};
+
+struct MESSAGEPACKOBJ {
+    int SerializedLength; // 0x10
+    byte Serialized[SerializedLength];
+};
+
+struct MESSAGEPACKOBJLIST {
+    int Count;
+    struct MESSAGEPACKCONTAINER {
+        for (i = 0; i < Count; i++) {
+            MESSAGEPACKOBJ obj;
+        }
+    } container;
+};
+struct EventSaveParameter {
+    MESSAGEPACKOBJ Objects;
+};
+
+struct SubEventSaveData {
+    MESSAGEPACKOBJ Objects;
+};
+
+struct ChildData {
+    MESSAGEPACKOBJ Objects;
+};
+struct ChildSaveData {
+    int Count;
+    struct CHILDDATA {
+        for (i = 0; i < Count; i++) {
+           MESSAGEPACKOBJ obj;  // Don't initialize a size for this. 010 buggy
+        }
+    } childData;
+};
+
+struct FishRecord {
+    int Id; // 0x10
+    Vector3Int Size; // 0x14
+    // Respectively, it's min, max, and stamp. Although they seem to set stamp to 0
+    // Lol this game
+};
+
+
+struct STAMPRECORDDATA {
+	int StampLevel; // 0x10
+    float MaxRecord; // 0x14 It's a float, but seems like it's an int?
+    float MinRecord; // 0x18
+};
+
+
+
+struct EnemyStatusData {
+    int MonsterDataID; // 0x10C
+    int PartnerMovementOrderType; // 0x110
+};
+
+struct FarmSupportMonsterDataList {
+    uint FriendMonsterDataID; // 0x10
+    int State; // 0x14
+    int WorkTime; // 0x18
+    int CellIndex; // 0x1C
+    Vector3 Position; // 0x20
+    Quaternion Rotation; // 0x2C
+};
+struct SAVETIME {
+     ushort Year; // 0x10
+	 ushort Day; // 0x12
+	 byte Month; // 0x14
+	 byte Hour; // 0x15
+	 byte Minute; // 0x16
+	 byte Second; // 0x17
+};
+
+struct HEADER {
+    uint64 UID;
+    uint Version;
+    char Project[4];
+    uint WCnt;
+    uint WOpt;
+    SAVETIME SaveTime;
+} header;
+
+struct RF5WORLDDATA {
+    byte DifficultyValue;
+    int SenarioStoppedTime; // 0x14
+    int MapId; // 0x18
+    Vector3 Position; // 0x1C
+    Vector3 RotationEuler; // 0x28
+    int InGameTimeElapsedTime; // 0x34
+    WeatherData weatherData; // 0x38
+    uint ShopRandSeedFix; // 0x48
+    uint ShopRandSeed; // 0x4C
+    int ShopSeedGenerateDay; // 0x50
+    int LastShippingDay; // 0x54
+    int LastPlaceId; // 0x58
+    int LastSleepTime; // 0x5C
+    int MiningPointSaveDataCount;
+    MiningPointSaveData miningPointSaveData[MiningPointSaveDataCount];
+    RewardBoxSaveData rewardBoxSaveData;
+    SaveFlagStorage ItemSpawnFlag; // 0x70
+    SaveFlagStorage TreasureFlag; // 0x78
+    SaveFlagStorage GimmickFlag; // 0x80
+    int SeedPointElapsedDay; // 0x88
+    int SeedPointMonsterAddedCount; // 0x8C
+    float SeedSupportCoolTime; // 0x90*/
+    int MeteorPositionCount;
+    int MeteorPosition[MeteorPositionCount + 1];    // Unsure if you add 1 if 0 len + how they calculate len
+    int OffsetFiveYearAgo; // 0xA0
+    int PunchCount; // 0xA4
+};
+struct RF5PLAYERDATA {
+    int PlayerGold; // 0x10
+    int PlayerNameCount;
+    char PlayerName[0x20]; // 0x18
+    byte IsPlayerMale; // 0x20 BOOL
+    byte IsPlayerModelMale; // 0x21 BOOL
+    int VariationNo; // 0x24
+	 int PlayerBirthDay; // 0x28 This looks weird. Look later.
+    int MarriedNPCID; // 0x2C
+	 int SeedPoint; // 0x30
+	 int PoliceRank; // 0x34
+	 int Stone; // 0x38
+	 int Lumber; // 0x3C
+	 int Compost; // 0x40
+	 int Esa; // 0x44
+	 int DailyRecipePan_Bakery; // 0x48
+	 int DailyRecipePan_Restaurant; // 0x4C
+	 int BathroomBlocked; // 0x50
+    int SkillDataCount;
+	 SkillData SkillDatas[SkillDataCount]; // 0x58
+	 int DualSmithActor; // 0x60
+	 int DualCookActor; // 0x64
+	 int DualFishingActor; // 0x68*/
+};
+
+struct RF5EVENTDATA {
+    EventSaveParameter eventSaveParameter;
+    SaveFlagStorage SaveFlag; // 0x18
+    SubEventSaveData SubEventSaveDatas;
+	int MainScenarioStep; // 0x28
+    int PresentSendActorListCount;
+    int PresentSendActorList[PresentSendActorListCount]; // 0x30
+    int PresentRecvActorListCount;
+    int PresentRecvActorList[PresentRecvActorListCount]; // 0x38
+    byte IsStartFishing; // 0x40
+    int FesJoinActorListCount;
+    int FesJoinActorList[FesJoinActorListCount];
+    int FesVisitorActorListCount;
+    int FesVisitorActorList[FesVisitorActorListCount];
+    int FesNpcScoreListCount;
+    int FesNpcScoreList[FesNpcScoreListCount];
+	int IsCalcFesId; // 0x60
+	int VictoryCandidateNpcId; // 0x64
+	int JudgeChildId; // 0x68
+    int FishTypeListCount;
+//	private Dictionary<int, int> FlagDataMappings; // 0x78 // Unsure how they read this
+};
+
+struct RF5NPCDATA {
+    int Count;
+    struct NPCSAVEPARAMETERS {
+        for (i = 0; i < Count; i++) {
+           MESSAGEPACKOBJ obj;  // Don't initialize a size for this. 010 buggy
+        }
+    } NpcSaveParameters;
+    MESSAGEPACKOBJ NpcDateSaveParam;
+    ChildSaveData ChildSaveDatas;
+    MESSAGEPACKOBJ GiveBirthSaveParameter;
+    // Unsure what this is atm
+    int NpcHatCacheCount;
+
+        for (i = 0; i < NpcHatCacheCount; i++) {
+    struct NPCHATCACHE {
+           int NPCID;
+           MESSAGEPACKOBJ obj;  // Don't initialize a size for this. 010 buggy
+    } npcHatCache;
+        }
+};
+
+struct RF5FISHINGDATA {
+    int FishRecordCount;
+    FishRecord fishRecord[FishRecordCount];
+};
+
+struct RF5STAMPDATA {
+    int StampRecordDataCount;
+    STAMPRECORDDATA StampRecordData[80];
+};
+
+struct RF5FURNITUREDATA {
+// Lol what if 0?? 30 or 90?
+    int unk;
+    int unk;
+    int FurnitureSaveDataCount;
+
+    for (i = 0; i < FurnitureSaveDataCount; i++)
+    {
+        struct FurnitureSaveData {
+            Vector3 Pos; // 0x10
+            Quaternion Rot; // 0x1C
+	        int SceneId; // 0x2C
+            int Id; // 0x30
+            // Just read until two bytes equal 0.
+            struct STRINGID {
+                ii = 0;
+                do {
+                    struct UNIQUEID {
+                            byte char1;
+                            byte char2;
+                    } uniqueID;
+                
+                    if (uniqueID[ii].char1 == 0 & uniqueID[ii].char2 == 0) {
+                            break;
+                    }
+                    ii+= 1;
+                } while (true); // 0x38
+            } stringID;
+            int Point; // 0x40
+            int Hp; // 0x44
+            byte Have; // 0x48
+        } saveData;
+    }
+};
+
+struct RF5PARTYDATA {
+    int PartyDataCount;
+    struct PARTYDATA {
+        for (i = 0; i < PartyDataCount; i++) {
+           MESSAGEPACKOBJ obj;  // Don't initialize a size for this. 010 buggy
+        }
+    } partyData;
+};
+
+struct RF5ITEMDATA {
+    MESSAGEPACKOBJ Rucksack; // 0x10
+	 MESSAGEPACKOBJ ItemBox; // 0x18
+	 MESSAGEPACKOBJ Refrigerator; // 0x20
+	 MESSAGEPACKOBJ RuneRuck; // 0x28
+	 MESSAGEPACKOBJ WeaponBox; // 0x30
+	 MESSAGEPACKOBJ ArmorBox; // 0x38
+	 MESSAGEPACKOBJ FarmToolBox; // 0x40
+	 MESSAGEPACKOBJ RuneBox; // 0x48
+	 MESSAGEPACKOBJ ShippingBox; // 0x50
+	 MESSAGEPACKOBJ FieldOnGroundItemStorage; // 0x58
+};
+
+struct RF5FARMSUPPORTMONSTERDATA {
+    int FarmSupportMonsterDataListCount;
+    FarmSupportMonsterDataList FarmSupportMonsterDataLists[FarmSupportMonsterDataListCount];
+};
+
+// This doesn't match disassembly, but this matches perfectly soo...
+struct RF5FARMDATA {
+    // Lol I really don't know what these are
+    MESSAGEPACKOBJLIST firstVisitFarm;
+    MESSAGEPACKOBJLIST farmSizeLevels;
+    MESSAGEPACKOBJLIST farmCropDatas;
+    MESSAGEPACKOBJLIST crystalUseCounts;
+    MESSAGEPACKOBJLIST crop;
+    MESSAGEPACKOBJLIST soil;
+    MESSAGEPACKOBJLIST harvestCount;
+    MESSAGEPACKOBJLIST itemHarvestIdList;
+    MESSAGEPACKOBJLIST monsterHutReleaseFlags;
+    MESSAGEPACKOBJLIST monsterHutSaveDatas;
+};
+
+struct RF5STATUSDATA {
+    MESSAGEPACKOBJ Unk;
+    int Count;
+    for (i = 0; i < Count; i++) {
+        struct HUMANSTATUSDATA {
+            int NPCID;
+            MESSAGEPACKOBJ dd;
+        } humanStatusData;
+    }
+    MESSAGEPACKOBJLIST FriendMonsterStatusDatas;
+};
+
+struct RF5ORDERDATA {
+    MESSAGEPACKOBJ OrderSaveParameters;
+    MESSAGEPACKOBJ WantedSaveData;
+};
+
+struct RF5MAKINGDATA {
+    SaveFlagStorage SaveFlag;
+    int EnemyLevelupStage;
+    int MakingCount;
+    SaveFlagStorage DoEndScriptFlags;
+};
+
+struct RF5POLICEBATCHDATA {
+    int policeBatchIdSlotA;
+    int policeBatchIdSlotB;
+    SaveFlagStorage SaveFlag;
+};
+
+struct RF5ITEMFLAGDATA {
+    SaveFlagStorage SaveFlag; // 0x10
+    SaveFlagStorage ClothFlag; // 0x18
+};
+
+struct RF5BUILDDATA {
+    SaveFlagStorage SaveFlag;
+};
+
+struct RF5SHIPPINGDATA {
+    int completedPercent; 
+    int64 totalIncome;
+    MESSAGEPACKOBJLIST ItemRecordListCount;
+/*
+    struct CONTAINER {
+        for (i = 0; i < ItemRecordListCount; i++) {
+    
+            MESSAGEPACKOBJ ItemRecordList;
+    
+        }
+    } container;
+*/
+    MESSAGEPACKOBJLIST ItemRecordListCount;
+    MESSAGEPACKOBJLIST ItemRecordListCount;
+    MESSAGEPACKOBJLIST ItemRecordListCount;
+    MESSAGEPACKOBJLIST ItemRecordListCount;
+    MESSAGEPACKOBJLIST ItemRecordListCount;
+    MESSAGEPACKOBJLIST ItemRecordListCount;
+    MESSAGEPACKOBJLIST ItemRecordListCount;
+    MESSAGEPACKOBJLIST FishShipmentRecords;
+    MESSAGEPACKOBJLIST SeedLevelRecordList;
+
+// LPocketData
+byte SyncToCampEquip;
+int QuickLastFocus;
+int CampLastFocus;
+int Unk[38];   // Placeholder for now
+
+// NameData
+char Farm1[36]; // 0x18
+char Farm2[36]; // 0x18
+char Farm3[36]; // 0x18
+char Farm4[36]; // 0x18
+char Farm5[36]; // 0x18
+char Farm6[36]; // 0x18
+char Farm7[36]; // 0x18
+char Farm8[36]; // 0x18
+char Farm9[36]; // 0x18
+char Farm10[36]; // 0x18
+char Farm11[36]; // 0x18
+char Farm12[36]; // 0x18
+char Farm13[36]; // 0x18
+char Farm14[36]; // 0x18
+char Farm15[36]; // 0x18
+/*
+int UIEMCategoriesCustomNoCount;
+int UIEMCategoriesCustomNo[UIEMCategoriesCustomNoCount];
+int UIEMQuckCategoriesCount;
+int UIEMQuckCategories[UIEMQuckCategoriesCount];
+*/
+};
+
+
+struct RF5SAVEDATA {
+    int SlotNo;
+    SaveFlagStorage SaveFlag;
+    RF5WORLDDATA worldData;
+    RF5PLAYERDATA playerData;
+    RF5EVENTDATA eventData;
+    RF5NPCDATA npcData;
+
+
+    RF5FISHINGDATA fishingData;
+    RF5STAMPDATA stampData;
+    RF5FURNITUREDATA furnitureData;
+    RF5PARTYDATA partyData; //BattleData but w/e
+    RF5ITEMDATA itemData;
+    RF5FARMSUPPORTMONSTERDATA farmSupportMonsterData;
+    RF5FARMDATA FarmData; 
+    RF5STATUSDATA statusData;
+    RF5ORDERDATA orderData;
+    RF5MAKINGDATA makingData;
+    RF5POLICEBATCHDATA policeBatchData;
+    RF5ITEMFLAGDATA itemFlagData;
+    RF5BUILDDATA buildData;
+    RF5SHIPPINGDATA shippingData;
+} saveData;
+
+// Need https://github.com/neuecc/MessagePack-CSharp

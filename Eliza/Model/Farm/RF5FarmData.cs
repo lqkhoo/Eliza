@@ -12,7 +12,7 @@ namespace Eliza.Model.Farm
         [ElizaMessagePackList]
         public FarmCropData[] FarmCropDatas;
         [ElizaMessagePackList]
-        public int[] CrystalUseCounts;
+        public CrystalUseCount[] CrystalUseCounts;
         [ElizaMessagePackList]
         public RF4_CROP_STATE[] Crop;
         [ElizaMessagePackList]

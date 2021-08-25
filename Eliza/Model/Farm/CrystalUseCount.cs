@@ -3,12 +3,11 @@ using Eliza.Core.Serialization.MessagePackFormatters;
 
 namespace Eliza.Model.Farm
 {
-
     [MessagePackObject]
-    [MessagePackFormatter(typeof(FarmSizeLevelFormatter))]
-    public class FarmSizeLevel
+    [MessagePackFormatter(typeof(CrystalUseCountFormatter))]
+    public class CrystalUseCount
     {
         [Key(0)]
-        public int Level;
+        public int Count;
     }
 }
