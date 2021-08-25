@@ -7,7 +7,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
 {
     public class ItemDataFormatter : IMessagePackFormatter<ItemData>
     {
-        //Not Needed anymore. Turns out I forgot to inherit one class. OOps is needed. serializer is bad...
+
         public ItemData Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
         {
             IFormatterResolver resolver = options.Resolver;

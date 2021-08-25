@@ -8,7 +8,7 @@ namespace Eliza.Model.Farm
         [ElizaMessagePackList]
         public bool[] FirstVisitFarm;
         [ElizaMessagePackList]
-        public int[] FarmSizeLevels;
+        public FarmSizeLevel[] FarmSizeLevels;
         [ElizaMessagePackList]
         public FarmCropData[] FarmCropDatas;
         [ElizaMessagePackList]
