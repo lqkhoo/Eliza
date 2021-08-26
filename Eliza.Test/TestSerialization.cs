@@ -18,13 +18,11 @@ namespace Eliza.Test
             // Ensure byte-level reproduction when we haven't modified anything.
             // This is far more tricky than it sounds.
 
-            /*
             string inputPath = "../../../Saves/107/rf5_gm000";
             string outputPath = inputPath + "_test_decrypt_encrypt_107";
             SaveData save = SaveData.FromEncryptedFile(inputPath, version: 7, locale: SaveData.LOCALE.JP);
             save.ToEncryptedFile(outputPath);
             Assert.True(TestUtils.AreFilesIdentical(inputPath, outputPath));
-            */
 
             string inputPath2 = "../../../Saves/107/rf5_gm001";
             string outputPath2 = inputPath2 + "_test_decrypt_encrypt_107";

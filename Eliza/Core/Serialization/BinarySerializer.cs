@@ -16,6 +16,9 @@ namespace Eliza.Core.Serialization
     {
         public BinaryWriter Writer;
 
+        // For debugging only.
+        // Stores the position of the stream of this.Writer
+        // just before writing the object of the type keyed.
         protected Dictionary<Type, long> _DebugAddressMap;
 
         public BinarySerializer(Stream baseStream) : base(baseStream)
@@ -55,23 +58,23 @@ namespace Eliza.Core.Serialization
             }
         }
 
-        protected void WritePrimitive(object value)
+        protected void WritePrimitive(object value, TypeCode typeCode=TypeCode.Empty)
         {
             var type = value.GetType();
 
             switch (Type.GetTypeCode(type)) {
-                case TypeCode.Boolean: this.Writer.Write((bool)value); break;
-                case TypeCode.Byte: this.Writer.Write((byte)value); break;
-                case TypeCode.Char: this.Writer.Write((char)value); break;
-                case TypeCode.UInt16: this.Writer.Write((ushort)value); break;
-                case TypeCode.UInt32: this.Writer.Write((uint)value); break;
-                case TypeCode.UInt64: this.Writer.Write((ulong)value); break;
-                case TypeCode.SByte: this.Writer.Write((sbyte)value); break;
-                case TypeCode.Int16: this.Writer.Write((short)value); break;
-                case TypeCode.Int32: this.Writer.Write((int)value); break;
-                case TypeCode.Int64: this.Writer.Write((long)value); break;
-                case TypeCode.Single: this.Writer.Write((float)value); break;
-                case TypeCode.Double: this.Writer.Write((double)value); break;
+                case TypeCode.Boolean: Writer.Write((bool)value); break;
+                case TypeCode.Byte: Writer.Write((byte)value); break;
+                case TypeCode.Char: Writer.Write((char)value); break;
+                case TypeCode.UInt16: Writer.Write((ushort)value); break;
+                case TypeCode.UInt32: Writer.Write((uint)value); break;
+                case TypeCode.UInt64: Writer.Write((ulong)value); break;
+                case TypeCode.SByte: Writer.Write((sbyte)value); break;
+                case TypeCode.Int16: Writer.Write((short)value); break;
+                case TypeCode.Int32: Writer.Write((int)value); break;
+                case TypeCode.Int64: Writer.Write((long)value); break;
+                case TypeCode.Single: Writer.Write((float)value); break;
+                case TypeCode.Double: Writer.Write((double)value); break;
             }
         }
 
@@ -81,23 +84,22 @@ namespace Eliza.Core.Serialization
                                 int max=ElizaListAttribute.UNKNOWN_SIZE,
                                 bool isMessagePackList=ElizaListAttribute.DFEAULT_ISMESSAGEPACK_LIST)
         {
-            if (length == 0) {
+
+            if (length == ElizaListAttribute.UNKNOWN_SIZE) {
                 switch (lengthType) {
-                    case TypeCode.Byte: this.Writer.Write((byte)list.Count); break;
-                    case TypeCode.Char: this.Writer.Write((char)list.Count); break;
-                    case TypeCode.UInt16: this.Writer.Write((ushort)list.Count); break;
-                    case TypeCode.UInt32: this.Writer.Write((uint)list.Count); break;
-                    case TypeCode.UInt64: this.Writer.Write((ulong)list.Count); break;
-                    case TypeCode.SByte: this.Writer.Write((sbyte)list.Count); break;
-                    case TypeCode.Int16: this.Writer.Write((short)list.Count); break;
-                    case TypeCode.Int32: this.Writer.Write((int)list.Count); break;
-                    case TypeCode.Int64: this.Writer.Write((long)list.Count); break;
+                    case TypeCode.Int32: Writer.Write((int)list.Count); break;
+                    case TypeCode.Byte: Writer.Write((byte)list.Count); break;
+                    case TypeCode.Char: Writer.Write((char)list.Count); break;
+                    case TypeCode.UInt16: Writer.Write((ushort)list.Count); break;
+                    case TypeCode.UInt32: Writer.Write((uint)list.Count); break;
+                    case TypeCode.UInt64: Writer.Write((ulong)list.Count); break;
+                    case TypeCode.SByte: Writer.Write((sbyte)list.Count); break;
+                    case TypeCode.Int16: Writer.Write((short)list.Count); break;
+                    case TypeCode.Int64: Writer.Write((long)list.Count); break;
                 }
             }
-
             // The max parameter isn't used here because we've already
             // allocated memory equal to max items in the list.
-
             foreach (object value in list) {
                 if (isMessagePackList) {
                     this.WriteMessagePackObject(value);
@@ -108,33 +110,49 @@ namespace Eliza.Core.Serialization
 
         }
         protected void WriteString(string value,
-                                   int max = ElizaStringAttribute.UNKNOWN_SIZE,
+                                   TypeCode lengthType=ElizaStringAttribute.DEFAULT_LENGTH_TYPECODE,
+                                   int maxLength = ElizaStringAttribute.UNKNOWN_SIZE,
                                    bool isUtf16Uuid=ElizaStringAttribute.DEFAULT_IS_UTF16_UUID)
         {
-            var data = Encoding.Unicode.GetBytes(value);
-            if (max != 0) {
-                this.Writer.Write(data.Length);
-                for (int index = 0; index < max; index++) {
-                    if (index < data.Length) {
-                        this.Writer.Write(data[index]);
-                    } else {
+            byte[] data;
+            if (! isUtf16Uuid) {
+
+                data = Encoding.Unicode.GetBytes(value);
+
+                switch (lengthType) {
+                    case TypeCode.Int32: Writer.Write((int)data.Length); break;
+                    case TypeCode.Byte: Writer.Write((byte)data.Length); break;
+                    case TypeCode.Char: Writer.Write((char)data.Length); break;
+                    case TypeCode.UInt16: Writer.Write((ushort)data.Length); break;
+                    case TypeCode.UInt32: Writer.Write((uint)data.Length); break;
+                    case TypeCode.UInt64: Writer.Write((ulong)data.Length); break;
+                    case TypeCode.SByte: Writer.Write((sbyte)data.Length); break;
+                    case TypeCode.Int16: Writer.Write((short)data.Length); break;
+                    case TypeCode.Int64: Writer.Write((long)data.Length); break;
+                }
+                for (int idx = 0; idx < data.Length; idx++) {
+                    this.Writer.Write(data[idx]);
+                }
+                // If always serialize to max size, write zero for the rest
+                if (maxLength != ElizaStringAttribute.UNKNOWN_SIZE) {
+                    for (int idx = data.Length; idx < maxLength; idx++) {
                         this.Writer.Write((byte)0x0);
                     }
                 }
+
             } else {
-                // This assumes everything else adds 0 to the end. Might need another attribute
+                // Note ASCII
+                data = Encoding.ASCII.GetBytes(value);
+
+                // No length information for UUIDs.
                 for (int index = 0; index < data.Length; index++) {
                     this.Writer.Write(data[index]);
                     this.Writer.Write((byte)0x0);
                 }
+                // Write the terminator
                 this.Writer.Write((byte)0x0);
                 this.Writer.Write((byte)0x0);
-                //for (int index = 0; index < data.Length; index++)
-                //{
-                //    Writer.Write(data[index]);
-                //}
             }
-            return;
         }
 
         protected void WriteSaveFlagStorage(SaveFlagStorage saveFlagStorage)
@@ -168,7 +186,7 @@ namespace Eliza.Core.Serialization
                     if (fieldType == typeof(string)) {
                         this.WriteString(
                             value: (string)fieldValue,
-                            max: stringAttr.MaxSize,
+                            maxLength: stringAttr.MaxSize,
                             isUtf16Uuid: stringAttr.IsUtf16Uuid
                         );
                         hasWritten = true;
@@ -213,7 +231,6 @@ namespace Eliza.Core.Serialization
             }
 
             if (objectType.IsDefined(typeof(MessagePackObjectAttribute))) {
-                // MessagePackObject
                 this.WriteMessagePackObject(objectValue);
 
             } else {

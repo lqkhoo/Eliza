@@ -99,14 +99,15 @@ namespace Eliza.Core.Serialization
             Type contentType;
 
             // If the list has dynamic length, then read in the length int preceding the data.
+            // This can still be zero, in which case it serializes to
+            // just the length int, and we read nothing else.
             if (length == ElizaListAttribute.UNKNOWN_SIZE) {
                 length = Convert.ToInt32(this.ReadPrimitive(lengthType));
-                // This can still be zero, in which case it serializes to
-                // just the length int, and we read nothing else.
             }
 
-            // Even if we know the max size, we still need to read empty data
-            // because they may be encoded differently.
+            // If list is always serialized to some known max size,
+            // then we can just operate on that and read in all the
+            // empty values as well.
             if (maxSize != ElizaListAttribute.UNKNOWN_SIZE) {
                 length = maxSize;
             }
@@ -138,47 +139,44 @@ namespace Eliza.Core.Serialization
             return ilist;
         }
 
-        protected string ReadString(int size=ElizaStringAttribute.UNKNOWN_SIZE,
-                                    int max=ElizaStringAttribute.UNKNOWN_SIZE,
+        protected string ReadString(int max=ElizaStringAttribute.UNKNOWN_SIZE,
+                                    TypeCode lengthType=ElizaStringAttribute.DEFAULT_LENGTH_TYPECODE,
                                     bool isUtf16Uuid=ElizaStringAttribute.DEFAULT_IS_UTF16_UUID)
         {
             List<byte> dataString = new();
 
-            //Might be deprecated
-            if (size != ElizaStringAttribute.UNKNOWN_SIZE) {
-                byte[] data = this.Reader.ReadBytes(size);
-                return Encoding.Unicode.GetString(data);
+            if (!isUtf16Uuid) {
 
-            } else if (max != ElizaStringAttribute.UNKNOWN_SIZE) {
-                int length = this.Reader.ReadInt32();
-                byte[] data = this.Reader.ReadBytes(length);
-                this.BaseStream.Seek(max - length, SeekOrigin.Current);
+                int length = Convert.ToInt32(this.ReadPrimitive(lengthType));
+                byte[] data;
+                if (max == ElizaStringAttribute.UNKNOWN_SIZE) {
+                    data = this.Reader.ReadBytes(length);
+                } else {
+                    data = this.Reader.ReadBytes(length);
+                    this.BaseStream.Seek(max - length, SeekOrigin.Current);
+                }
                 return Encoding.Unicode.GetString(data);
 
             } else {
-
-                //TODO: handle UUID16
-
                 // This handles stringId in the FurnitureSaveData struct.
                 // These are most likely UUIDs including the hyphens
                 // encoded as UTF-16 to be passed directly into function calls.
                 // Since UUIDs only have ASCII bytes, every other byte will be zero.
                 // We only extract every other (first) byte.
                 // See: https://stackoverflow.com/q/50070289
-
                 do {
                     byte character = this.Reader.ReadByte();
                     byte nullCharacter = this.Reader.ReadByte();
-
                     if (character != 0 & nullCharacter == 0) {
                         dataString.Add(character);
                     } else if (character == 0 & nullCharacter == 0) {
                         break;
                     }
-
                 } while (true);
 
-                return Encoding.Unicode.GetString(dataString.ToArray());
+                // Note ASCII
+                return Encoding.ASCII.GetString(dataString.ToArray());
+  
             }
         }
 

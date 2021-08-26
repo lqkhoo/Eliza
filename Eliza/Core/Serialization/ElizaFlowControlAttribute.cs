@@ -38,9 +38,8 @@ namespace Eliza.Core.Serialization
             public int FixedSize { get; set; } = UNKNOWN_SIZE;
 
             /// <summary>
-            /// This annotates that the list has a known, fixed maximum size
-            /// that's always allocated. However, we still need to read in
-            /// how many elements are filled.
+            /// This annotation means the array size is always known and fixed,
+            /// however, we still ALWAYS read in how many elements are filled.
             /// </summary>
             public int MaxSize { get; set; } = UNKNOWN_SIZE;
 
@@ -54,11 +53,15 @@ namespace Eliza.Core.Serialization
         public sealed class ElizaStringAttribute : ElizaFlowControlAttribute
         {
             public const int UNKNOWN_SIZE = 0;
+            public const TypeCode DEFAULT_LENGTH_TYPECODE = TypeCode.Int32;
             public const bool DEFAULT_IS_UTF16_UUID = false;
 
+            public TypeCode LengthType { get; set; } = DEFAULT_LENGTH_TYPECODE;
+
             /// <summary>
-            /// This denotes the maximum size for string arrays.
-            /// There's little reason to use this for reflection logic.
+            /// Strings annotated with MaxSize always serialize to number of bytes
+            /// equal to MaxSize, but they still have a field indicating the length
+            /// of the actual string within.
             /// </summary>
             public int MaxSize { get; set; } = UNKNOWN_SIZE;
 
@@ -70,6 +73,7 @@ namespace Eliza.Core.Serialization
 
         }
 
+        // Doesn't influence our logic at the moment
         /// <summary>
         /// Annotates that a fields which have non-default values in edge cases.
         /// </summary>
