@@ -1,5 +1,4 @@
-﻿using static Eliza.Core.Serialization.ElizaFlowControlAttribute;
-
+﻿using Eliza.Core.Serialization;
 namespace Eliza.Model.Name
 {
     public class RF5NameData

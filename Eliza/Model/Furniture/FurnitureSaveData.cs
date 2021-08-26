@@ -1,5 +1,5 @@
 ﻿using System.Numerics;
-using static Eliza.Core.Serialization.ElizaFlowControlAttribute;
+using Eliza.Core.Serialization;
 
 namespace Eliza.Model.Furniture
 {

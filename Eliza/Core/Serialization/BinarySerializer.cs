@@ -21,7 +21,8 @@ namespace Eliza.Core.Serialization
         // just before writing the object of the type keyed.
         protected Dictionary<Type, long> _DebugAddressMap;
 
-        public BinarySerializer(Stream baseStream) : base(baseStream)
+        public BinarySerializer(Stream baseStream, SaveData.LOCALE locale, int version)
+                                : base(baseStream, locale, version)
         {
             this.Writer = new BinaryWriter(baseStream);
             this._DebugAddressMap = new Dictionary<Type, long>();
@@ -130,12 +131,12 @@ namespace Eliza.Core.Serialization
                     case TypeCode.Int16: Writer.Write((short)data.Length); break;
                     case TypeCode.Int64: Writer.Write((long)data.Length); break;
                 }
-                for (int idx = 0; idx < data.Length; idx++) {
+                for (int idx=0; idx<data.Length; idx++) {
                     this.Writer.Write(data[idx]);
                 }
                 // If always serialize to max size, write zero for the rest
                 if (maxLength != ElizaStringAttribute.UNKNOWN_SIZE) {
-                    for (int idx = data.Length; idx < maxLength; idx++) {
+                    for (int idx=data.Length; idx<maxLength; idx++) {
                         this.Writer.Write((byte)0x0);
                     }
                 }
@@ -145,7 +146,7 @@ namespace Eliza.Core.Serialization
                 data = Encoding.ASCII.GetBytes(value);
 
                 // No length information for UUIDs.
-                for (int index = 0; index < data.Length; index++) {
+                for (int index=0; index<data.Length; index++) {
                     this.Writer.Write(data[index]);
                     this.Writer.Write((byte)0x0);
                 }
@@ -169,55 +170,6 @@ namespace Eliza.Core.Serialization
                 this.WriteValue(item.Key);
                 this.WriteValue(item.Value);
             }
-        }
-
-        protected void WriteField(object fieldValue, FieldInfo fieldInfo)
-        {
-
-            Type fieldType = fieldInfo.FieldType;
-            bool hasWritten = false;
-
-            if (fieldInfo.IsDefined(typeof(ElizaFlowControlAttribute), inherit: true)) {
-
-                //TODO: Versioning tags
-
-                if (fieldInfo.IsDefined(typeof(ElizaStringAttribute))) {
-                    var stringAttr = (ElizaStringAttribute)fieldInfo.GetCustomAttribute(typeof(ElizaStringAttribute));
-                    if (fieldType == typeof(string)) {
-                        this.WriteString(
-                            value: (string)fieldValue,
-                            maxLength: stringAttr.MaxSize,
-                            isUtf16Uuid: stringAttr.IsUtf16Uuid
-                        );
-                        hasWritten = true;
-                    } else {
-                        throw new UnsupportedAttributeException(stringAttr, fieldInfo);
-                    }
-
-                } else if (fieldInfo.IsDefined(typeof(ElizaListAttribute))) {
-                    var listAttr = (ElizaListAttribute)fieldInfo.GetCustomAttribute(typeof(ElizaListAttribute));
-                    if (IsList(fieldType)) {
-                        this.WriteList(
-                            list: (IList)fieldValue,
-                            lengthType: listAttr.LengthType,
-                            length: listAttr.FixedSize,
-                            max: listAttr.MaxSize,
-                            isMessagePackList: listAttr.IsMessagePackList
-                        );
-                        hasWritten = true;
-                    } else {
-                        throw new UnsupportedAttributeException(listAttr, fieldInfo);
-                    }
-                }
-
-            }
-
-            // If there were no Eliza attributes, or if it was not a directive
-            // that changes how we write the field, do the simplest case.
-            if (! hasWritten) {
-                this.WriteValue(fieldValue);
-            }
-            
         }
 
         protected void WriteObject(object objectValue)
@@ -248,6 +200,75 @@ namespace Eliza.Core.Serialization
             var bytes = MessagePackSerializer.Serialize(value);
             this.Writer.Write(bytes.Length);
             this.Writer.Write(bytes);
+        }
+
+        protected void WriteField(object fieldValue, FieldInfo fieldInfo) {
+
+            // See BinaryDeserializer for notes.
+
+            Type fieldType = fieldInfo.FieldType;
+
+            bool hasWritten = false;
+            bool hasControlTag = false;
+
+            // Check if the field has been annotated with one of our attributes
+            if (fieldInfo.IsDefined(typeof(ElizaFlowControlAttribute), inherit: true)) {
+
+                hasControlTag = true;
+
+                var elizaAttrs = fieldInfo.GetCustomAttributes(typeof(ElizaFlowControlAttribute), inherit: true);
+                foreach (ElizaFlowControlAttribute elizaAttr in elizaAttrs) {
+
+                    // Do the version check here. If it doesn't match, skip to the next attribute.
+                    bool isRelevant = ((this.Locale == elizaAttr.Locale
+                                        || elizaAttr.Locale == SaveData.LOCALE.ANY)
+                                        && this.Version >= elizaAttr.FromVersion);
+
+                    // Don't fail silently if it's trying to write twice. Means wrong use of tags.
+                    if (hasWritten && isRelevant) { throw new UnsupportedAttributeException(elizaAttr, fieldInfo); }
+
+                    if (hasWritten || (!isRelevant)) { continue; }
+
+                    // Now process the tag based on its type.
+                    Type attrType = elizaAttr.GetType();
+
+                    if (attrType == typeof(ElizaStringAttribute)) {
+                        var stringAttr = (ElizaStringAttribute)elizaAttr;
+                        if (fieldType == typeof(string)) {
+                            this.WriteString(
+                                value: (string)fieldValue,
+                                maxLength: stringAttr.MaxSize,
+                                isUtf16Uuid: stringAttr.IsUtf16Uuid
+                            );
+                            hasWritten = true;
+                        } else { throw new UnsupportedAttributeException(stringAttr, fieldInfo); }
+
+                    } else if (attrType == typeof(ElizaListAttribute)) {
+                        var listAttr = (ElizaListAttribute)elizaAttr;
+                        if (IsList(fieldType)) {
+                            this.WriteList(
+                                list: (IList)fieldValue,
+                                lengthType: listAttr.LengthType,
+                                length: listAttr.FixedSize,
+                                max: listAttr.MaxSize,
+                                isMessagePackList: listAttr.IsMessagePackList
+                            );
+                            hasWritten = true;
+                        } else { throw new UnsupportedAttributeException(listAttr, fieldInfo); }
+
+                    } else {
+                        // This is a normal field with a tag.
+                        this.WriteValue(fieldValue);
+                        hasWritten = true;
+                    }
+
+                }
+            }
+
+            if ((! hasControlTag) && (! hasWritten)) {
+                this.WriteValue(fieldValue);
+            }
+
         }
     }
 }

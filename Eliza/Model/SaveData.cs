@@ -42,7 +42,7 @@ namespace Eliza.Model
         public const int HEADER_NBYTES = 0x20;
         public const int FOOTER_NBYTES = 0x10;
 
-        public enum LOCALE : Int32 { JP=0, EN=1 }
+        public enum LOCALE : Int32 { JP=0, EN=1, ANY=2 }
         public const int LATEST_JP_VER = 7;
         public const int LATEST_EN_VER = -1;
 
@@ -61,13 +61,17 @@ namespace Eliza.Model
         protected SaveData(byte[] headerBytes, byte[] decryptedDataBytes, byte[] footerBytes,
                            int version= LATEST_JP_VER, LOCALE locale=LOCALE.JP)
         {
+
+            this.Locale = locale;
+            this.Version = version;
+
             using (MemoryStream header = new(headerBytes))
             using (MemoryStream saveData = new(decryptedDataBytes))
             using (MemoryStream footer = new(footerBytes))
             {
-                this.header = new BinaryDeserializer(header).ReadSaveDataHeader();
-                this.saveData = new BinaryDeserializer(saveData).ReadSaveData();
-                this.footer = new BinaryDeserializer(footer).ReadSaveDataFooter();
+                this.header = new BinaryDeserializer(header, locale, version).ReadSaveDataHeader();
+                this.saveData = new BinaryDeserializer(saveData, locale, version).ReadSaveData();
+                this.footer = new BinaryDeserializer(footer, locale, version).ReadSaveDataFooter();
             }
             this._originalHeader = headerBytes;
             this._originalSaveData = decryptedDataBytes;
@@ -100,18 +104,16 @@ namespace Eliza.Model
         }
 
 
-        public static SaveData FromEncryptedFile(string path, int version=SaveData.LATEST_JP_VER,
-                                                 LOCALE locale = LOCALE.JP)
+        public static SaveData FromEncryptedFile(string path, int version, LOCALE locale)
         {
             var (header, data, footer) = DecryptFile(path);
-            return new SaveData(header, data, footer);
+            return new SaveData(header, data, footer, version, locale);
         }
 
 
         public static void ToDecryptedFile(string inputPath, string outputPath,
-                                           bool bypassSerialization=true,
-                                           int version=SaveData.LATEST_JP_VER, 
-                                           LOCALE locale = LOCALE.JP)
+                                           int version, LOCALE locale,
+                                           bool bypassSerialization = true)
         {
             using (FileStream fs = new(outputPath, FileMode.OpenOrCreate, FileAccess.Write))
             {
@@ -122,9 +124,9 @@ namespace Eliza.Model
                     fs.Write(decryptedData);
                     fs.Write(footer);
                 } else {
-                    SaveData save = SaveData.FromEncryptedFile(inputPath);
+                    SaveData save = SaveData.FromEncryptedFile(inputPath, version, locale);
                     using MemoryStream ms = new();
-                    BinarySerializer serializer = new(ms);
+                    BinarySerializer serializer = new(ms, save.Locale, save.Version);
                     serializer.WriteSaveDataHeader(save.header);
                     serializer.WriteSaveData(save.saveData); // Plain write. No encryption.
                     serializer.WriteSaveDataFooter(save.footer);
@@ -151,7 +153,7 @@ namespace Eliza.Model
 
                 // Write new unencrypted data to buffer
                 using MemoryStream serializerBuffer = new();
-                BinarySerializer serializer = new(serializerBuffer);
+                BinarySerializer serializer = new(serializerBuffer, this.Locale, this.Version);
                 serializer.BaseStream.Position = 0x0;
                 serializer.WriteSaveDataHeader(this.header);
                 serializer.WriteSaveData(this.saveData);
@@ -182,7 +184,7 @@ namespace Eliza.Model
                 buffer.Write(encryptedData);
 
                 // Write footer
-                serializer = new(buffer);
+                serializer = new(buffer, this.Locale, this.Version);
                 serializer.Writer.Write((int)bodyLength);
                 serializer.Writer.Write((int)paddedLength);
                 serializer.Writer.Write(checksum);
@@ -192,7 +194,6 @@ namespace Eliza.Model
 
                 fs.SetLength(0);
                 buffer.CopyTo(fs, (int)buffer.Length);
-                fs.SetLength(fs.Position); // Truncate
             }
         }
     }

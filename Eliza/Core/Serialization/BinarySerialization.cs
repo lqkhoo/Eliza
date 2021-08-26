@@ -33,6 +33,10 @@ namespace Eliza.Core.Serialization
 
     class BinarySerialization
     {
+
+        public readonly SaveData.LOCALE Locale;
+        public readonly int Version;
+
         public readonly Stream BaseStream;
 
         protected HashSet<Type> _DebugTypeSet = new() {
@@ -62,8 +66,10 @@ namespace Eliza.Core.Serialization
         };
 
 
-        public BinarySerialization(Stream baseStream)
+        public BinarySerialization(Stream baseStream, SaveData.LOCALE locale, int version)
         {
+            this.Locale = locale;
+            this.Version = version;
             this.BaseStream = baseStream;
         }
 

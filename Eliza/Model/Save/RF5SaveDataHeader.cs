@@ -1,4 +1,4 @@
-﻿using static Eliza.Core.Serialization.ElizaFlowControlAttribute;
+﻿using Eliza.Core.Serialization;
 
 namespace Eliza.Model.Save
 {

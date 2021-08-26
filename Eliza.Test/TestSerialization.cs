@@ -50,15 +50,31 @@ namespace Eliza.Test
         }
     }
 
-    [Collection("104")]
-    public class TestSerializationJP104
+    [Collection("106")]
+    public class TestSerializationJP106
     {
+        [Fact]
+        public void TestDecryptEncryptJP106() {
+            string inputPath = "../../../Saves/106/rf5_gm000";
+            string outputPath = inputPath + "_test_decrypt_encrypt_106";
+            SaveData save = SaveData.FromEncryptedFile(inputPath, version: 6, locale: SaveData.LOCALE.JP);
+            save.ToEncryptedFile(outputPath);
+            Assert.True(TestUtils.AreFilesIdentical(inputPath, outputPath));
+        }
 
     }
 
     [Collection("102")]
     public class TestSerializationJP102
     {
+        [Fact]
+        public void TestDecryptEncryptJP102() {
+            string inputPath = "../../../Saves/102/rf5_gm001";
+            string outputPath = inputPath + "_test_decrypt_encrypt_102";
+            SaveData save = SaveData.FromEncryptedFile(inputPath, version: 2, locale: SaveData.LOCALE.JP);
+            save.ToEncryptedFile(outputPath);
+            Assert.True(TestUtils.AreFilesIdentical(inputPath, outputPath));
+        }
 
     }
 }

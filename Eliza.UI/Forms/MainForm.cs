@@ -83,7 +83,7 @@ namespace Eliza.Forms
 
                     // try
                     // {
-                    this._saveData = SaveData.FromEncryptedFile(this._path);
+                    this._saveData = SaveData.FromEncryptedFile(this._path, version:7, locale: SaveData.LOCALE.JP);
                     this.headerButton.Enabled = true;
                     this.dataButton.Enabled = true;
                     this.footerButton.Enabled = true;

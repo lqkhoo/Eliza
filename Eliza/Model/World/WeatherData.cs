@@ -1,5 +1,5 @@
-﻿using static Eliza.Core.Serialization.ElizaFlowControlAttribute;
-using System;
+﻿using System;
+using Eliza.Core.Serialization;
 
 namespace Eliza.Model.World
 {

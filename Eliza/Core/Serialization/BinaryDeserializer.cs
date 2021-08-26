@@ -10,6 +10,7 @@ using static Eliza.Core.Serialization.ElizaFlowControlAttribute;
 using Eliza.Model;
 using Eliza.Model.Save;
 using Eliza.Model.Status;
+using Eliza.Model.Event;
 
 namespace Eliza.Core.Serialization
 {
@@ -22,11 +23,11 @@ namespace Eliza.Core.Serialization
         // Used for debugging only.
         protected List<object> _DebugList;
 
-        public BinaryDeserializer(Stream baseStream) : base(baseStream)
+        public BinaryDeserializer(Stream baseStream, SaveData.LOCALE locale, int version)
+                                  : base(baseStream, locale, version)
         {
             this.Reader = new BinaryReader(baseStream);
             this._DebugList = new List<object>();
-
         }
 
         // Public read methods preserve the position of this.Reader
@@ -145,22 +146,18 @@ namespace Eliza.Core.Serialization
         {
             List<byte> dataString = new();
 
-            if (!isUtf16Uuid) {
+            if (! isUtf16Uuid) {
 
                 int length = Convert.ToInt32(this.ReadPrimitive(lengthType));
-                byte[] data;
-                if (max == ElizaStringAttribute.UNKNOWN_SIZE) {
-                    data = this.Reader.ReadBytes(length);
-                } else {
-                    data = this.Reader.ReadBytes(length);
+                byte[] data = this.Reader.ReadBytes(length);
+                if (max != ElizaStringAttribute.UNKNOWN_SIZE) {
                     this.BaseStream.Seek(max - length, SeekOrigin.Current);
                 }
                 return Encoding.Unicode.GetString(data);
 
             } else {
-                // This handles stringId in the FurnitureSaveData struct.
-                // These are most likely UUIDs including the hyphens
-                // encoded as UTF-16 to be passed directly into function calls.
+                // This handles the stringIds in the FURNITUREDATA struct.
+                // These are most likely UUIDs encoded as UTF-16.
                 // Since UUIDs only have ASCII bytes, every other byte will be zero.
                 // We only extract every other (first) byte.
                 // See: https://stackoverflow.com/q/50070289
@@ -242,8 +239,17 @@ namespace Eliza.Core.Serialization
             if (this._DebugTypeSet.Contains(objectType)) {
                 this._DebugList.Add(objectValue); // Helpful to breakpoint this line.
             }
+            if(objectType == typeof(SaveScenarioSupport)) {
+                var foo = 0;
+            }
 
             return objectValue;
+        }
+
+        protected object ReadMessagePackObject(Type type) {
+            var length = this.Reader.ReadInt32();
+            var data = this.Reader.ReadBytes(length);
+            return MessagePackSerializer.Deserialize(type, data);
         }
 
         protected void ReadField(object objectValue, FieldInfo fieldInfo)
@@ -252,57 +258,78 @@ namespace Eliza.Core.Serialization
             Type fieldType = fieldInfo.FieldType;
             object fieldValue = null;
 
-            // First, check if the field was decorated with at least one 
-            // of our attributes. This can change how we process the field.
+            // The rule here is simple. If we have one or more control flow tags,
+            // the read happens within the loop. We only reach the point after the loop
+            // if there are no ElizaFlowControlAttributes.
+
+            bool hasRead = false;       // Have we read anything so far in this function call?
+            bool hasControlTag = false; // Has this field been annotated with an ElizaControlFlowAttribute?
+
+            // Check if the field has been annotated with one of our attributes
             if (fieldInfo.IsDefined(typeof(ElizaFlowControlAttribute), inherit: true)) {
 
-                //TODO: versioning tags
+                hasControlTag = true;
 
-                if (fieldInfo.IsDefined(typeof(ElizaStringAttribute))) {
-                    var stringAttr = (ElizaStringAttribute)fieldInfo.GetCustomAttribute(typeof(ElizaStringAttribute));
-                    if (fieldType == typeof(string)) {
-                        fieldValue = this.ReadString(
-                                        max: stringAttr.MaxSize,
-                                        isUtf16Uuid: stringAttr.IsUtf16Uuid
-                                     );
-                    } else {
-                        throw new UnsupportedAttributeException(stringAttr, fieldInfo);
+                var elizaAttrs = fieldInfo.GetCustomAttributes(typeof(ElizaFlowControlAttribute), inherit: true);
+                foreach (ElizaFlowControlAttribute elizaAttr in elizaAttrs) {
+
+                    // Do the version check here. If it doesn't match, skip to the next attribute.
+                    bool isRelevant = ((this.Locale == elizaAttr.Locale
+                                            || elizaAttr.Locale == SaveData.LOCALE.ANY)
+                                            && this.Version >= elizaAttr.FromVersion);
+
+                    // Don't fail silently if it's trying to read twice. Means wrong use of tags.
+                    if (hasRead && isRelevant) { throw new UnsupportedAttributeException(elizaAttr, fieldInfo); }
+                    if (hasRead || (!isRelevant)) {
+                        continue;
                     }
 
-                } else if (fieldInfo.IsDefined(typeof(ElizaListAttribute))) {
-                    var listAttr = (ElizaListAttribute)fieldInfo.GetCustomAttribute(typeof(ElizaListAttribute));
-                    if (IsList(fieldType)) {
-                        fieldValue = this.ReadList(
-                                        type: fieldType,
-                                        lengthType: listAttr.LengthType,
-                                        length: listAttr.FixedSize,
-                                        maxSize: listAttr.MaxSize,
-                                        isMessagePackList: listAttr.IsMessagePackList
-                                     );
+                    // If the tag is relevant and we haven't read anything:
+                    Type attrType = elizaAttr.GetType();
+
+                    if(attrType == typeof(ElizaStringAttribute)) {
+                        var stringAttr = (ElizaStringAttribute)elizaAttr;
+                        if (fieldType == typeof(string)) {
+                            fieldValue = this.ReadString(
+                                            max: stringAttr.MaxSize,
+                                            isUtf16Uuid: stringAttr.IsUtf16Uuid
+                                         );
+                            hasRead = true;
+                        } else { throw new UnsupportedAttributeException(stringAttr, fieldInfo); }
+
+                    } else if(attrType == typeof(ElizaListAttribute)) {
+                        var listAttr = (ElizaListAttribute)elizaAttr;
+                        if (IsList(fieldType)) {
+                            fieldValue = this.ReadList(
+                                            type: fieldType,
+                                            lengthType: listAttr.LengthType,
+                                            length: listAttr.FixedSize,
+                                            maxSize: listAttr.MaxSize,
+                                            isMessagePackList: listAttr.IsMessagePackList
+                                         );
+                            hasRead = true;
+                        } else { throw new UnsupportedAttributeException(listAttr, fieldInfo); }
+
                     } else {
-                        throw new UnsupportedAttributeException(listAttr, fieldInfo);
+
+                        // This is a normal field with a tag.
+                        fieldValue = this.ReadValue(fieldType);
+                        hasRead = true;
                     }
+
                 }
             }
 
-
-            // TODO: version bypass. Need another variable.
             // TODO: value tags
 
-            // If there were no Eliza attributes, or if it was not a directive
-            // that changes how we read the field, do the simplest case.
-            if (fieldValue == null) {
+            if ((! hasControlTag) && (! hasRead)) {
                 fieldValue = this.ReadValue(fieldType);
             }
+
+            // Finally set the value into the field, for all cases above
             fieldInfo.SetValue(objectValue, fieldValue);
             return;
         }
 
-        protected object ReadMessagePackObject(Type type)
-        {
-            var length = this.Reader.ReadInt32();
-            var data = this.Reader.ReadBytes(length);
-            return MessagePackSerializer.Deserialize(type, data);
-        }
     }
 }
