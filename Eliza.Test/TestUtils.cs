@@ -13,26 +13,29 @@ namespace Eliza.Test.Utils
         // https://docs.microsoft.com/en-us/troubleshoot/dotnet/csharp/create-file-compare
         public static bool AreFilesIdentical(string path1, string path2)
         {
-            // Just check every byte
-            int f1byte;
-            int f2byte;
-            FileStream fs1 = new FileStream(path1, FileMode.Open);
-            FileStream fs2 = new FileStream(path2, FileMode.Open);
-            if (fs1.Length != fs2.Length) {
-                return false;
+            // Just check every byte. Completely load both files into memory for speed.
+
+            using (FileStream fs1 = new (path1, FileMode.Open))
+            using (FileStream fs2 = new(path2, FileMode.Open)) {
+
+                if(fs1.Length != fs2.Length) {
+                    return false;
+                }
+
+                byte[] arr1 = new byte[fs1.Length];
+                byte[] arr2 = new byte[fs2.Length];
+
+                fs1.Read(arr1, 0, arr1.Length);
+                fs2.Read(arr2, 0, arr2.Length);
+
+                for(int i=0; i<arr1.Length; i++) {
+                    if(arr1[i] != arr2[i]) {
+                        return false;
+                    }
+                }
+                return true;
             }
-
-            do {
-                f1byte = (byte)fs1.ReadByte();
-                f2byte = (byte)fs2.ReadByte();
-            } while ((f1byte==f2byte) && (f1byte != -1));
-
-            fs1.Close();
-            fs2.Close();
-
-            return ((f1byte - f2byte) == 0);
         }
-
 
     }
 }

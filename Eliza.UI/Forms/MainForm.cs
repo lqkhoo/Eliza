@@ -107,7 +107,7 @@ namespace Eliza.Forms
                 if (saveFileDialog.ShowDialog(this.Parent) == DialogResult.Ok)
                 {
                     var path = saveFileDialog.FileName;
-                    this._saveData.Write(path);
+                    this._saveData.ToEncryptedFile(path);
                 }
             }
         }

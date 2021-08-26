@@ -3,6 +3,8 @@ using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Parameters;
 using System.Text;
+using System.Security.Cryptography;
+using System;
 
 namespace Eliza.Core
 {
@@ -10,16 +12,17 @@ namespace Eliza.Core
     {
         public static byte[] Encrypt(byte[] data)
         {
-            return RijndaelCrypto(data, true);
+            return RijndaelCrypto(data, isEncrypting: true);
         }
 
         public static byte[] Decrypt(byte[] data)
         {
-            return RijndaelCrypto(data, false);
+            return RijndaelCrypto(data, isEncrypting: false);
         }
 
         public static byte[] RijndaelCrypto(byte[] data, bool isEncrypting)
         {
+
             //RF5 uses 256bit block Rijndael Encryption
             var aesKey = Encoding.UTF8.GetBytes("1cOSvkZ4HQCi6z/yQpEEl4neB+AIXwTX");
             var aesIV = Encoding.UTF8.GetBytes("XuMigxpK61gLwgo1RsreLLGPcw3vJFze");
@@ -33,6 +36,23 @@ namespace Eliza.Core
             var output = new byte[cipher.GetOutputSize(data.Length)];
             var length = cipher.ProcessBytes(data, output, 0);
             cipher.DoFinal(output, length);
+
+            // This is when using BouncyCastle.NetCore 1.8.8.
+            // Their implementation returns an extra 32 bytes during encryption
+            // compared to the following reference implementations:
+            // 
+            // * RF5's original encryption routines
+            // * Py3rijndael: https://github.com/meyt/py3rijndael
+            // 
+            // It's nice to preserve the property inputSize == outputSize.
+            // However, to keep things consistent with the game,
+            // we truncate the last block.
+            if (isEncrypting) {
+                var destArray = new byte[output.Length - 0x20];
+                Array.Copy(output, destArray, destArray.Length);
+                output = destArray;
+            }
+
             return output;
         }
 

@@ -419,28 +419,28 @@ struct RF5SHIPPINGDATA {
     MESSAGEPACKOBJLIST FishShipmentRecords;
     MESSAGEPACKOBJLIST SeedLevelRecordList;
 
-// LPocketData
-byte SyncToCampEquip;
-int QuickLastFocus;
-int CampLastFocus;
-int Unk[38];   // Placeholder for now
-
-// NameData
-char Farm1[36]; // 0x18
-char Farm2[36]; // 0x18
-char Farm3[36]; // 0x18
-char Farm4[36]; // 0x18
-char Farm5[36]; // 0x18
-char Farm6[36]; // 0x18
-char Farm7[36]; // 0x18
-char Farm8[36]; // 0x18
-char Farm9[36]; // 0x18
-char Farm10[36]; // 0x18
-char Farm11[36]; // 0x18
-char Farm12[36]; // 0x18
-char Farm13[36]; // 0x18
-char Farm14[36]; // 0x18
-char Farm15[36]; // 0x18
+    // LPocketData
+    byte SyncToCampEquip;
+    int QuickLastFocus;
+    int CampLastFocus;
+    int Unk[38];   // Placeholder for now
+    
+    // NameData
+    char Farm1[36]; // 0x18
+    char Farm2[36]; // 0x18
+    char Farm3[36]; // 0x18
+    char Farm4[36]; // 0x18
+    char Farm5[36]; // 0x18
+    char Farm6[36]; // 0x18
+    char Farm7[36]; // 0x18
+    char Farm8[36]; // 0x18
+    char Farm9[36]; // 0x18
+    char Farm10[36]; // 0x18
+    char Farm11[36]; // 0x18
+    char Farm12[36]; // 0x18
+    char Farm13[36]; // 0x18
+    char Farm14[36]; // 0x18
+    char Farm15[36]; // 0x18
 /*
 int UIEMCategoriesCustomNoCount;
 int UIEMCategoriesCustomNo[UIEMCategoriesCustomNoCount];

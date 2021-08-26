@@ -17,10 +17,6 @@ namespace Eliza.Core.Serialization
         // representing the length of the array that follows.
         protected const TypeCode DEFAULT_LENGTH_TYPECODE = TypeCode.Int32;
 
-        public const int HEADER_LENGTH_NBYTES = 0x20;
-        public const int FOOTER_LENGTH_NBYTES = 0x10;
-
-
         public BinarySerialization(Stream baseStream)
         {
             this.BaseStream = baseStream;

@@ -22,41 +22,24 @@ namespace Eliza.Core.Serialization
             this.Reader = new BinaryReader(baseStream);
         }
 
-        /*
-        public T Deserialize<T>()
-        {
-            return (T)ReadValue(typeof(T));
-        }
-        */
-
         // Public read methods preserve the position of this.Reader
         // from previous reads. For most intents and purposes we stick
         // with default arguments and simply read the header, data,
         // and footer sequentially.
-
-        public RF5SaveDataHeader ReadSaveDataHeader(bool reposition=false,
-                                                    long newPosition=0x0)
+        public RF5SaveDataHeader ReadSaveDataHeader()
         {
-            if (reposition) { this.BaseStream.Position = newPosition; }
             return (RF5SaveDataHeader)this.ReadObject(typeof(RF5SaveDataHeader));
         }
 
-        public RF5SaveData ReadSaveData(bool reposition=false,
-                                        long newPosition=BinarySerializer.HEADER_LENGTH_NBYTES)
+        public RF5SaveData ReadSaveData()
         {
-            if (reposition) { this.BaseStream.Position = newPosition; }
             return (RF5SaveData)this.ReadObject(typeof(RF5SaveData));
         }
 
-        public RF5SaveDataFooter ReadSaveDataFooter(bool reposition=false, long newPosition=-1)
+        public RF5SaveDataFooter ReadSaveDataFooter()
         {
-            if (reposition) {
-                newPosition = newPosition == -1 ? this.BaseStream.Position : newPosition;
-                this.BaseStream.Position = newPosition;
-            } else {
-                //Aligned relative to data 256bits due to Rijndael crypto
-                this.BaseStream.Position = ((this.BaseStream.Position - 0x20 + 0x1F) & ~0x1F) + 0x20;
-            }
+            //Aligned relative to data 256bits due to Rijndael crypto
+            this.BaseStream.Position = ((this.BaseStream.Position - 0x20 + 0x1F) & ~0x1F) + 0x20;
             return (RF5SaveDataFooter)this.ReadObject(typeof(RF5SaveDataFooter));
         }
 
@@ -203,13 +186,6 @@ namespace Eliza.Core.Serialization
             return new SaveFlagStorage(data.ToArray(), length);
         }
 
-        protected RF5SaveDataFooter ReadSaveDataFooter(Type type)
-        {
-            //Aligned relative to data 256bits due to Rijndael crypto
-            this.BaseStream.Position = ((this.BaseStream.Position - 0x20 + 0x1F) & ~0x1F) + 0x20;
-            return (RF5SaveDataFooter)this.ReadObject(type);
-        }
-
         protected IDictionary ReadDictionary(Type type)
         {
             Type[] arguments = type.GetGenericArguments();
@@ -256,7 +232,6 @@ namespace Eliza.Core.Serialization
 
         }
 
-
         protected void ReadField(object objectValue, FieldInfo fieldInfo)
         {
 
@@ -273,15 +248,9 @@ namespace Eliza.Core.Serialization
                     if (IsList(fieldType)) {
                         fieldValue = this.ReadList(fieldType, isMessagePackList: true);
                     } else {
-                        var messagePackListAttribute = (ElizaMessagePackListAttribute)fieldInfo
-                                                       .GetCustomAttribute(typeof(ElizaMessagePackListAttribute));
+                        var messagePackListAttribute = (ElizaMessagePackListAttribute)fieldInfo.GetCustomAttribute(typeof(ElizaMessagePackListAttribute));
                         throw new UnsupportedAttributeException(messagePackListAttribute, fieldInfo);
                     }
-                }
-
-                if (fieldInfo.IsDefined(typeof(ElizaMessagePackRawAttribute))) {
-                    fieldValue = this.ReadMessagePackObject(fieldType);
-                    // No type-checking because this is our type coercion.
                 }
 
                 if (fieldInfo.IsDefined(typeof(ElizaSizeAttribute))) {
@@ -329,7 +298,6 @@ namespace Eliza.Core.Serialization
             fieldInfo.SetValue(objectValue, fieldValue);
             return;
         }
-
 
         protected object ReadMessagePackObject(Type type)
         {

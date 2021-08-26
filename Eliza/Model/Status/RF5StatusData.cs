@@ -5,8 +5,7 @@ namespace Eliza.Model.Status
 {
     public class RF5StatusData
     {
-        [ElizaMessagePackRaw]
-        public int unk;
+        public MessagePackInt Unk;
         public Dictionary<int, HumanStatusData> HumanStatusDatas;
         public List<FriendMonsterStatusData> FriendMonsterStatusDatas;
     }

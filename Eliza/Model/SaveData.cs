@@ -1,8 +1,11 @@
-﻿using Eliza.Core;
+﻿
 using System.IO;
-using Eliza.Core.Serialization;
 using System;
+using System.Linq;
+using Eliza.Core;
+using Eliza.Core.Serialization;
 using Eliza.Model.Save;
+using System.Collections.Generic;
 //TODO:
 //Generate JSON:
 //https://github.com/SinsofSloth/RF5-global-metadata/blob/1a4dc9fb55263296c8a8564176591a7ab9fa1745/_no_namespace/FarmManager.FARM_ID.cs
@@ -36,69 +39,156 @@ namespace Eliza.Model
 {
     public class SaveData
     {
+        public const int HEADER_NBYTES = 0x20;
+        public const int FOOTER_NBYTES = 0x10;
+
+        public enum LOCALE : Int32 { JP=0, EN=1 }
+        public const int LATEST_JP_VER = 7;
+        public const int LATEST_EN_VER = -1;
+
+
         public RF5SaveDataHeader header;
         public RF5SaveData saveData;
         public RF5SaveDataFooter footer;
 
-        protected SaveData(byte[] headerBytes, byte[] decryptedDataBytes, byte[] footerBytes)
+        public readonly LOCALE Locale;
+        public readonly int Version;
+
+        public readonly byte[] _originalHeader;
+        public readonly byte[] _originalSaveData;
+        public readonly byte[] _originalFooter;
+
+        protected SaveData(byte[] headerBytes, byte[] decryptedDataBytes, byte[] footerBytes,
+                                                int version= LATEST_JP_VER, LOCALE locale=LOCALE.JP)
         {
-            this.header = new BinaryDeserializer(new MemoryStream(headerBytes)).ReadSaveDataHeader();
-            this.saveData = new BinaryDeserializer(new MemoryStream(decryptedDataBytes)).ReadSaveData();
-            this.footer = new BinaryDeserializer(new MemoryStream(footerBytes)).ReadSaveDataFooter();
+            using (MemoryStream header = new(headerBytes))
+            using (MemoryStream saveData = new(decryptedDataBytes))
+            using (MemoryStream footer = new(footerBytes))
+            {
+                this.header = new BinaryDeserializer(header).ReadSaveDataHeader();
+                this.saveData = new BinaryDeserializer(saveData).ReadSaveData();
+                this.footer = new BinaryDeserializer(footer).ReadSaveDataFooter();
+            }
+            this._originalHeader = headerBytes;
+            this._originalSaveData = decryptedDataBytes;
+            this._originalFooter = footerBytes;
         }
 
         protected static Tuple<byte[], byte[], byte[]> DecryptFile(string path)
         {
-            const int HEADER_NBYTES = 0x20;
-            const int FOOTER_NBYTES = 0x10;
             byte[] header;
-            byte[] encrypted_data;
-            byte[] decrypted_data;
+            byte[] encryptedData;
+            byte[] decryptedData;
             byte[] footer;
 
             using (FileStream fs = new(path, FileMode.Open, FileAccess.Read)) {
                 BinaryReader reader = new(fs);
                 int total_nbytes = (int)fs.Length;
-                int data_length = total_nbytes - HEADER_NBYTES - FOOTER_NBYTES;
-                header = reader.ReadBytes(HEADER_NBYTES);
-                encrypted_data = reader.ReadBytes(data_length);
-                footer = reader.ReadBytes(FOOTER_NBYTES);
-                decrypted_data = Cryptography.Decrypt(encrypted_data);
+                int data_length = total_nbytes - SaveData.HEADER_NBYTES - SaveData.FOOTER_NBYTES;
+                header = reader.ReadBytes(SaveData.HEADER_NBYTES);
+                encryptedData = reader.ReadBytes(data_length);
+                footer = reader.ReadBytes(SaveData.FOOTER_NBYTES);
+                decryptedData = Cryptography.Decrypt(encryptedData);
+
+                // decrypted_data contains undefined bytes at the end.
+                // These are from uninitialized buffer indices from
+                // the padding operation for the previous encryption.
+                // We need to reproduce these to maintain the checksum
+                // for an unmodified file.
             }
-            return new Tuple<byte[], byte[], byte[]>(header, decrypted_data, footer);
+            return new Tuple<byte[], byte[], byte[]>(header, decryptedData, footer);
         }
 
 
-        public static SaveData FromEncryptedFile(string path, int version=7)
+        public static SaveData FromEncryptedFile(string path, int version=SaveData.LATEST_JP_VER,
+                                                                    LOCALE locale = LOCALE.JP)
         {
             var (header, data, footer) = DecryptFile(path);
             return new SaveData(header, data, footer);
         }
 
 
-        // In this case we don't care about byte-for-byte reproduction because
-        // we aren't going to re-encrypt it. This is also useful to ensure that
-        // deserialization is working properly, to troubleshoot the serialization bit.
-        public static void JustDecryptFile(string inputPath, string outputPath, int version=7)
+        public static void ToDecryptedFile(string inputPath, string outputPath, bool bypassSerialization=true,
+                                    int version=SaveData.LATEST_JP_VER, LOCALE locale = LOCALE.JP)
         {
-            // Note that we're not just concatenating the contents from
-            // DecryptFile() together. We actually want to test serialization.
-            SaveData save = SaveData.FromEncryptedFile(inputPath);
-            using (var fs = new FileStream(outputPath, FileMode.OpenOrCreate, FileAccess.Write)) {
-
-                fs.SetLength(0); // Empty previous file contents.
-                var serializer = new BinarySerializer(fs, encrypt: false);
-                serializer.WriteSaveFile(save, encrypt: false);
+            using (FileStream fs = new(outputPath, FileMode.OpenOrCreate, FileAccess.Write))
+            {
+                if(bypassSerialization) {
+                    var (header, decryptedData, footer) = SaveData.DecryptFile(inputPath);
+                    fs.SetLength(0); // Empty previous file contents
+                    fs.Write(header);
+                    fs.Write(decryptedData);
+                    fs.Write(footer);
+                } else {
+                    SaveData save = SaveData.FromEncryptedFile(inputPath);
+                    using MemoryStream ms = new();
+                    BinarySerializer serializer = new(ms);
+                    serializer.WriteSaveDataHeader(save.header);
+                    serializer.WriteSaveData(save.saveData); // Plain write. No encryption.
+                    serializer.WriteSaveDataFooter(save.footer);
+                    serializer.BaseStream.SetLength(serializer.BaseStream.Position); // Truncate
+                    fs.SetLength(0);
+                    ms.CopyTo(fs);
+                }
             }
         }
 
 
-        public void Write(string path, int version=7)
+        public void ToEncryptedFile(string path, int version=SaveData.LATEST_JP_VER, LOCALE locale=LOCALE.JP)
         {
-            using (var fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite))
+            using (FileStream fs = new(path, FileMode.Create, FileAccess.ReadWrite))
             {
-                var serializer = new BinarySerializer(fs);
-                serializer.WriteSaveFile(this, encrypt: true);
+                using MemoryStream buffer = new();
+
+                // Write old unencrypted data including junk
+                buffer.Write(this._originalHeader);
+                buffer.Write(this._originalSaveData);
+                long junkLength = buffer.Position; // should equal paddedLength
+                buffer.Position = 0x0;
+
+                // Write new unencrypted data to buffer
+                using MemoryStream serializerBuffer = new();
+                BinarySerializer serializer = new(serializerBuffer);
+                serializer.WriteSaveDataHeader(this.header);
+                serializer.WriteSaveData(this.saveData);
+                long bodyLength = serializer.BaseStream.Position;
+                long paddedLength = ((bodyLength - 0x20 + 0x1F) & ~0x1F) + 0x20;
+                serializer.BaseStream.CopyTo(buffer);
+
+                int headerLength = SaveData.HEADER_NBYTES;
+                buffer.Position = 0x0;
+                byte[] headerData = new byte[headerLength];
+                byte[] paddedSaveData = new byte[paddedLength];
+                buffer.Read(headerData, offset: 0, count: headerLength);
+                buffer.Read(paddedSaveData, offset: 0, count: (int)paddedLength);
+
+                // Compute
+                byte[] encryptedData = Cryptography.Encrypt(paddedSaveData);
+
+                // The checksum only computes up to the point of the 
+                // encrypted data, which should be 0x20 shorter than
+                // paddedLength.
+                List<byte> bodyData = new();
+                bodyData.AddRange(headerData);
+                bodyData.AddRange(encryptedData);
+                var foo = bodyData.Count;
+                uint checksum = Cryptography.Checksum(bodyData.ToArray());
+
+                buffer.Position = headerLength;
+                buffer.Write(encryptedData);
+
+                // Write footer
+                serializer = new(buffer);
+                serializer.Writer.Write((int)bodyLength);
+                serializer.Writer.Write((int)paddedLength);
+                serializer.Writer.Write(checksum);
+                serializer.Writer.Write(this.footer.Blank);
+                buffer.SetLength(serializer.BaseStream.Position);
+                buffer.Position = 0x0;
+
+                fs.SetLength(0);
+                buffer.CopyTo(fs);
+
             }
         }
     }
