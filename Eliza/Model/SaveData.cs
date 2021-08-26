@@ -59,7 +59,7 @@ namespace Eliza.Model
         public readonly byte[] _originalFooter;
 
         protected SaveData(byte[] headerBytes, byte[] decryptedDataBytes, byte[] footerBytes,
-                                                int version= LATEST_JP_VER, LOCALE locale=LOCALE.JP)
+                           int version= LATEST_JP_VER, LOCALE locale=LOCALE.JP)
         {
             using (MemoryStream header = new(headerBytes))
             using (MemoryStream saveData = new(decryptedDataBytes))
@@ -101,15 +101,17 @@ namespace Eliza.Model
 
 
         public static SaveData FromEncryptedFile(string path, int version=SaveData.LATEST_JP_VER,
-                                                                    LOCALE locale = LOCALE.JP)
+                                                 LOCALE locale = LOCALE.JP)
         {
             var (header, data, footer) = DecryptFile(path);
             return new SaveData(header, data, footer);
         }
 
 
-        public static void ToDecryptedFile(string inputPath, string outputPath, bool bypassSerialization=true,
-                                    int version=SaveData.LATEST_JP_VER, LOCALE locale = LOCALE.JP)
+        public static void ToDecryptedFile(string inputPath, string outputPath,
+                                           bool bypassSerialization=true,
+                                           int version=SaveData.LATEST_JP_VER, 
+                                           LOCALE locale = LOCALE.JP)
         {
             using (FileStream fs = new(outputPath, FileMode.OpenOrCreate, FileAccess.Write))
             {
@@ -134,7 +136,8 @@ namespace Eliza.Model
         }
 
 
-        public void ToEncryptedFile(string path, int version=SaveData.LATEST_JP_VER, LOCALE locale=LOCALE.JP)
+        public void ToEncryptedFile(string path, int version=SaveData.LATEST_JP_VER,
+                                    LOCALE locale=LOCALE.JP)
         {
             using (FileStream fs = new(path, FileMode.Create, FileAccess.ReadWrite))
             {
@@ -149,6 +152,7 @@ namespace Eliza.Model
                 // Write new unencrypted data to buffer
                 using MemoryStream serializerBuffer = new();
                 BinarySerializer serializer = new(serializerBuffer);
+                serializer.BaseStream.Position = 0x0;
                 serializer.WriteSaveDataHeader(this.header);
                 serializer.WriteSaveData(this.saveData);
                 long bodyLength = serializer.BaseStream.Position;
@@ -187,8 +191,8 @@ namespace Eliza.Model
                 buffer.Position = 0x0;
 
                 fs.SetLength(0);
-                buffer.CopyTo(fs);
-
+                buffer.CopyTo(fs, (int)buffer.Length);
+                fs.SetLength(fs.Position); // Truncate
             }
         }
     }

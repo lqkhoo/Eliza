@@ -6,10 +6,10 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
-using static Eliza.Core.Serialization.ElizaAttribute;
-using Eliza.Model.Status;
-using Eliza.Model.Save;
+using static Eliza.Core.Serialization.ElizaFlowControlAttribute;
 using Eliza.Model;
+using Eliza.Model.Save;
+using Eliza.Model.Status;
 
 namespace Eliza.Core.Serialization
 {
@@ -17,9 +17,16 @@ namespace Eliza.Core.Serialization
     {
         public readonly BinaryReader Reader;
 
+        // This contains a list of top-level RF5Save objects
+        // which have been successfully deserialized.
+        // Used for debugging only.
+        protected List<object> _DebugList;
+
         public BinaryDeserializer(Stream baseStream) : base(baseStream)
         {
             this.Reader = new BinaryReader(baseStream);
+            this._DebugList = new List<object>();
+
         }
 
         // Public read methods preserve the position of this.Reader
@@ -81,15 +88,18 @@ namespace Eliza.Core.Serialization
             }
         }
 
-        protected IList ReadList(Type type, TypeCode lengthType=DEFAULT_LENGTH_TYPECODE,
-                                    int length=UNKNOWN_LENGTH, int maxSize=UNKNOWN_LENGTH,
-                                    bool isMessagePackList=false)
+        protected IList ReadList(Type type,
+                                TypeCode lengthType=ElizaListAttribute.DEFAULT_LENGTH_TYPECODE,
+                                int length=ElizaListAttribute.UNKNOWN_SIZE,
+                                int maxSize= ElizaListAttribute.UNKNOWN_SIZE,
+                                bool isMessagePackList=ElizaListAttribute.DFEAULT_ISMESSAGEPACK_LIST)
         {
+
             IList ilist;
             Type contentType;
 
             // If the list has dynamic length, then read in the length int preceding the data.
-            if (length == UNKNOWN_LENGTH) {
+            if (length == ElizaListAttribute.UNKNOWN_SIZE) {
                 length = Convert.ToInt32(this.ReadPrimitive(lengthType));
                 // This can still be zero, in which case it serializes to
                 // just the length int, and we read nothing else.
@@ -97,7 +107,7 @@ namespace Eliza.Core.Serialization
 
             // Even if we know the max size, we still need to read empty data
             // because they may be encoded differently.
-            if (maxSize != UNKNOWN_LENGTH) {
+            if (maxSize != ElizaListAttribute.UNKNOWN_SIZE) {
                 length = maxSize;
             }
 
@@ -128,17 +138,18 @@ namespace Eliza.Core.Serialization
             return ilist;
         }
 
-        protected string ReadString(int size=UNKNOWN_LENGTH,
-                                    int max=UNKNOWN_LENGTH, bool isUtf16Uuid=false)
+        protected string ReadString(int size=ElizaStringAttribute.UNKNOWN_SIZE,
+                                    int max=ElizaStringAttribute.UNKNOWN_SIZE,
+                                    bool isUtf16Uuid=ElizaStringAttribute.DEFAULT_IS_UTF16_UUID)
         {
             List<byte> dataString = new();
 
             //Might be deprecated
-            if (size != 0) {
+            if (size != ElizaStringAttribute.UNKNOWN_SIZE) {
                 byte[] data = this.Reader.ReadBytes(size);
                 return Encoding.Unicode.GetString(data);
 
-            } else if (max != 0) {
+            } else if (max != ElizaStringAttribute.UNKNOWN_SIZE) {
                 int length = this.Reader.ReadInt32();
                 byte[] data = this.Reader.ReadBytes(length);
                 this.BaseStream.Seek(max - length, SeekOrigin.Current);
@@ -228,8 +239,13 @@ namespace Eliza.Core.Serialization
                     }
                 }
             }
-            return objectValue;
 
+            // Populate this._DebugList
+            if (this._DebugTypeSet.Contains(objectType)) {
+                this._DebugList.Add(objectValue); // Helpful to breakpoint this line.
+            }
+
+            return objectValue;
         }
 
         protected void ReadField(object objectValue, FieldInfo fieldInfo)
@@ -239,62 +255,47 @@ namespace Eliza.Core.Serialization
             object fieldValue = null;
 
             // First, check if the field was decorated with at least one 
-            // ElizaAttribute. This can change how we process the field.
-            if (fieldInfo.IsDefined(typeof(ElizaAttribute), inherit: true)) {
+            // of our attributes. This can change how we process the field.
+            if (fieldInfo.IsDefined(typeof(ElizaFlowControlAttribute), inherit: true)) {
 
                 //TODO: versioning tags
 
-                if (fieldInfo.IsDefined(typeof(ElizaMessagePackListAttribute))) {
+                if (fieldInfo.IsDefined(typeof(ElizaStringAttribute))) {
+                    var stringAttr = (ElizaStringAttribute)fieldInfo.GetCustomAttribute(typeof(ElizaStringAttribute));
+                    if (fieldType == typeof(string)) {
+                        fieldValue = this.ReadString(
+                                        max: stringAttr.MaxSize,
+                                        isUtf16Uuid: stringAttr.IsUtf16Uuid
+                                     );
+                    } else {
+                        throw new UnsupportedAttributeException(stringAttr, fieldInfo);
+                    }
+
+                } else if (fieldInfo.IsDefined(typeof(ElizaListAttribute))) {
+                    var listAttr = (ElizaListAttribute)fieldInfo.GetCustomAttribute(typeof(ElizaListAttribute));
                     if (IsList(fieldType)) {
-                        fieldValue = this.ReadList(fieldType, isMessagePackList: true);
+                        fieldValue = this.ReadList(
+                                        type: fieldType,
+                                        lengthType: listAttr.LengthType,
+                                        length: listAttr.FixedSize,
+                                        maxSize: listAttr.MaxSize,
+                                        isMessagePackList: listAttr.IsMessagePackList
+                                     );
                     } else {
-                        var messagePackListAttribute = (ElizaMessagePackListAttribute)fieldInfo.GetCustomAttribute(typeof(ElizaMessagePackListAttribute));
-                        throw new UnsupportedAttributeException(messagePackListAttribute, fieldInfo);
+                        throw new UnsupportedAttributeException(listAttr, fieldInfo);
                     }
                 }
-
-                if (fieldInfo.IsDefined(typeof(ElizaSizeAttribute))) {
-                    var lengthAttribute = (ElizaSizeAttribute)fieldInfo.GetCustomAttribute(typeof(ElizaSizeAttribute));
-
-                    if (lengthAttribute.Fixed != 0) {
-                        if (IsList(fieldType)) {
-                            fieldValue = this.ReadList(fieldType, length: lengthAttribute.Fixed);
-                        } else if (fieldType == typeof(string)) {
-                            fieldValue = this.ReadString(lengthAttribute.Fixed);
-                        } else {
-                            throw new UnsupportedAttributeException(lengthAttribute, fieldInfo);
-                        }
-
-                    } else if (lengthAttribute.LengthType != TypeCode.Empty) {
-                        if (IsList(fieldType)) {
-                            fieldValue = this.ReadList(fieldType, lengthType: lengthAttribute.LengthType);
-                        } else if (fieldType == typeof(string)) {
-                            throw new UnsupportedAttributeException(lengthAttribute, fieldInfo);
-                        } else {
-                            throw new UnsupportedAttributeException(lengthAttribute, fieldInfo);
-                        }
-
-                    } else if (lengthAttribute.Max != 0) {
-                        if (IsList(fieldType)) {
-                            fieldValue = this.ReadList(fieldType, maxSize: lengthAttribute.Max);
-                        } else if (fieldType == typeof(string)) {
-                            fieldValue = this.ReadString(max: lengthAttribute.Max);
-                        } else {
-                            throw new UnsupportedAttributeException(lengthAttribute, fieldInfo);
-                        }
-                    } else {
-                        throw new UnsupportedAttributeException(lengthAttribute, fieldInfo);
-                    }
-                }
-
             }
 
-            // If there were no Eliza attributes, or if the ElizaAttribute
-            // was not a directive that changes how we read the field, do the simplest case.
+
+            // TODO: version bypass. Need another variable.
+            // TODO: value tags
+
+            // If there were no Eliza attributes, or if it was not a directive
+            // that changes how we read the field, do the simplest case.
             if (fieldValue == null) {
                 fieldValue = this.ReadValue(fieldType);
             }
-
             fieldInfo.SetValue(objectValue, fieldValue);
             return;
         }

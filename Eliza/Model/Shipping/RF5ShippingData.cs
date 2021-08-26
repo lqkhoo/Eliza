@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using static Eliza.Core.Serialization.ElizaAttribute;
+using static Eliza.Core.Serialization.ElizaFlowControlAttribute;
 
 namespace Eliza.Model.Shipping
 {
@@ -7,26 +7,35 @@ namespace Eliza.Model.Shipping
     {
         public int completedPercent;
         public long totalIncome;
-        [ElizaMessagePackList]
-        //List<ShipmentItemRecords>[]
+
+        [ElizaList(IsMessagePackList = true)]
         public List<ShipmentItemRecords> ItemRecordList1;
-        [ElizaMessagePackList]
+
+        [ElizaList(IsMessagePackList = true)]
         public List<ShipmentItemRecords> ItemRecordList2;
-        [ElizaMessagePackList]
+
+        [ElizaList(IsMessagePackList = true)]
         public List<ShipmentItemRecords> ItemRecordList3;
-        [ElizaMessagePackList]
+
+        [ElizaList(IsMessagePackList = true)]
         public List<ShipmentItemRecords> ItemRecordList4;
-        [ElizaMessagePackList]
+
+        [ElizaList(IsMessagePackList = true)]
         public List<ShipmentItemRecords> ItemRecordList5;
-        [ElizaMessagePackList]
+
+        [ElizaList(IsMessagePackList = true)]
         public List<ShipmentItemRecords> ItemRecordList6;
-        [ElizaMessagePackList]
+
+        [ElizaList(IsMessagePackList = true)]
         public List<ShipmentItemRecords> ItemRecordList7;
-        [ElizaMessagePackList]
+
+        [ElizaList(IsMessagePackList = true)]
         public List<ShipmentItemRecords> ItemRecordList8;
-        [ElizaMessagePackList]
+
+        [ElizaList(IsMessagePackList = true)]
         public List<FishShipmentRecords> FishRecordList;
-        [ElizaMessagePackList]
+
+        [ElizaList(IsMessagePackList = true)]
         public List<SeedLevelRecords> SeedLevelRecordList;
 
     }

@@ -1,4 +1,4 @@
-﻿using static Eliza.Core.Serialization.ElizaAttribute;
+﻿using static Eliza.Core.Serialization.ElizaFlowControlAttribute;
 
 namespace Eliza.Model.Save
 {
@@ -6,7 +6,7 @@ namespace Eliza.Model.Save
     {
         public ulong uid;
         public uint version;
-        [ElizaSize(Fixed = 4)]
+        [ElizaList(FixedSize = 4)]
         public char[] project;
         public uint wCnt;
         public uint wOpt;

@@ -1,4 +1,4 @@
-﻿using static Eliza.Core.Serialization.ElizaAttribute;
+﻿using static Eliza.Core.Serialization.ElizaFlowControlAttribute;
 using System;
 
 namespace Eliza.Model.World
@@ -12,7 +12,7 @@ namespace Eliza.Model.World
         public byte RuneyDayCount;
         public byte MeteorShowerDayCount;
         public byte NextWeatherDayId;
-        [ElizaSize(LengthType = TypeCode.Byte)]
+        [ElizaList(LengthType = TypeCode.Byte)]
         public byte[] WeatherHour;
 
         //public byte WeatherId { get => weatherId; set => weatherId = value; }

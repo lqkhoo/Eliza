@@ -13,26 +13,28 @@ namespace Eliza.Test
         // Otherwise put the tests in different collections to run them serially.
 
         [Fact]
-        public void TestDecryptEncrypt107()
+        public void TestDecryptEncryptJP107()
         {
             // Ensure byte-level reproduction when we haven't modified anything.
             // This is far more tricky than it sounds.
 
+            /*
             string inputPath = "../../../Saves/107/rf5_gm000";
             string outputPath = inputPath + "_test_decrypt_encrypt_107";
             SaveData save = SaveData.FromEncryptedFile(inputPath, version: 7, locale: SaveData.LOCALE.JP);
             save.ToEncryptedFile(outputPath);
             Assert.True(TestUtils.AreFilesIdentical(inputPath, outputPath));
+            */
 
-            inputPath = "../../../Saves/107/rf5_gm001";
-            outputPath = inputPath + "_test_decrypt_encrypt_107";
-            save = SaveData.FromEncryptedFile(inputPath, version: 7, locale: SaveData.LOCALE.JP);
-            save.ToEncryptedFile(outputPath);
-            Assert.True(TestUtils.AreFilesIdentical(inputPath, outputPath));
+            string inputPath2 = "../../../Saves/107/rf5_gm001";
+            string outputPath2 = inputPath2 + "_test_decrypt_encrypt_107";
+            SaveData save2 = SaveData.FromEncryptedFile(inputPath2, version: 7, locale: SaveData.LOCALE.JP);
+            save2.ToEncryptedFile(outputPath2);
+            Assert.True(TestUtils.AreFilesIdentical(inputPath2, outputPath2));
         }
 
         [Fact]
-        public void TestJustDecrypt107()
+        public void TestJustDecryptJP107()
         {
             string inputPath = "../../../Saves/107/rf5_gm002";
             string outputPath = inputPath + "_test_decrypt_107";
@@ -51,13 +53,13 @@ namespace Eliza.Test
     }
 
     [Collection("104")]
-    public class TestSerialization104
+    public class TestSerializationJP104
     {
 
     }
 
     [Collection("102")]
-    public class TestSerialization102
+    public class TestSerializationJP102
     {
 
     }

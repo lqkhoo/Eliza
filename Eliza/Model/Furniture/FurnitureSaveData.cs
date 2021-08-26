@@ -1,5 +1,5 @@
 ﻿using System.Numerics;
-using static Eliza.Core.Serialization.ElizaAttribute;
+using static Eliza.Core.Serialization.ElizaFlowControlAttribute;
 
 namespace Eliza.Model.Furniture
 {
@@ -9,7 +9,7 @@ namespace Eliza.Model.Furniture
         public Quaternion Rot;
         public int SceneId;
         public int Id;
-        [ElizaUtf16Uuid]
+        [ElizaString(IsUtf16Uuid=true)]
         public string UniqueId;
         public int Point;
         public int Hp;

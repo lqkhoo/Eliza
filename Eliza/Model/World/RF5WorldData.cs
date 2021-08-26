@@ -1,5 +1,5 @@
 ﻿using System.Numerics;
-using static Eliza.Core.Serialization.ElizaAttribute;
+using static Eliza.Core.Serialization.ElizaFlowControlAttribute;
 
 namespace Eliza.Model.World
 {

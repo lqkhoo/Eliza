@@ -1,11 +1,11 @@
-﻿using static Eliza.Core.Serialization.ElizaAttribute;
+﻿using static Eliza.Core.Serialization.ElizaFlowControlAttribute;
 
 namespace Eliza.Model.Player
 {
     public class RF5PlayerData
     {
         public int PlayerGold;
-        [ElizaSize(Max = 32)]
+        [ElizaString(MaxSize = 32)]
         public string PlayerName;
         public bool IsPlayerMale;
         public bool IsPlayerModelMale;

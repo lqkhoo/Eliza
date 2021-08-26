@@ -1,5 +1,4 @@
-﻿using Eliza.Model;
-using MessagePack;
+﻿using MessagePack;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,8 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Eliza.Model;
 using Eliza.Model.Save;
-using static Eliza.Core.Serialization.ElizaAttribute;
+using static Eliza.Core.Serialization.ElizaFlowControlAttribute;
 
 namespace Eliza.Core.Serialization
 {
@@ -16,9 +16,12 @@ namespace Eliza.Core.Serialization
     {
         public BinaryWriter Writer;
 
+        protected Dictionary<Type, long> _DebugAddressMap;
+
         public BinarySerializer(Stream baseStream) : base(baseStream)
         {
             this.Writer = new BinaryWriter(baseStream);
+            this._DebugAddressMap = new Dictionary<Type, long>();
         }
 
         public void WriteSaveDataHeader(RF5SaveDataHeader header) {
@@ -72,8 +75,11 @@ namespace Eliza.Core.Serialization
             }
         }
 
-        protected void WriteList(IList list, TypeCode lengthType=BinarySerializer.DEFAULT_LENGTH_TYPECODE,
-                                            int length=0, int max=0, bool isMessagePackList=false)
+        protected void WriteList(IList list,
+                                TypeCode lengthType=ElizaListAttribute.DEFAULT_LENGTH_TYPECODE,
+                                int length=ElizaListAttribute.UNKNOWN_SIZE,
+                                int max=ElizaListAttribute.UNKNOWN_SIZE,
+                                bool isMessagePackList=ElizaListAttribute.DFEAULT_ISMESSAGEPACK_LIST)
         {
             if (length == 0) {
                 switch (lengthType) {
@@ -89,6 +95,9 @@ namespace Eliza.Core.Serialization
                 }
             }
 
+            // The max parameter isn't used here because we've already
+            // allocated memory equal to max items in the list.
+
             foreach (object value in list) {
                 if (isMessagePackList) {
                     this.WriteMessagePackObject(value);
@@ -96,9 +105,11 @@ namespace Eliza.Core.Serialization
                     this.WriteValue(value);
                 }
             }
-            //The only instance of the use of max, doesn't seem to have an effect regardless of the length is (i.e. FurnitureData)
+
         }
-        protected void WriteString(string value, int max = 0)
+        protected void WriteString(string value,
+                                   int max = ElizaStringAttribute.UNKNOWN_SIZE,
+                                   bool isUtf16Uuid=ElizaStringAttribute.DEFAULT_IS_UTF16_UUID)
         {
             var data = Encoding.Unicode.GetBytes(value);
             if (max != 0) {
@@ -146,54 +157,60 @@ namespace Eliza.Core.Serialization
         {
 
             Type fieldType = fieldInfo.FieldType;
+            bool hasWritten = false;
 
-            if (fieldInfo.IsDefined(typeof(ElizaAttribute), inherit: true)) {
+            if (fieldInfo.IsDefined(typeof(ElizaFlowControlAttribute), inherit: true)) {
 
                 //TODO: Versioning tags
 
-                if (fieldInfo.IsDefined(typeof(ElizaMessagePackListAttribute))) {
-                    if (IsList(fieldType)) {
-                        this.WriteList((IList)fieldValue, isMessagePackList: true);
-                        return;
+                if (fieldInfo.IsDefined(typeof(ElizaStringAttribute))) {
+                    var stringAttr = (ElizaStringAttribute)fieldInfo.GetCustomAttribute(typeof(ElizaStringAttribute));
+                    if (fieldType == typeof(string)) {
+                        this.WriteString(
+                            value: (string)fieldValue,
+                            max: stringAttr.MaxSize,
+                            isUtf16Uuid: stringAttr.IsUtf16Uuid
+                        );
+                        hasWritten = true;
+                    } else {
+                        throw new UnsupportedAttributeException(stringAttr, fieldInfo);
                     }
-                }
 
-                if (fieldInfo.IsDefined(typeof(ElizaSizeAttribute))) {
-                    var lengthAttribute = (ElizaSizeAttribute)fieldInfo.GetCustomAttribute(typeof(ElizaSizeAttribute));
-                    if (lengthAttribute.Fixed != 0) {
-                        if (IsList(fieldType)) {
-                            this.WriteList((IList)fieldValue, length: lengthAttribute.Fixed);
-                            return;
-                        } else if (fieldType == typeof(string)) {
-                            this.WriteString((string)fieldValue, lengthAttribute.Fixed);
-                            return;
-                        }
-                    } else if (lengthAttribute.LengthType != TypeCode.Empty) {
-                        if (IsList(fieldType)) {
-                            this.WriteList((IList)fieldValue, lengthType: lengthAttribute.LengthType);
-                            return;
-                        } else if (fieldType == typeof(string)) {
-                            // Not supported for strings
-                        }
-                    } else if (lengthAttribute.Max != 0) {
-                        if (IsList(fieldType)) {
-                            this.WriteList((IList)fieldValue, max: lengthAttribute.Max);
-                            return;
-                        } else if (fieldType == typeof(string)) {
-                            this.WriteString((string)fieldValue, max: lengthAttribute.Max);
-                            return;
-                        }
+                } else if (fieldInfo.IsDefined(typeof(ElizaListAttribute))) {
+                    var listAttr = (ElizaListAttribute)fieldInfo.GetCustomAttribute(typeof(ElizaListAttribute));
+                    if (IsList(fieldType)) {
+                        this.WriteList(
+                            list: (IList)fieldValue,
+                            lengthType: listAttr.LengthType,
+                            length: listAttr.FixedSize,
+                            max: listAttr.MaxSize,
+                            isMessagePackList: listAttr.IsMessagePackList
+                        );
+                        hasWritten = true;
+                    } else {
+                        throw new UnsupportedAttributeException(listAttr, fieldInfo);
                     }
                 }
 
             }
 
-            this.WriteValue(fieldValue);
+            // If there were no Eliza attributes, or if it was not a directive
+            // that changes how we write the field, do the simplest case.
+            if (! hasWritten) {
+                this.WriteValue(fieldValue);
+            }
+            
         }
 
         protected void WriteObject(object objectValue)
         {
             var objectType = objectValue.GetType();
+
+            // Populate this._DebugList
+            if (this._DebugTypeSet.Contains(objectType)) {
+                // Helpful to breakpoint this line.
+                this._DebugAddressMap.Add(objectType, this.BaseStream.Position);
+            }
 
             if (objectType.IsDefined(typeof(MessagePackObjectAttribute))) {
                 // MessagePackObject
@@ -206,6 +223,7 @@ namespace Eliza.Core.Serialization
                     this.WriteField(fieldValue, fieldInfo);
                 }
             }
+
         }
 
         protected void WriteMessagePackObject(object value)
