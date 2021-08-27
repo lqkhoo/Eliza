@@ -43,19 +43,27 @@ namespace Eliza.Model
         public const int FOOTER_NBYTES = 0x10;
 
         public enum LOCALE : Int32 { JP=0, EN=1, ANY=2 }
+        public static readonly Dictionary<string, LOCALE> LocaleMap = new() {
+            { "JP", LOCALE.JP },
+            { "EN", LOCALE.EN }
+        };
+
         public const int LATEST_JP_VER = 7;
+        public static readonly Dictionary<string, int> JpVersionMap = new() {
+            { "1.0.7-1.0.9", LATEST_JP_VER },
+            { "1.0.4-1.0.6", 4 },
+            { "1.0.2-1.0.3", 2 }
+        };
+
         public const int LATEST_EN_VER = -1;
+        public static readonly Dictionary<string, int> EnVersionMap = new() {};
 
-        public static readonly string[] SupportedLocales = new string[] { "JP", "EN" };
-        public static readonly int[] SupportedVersions = new int[] { 2, 3, 4, 5, 6, 7 };
-
+        public readonly LOCALE Locale;
+        public readonly int Version;
 
         public RF5SaveDataHeader header;
         public RF5SaveData saveData;
         public RF5SaveDataFooter footer;
-
-        public readonly LOCALE Locale;
-        public readonly int Version;
 
         public readonly byte[] _originalHeader;
         public readonly byte[] _originalSaveData;

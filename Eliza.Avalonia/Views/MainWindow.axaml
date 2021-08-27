@@ -1,0 +1,76 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Eliza.Avalonia.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Eliza.Avalonia.Views.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Eliza.Avalonia">
+
+	<Design.DataContext>
+		<vm:MainWindowViewModel/>
+	</Design.DataContext>
+
+	<DockPanel LastChildFill="true">
+		<DockPanel DockPanel.Dock="Top" LastChildFill="true">
+			<Menu DockPanel.Dock="Top">
+				<MenuItem Header="_File">
+					<MenuItem Header="_Open">
+						<MenuItem Header="_JP">
+							<MenuItem Header="1.0.7-1.0.9" Command="{Binding CMD_Open_JP_107_109}"/>
+							<MenuItem Header="1.0.4-1.0.6" Command="{Binding CMD_Open_JP_104_106}"/>
+							<MenuItem Header="1.0.2-1.0.3" Command="{Binding CMD_Open_JP_102_103}"/>
+						</MenuItem>
+						<MenuItem Header="_EN">
+							<MenuItem Header="None"/>
+						</MenuItem>
+					</MenuItem>
+					<MenuItem Header="_Save" Command="{Binding CMD_Save}" />
+					<Separator/>
+					<MenuItem Header="_Developer">
+						<MenuItem Header="Open JP">
+							<MenuItem Header="1.0.10"/>
+							<MenuItem Header="1.0.9"/>
+							<MenuItem Header="1.0.8"/>
+							<MenuItem Header="1.0.7"/>
+							<MenuItem Header="1.0.6"/>
+							<MenuItem Header="1.0.5"/>
+							<MenuItem Header="1.0.4"/>
+							<MenuItem Header="1.0.3"/>
+							<MenuItem Header="1.0.2"/>
+							<MenuItem Header="1.0.1"/>
+							<MenuItem Header="1.0.0"/>
+						</MenuItem>
+						<MenuItem Header="Open EN">
+							<MenuItem Header="(None)"/>
+						</MenuItem>
+						<MenuItem Header="Save Decrypted"/>
+					</MenuItem>
+				</MenuItem>
+				<MenuItem Header="Placeholder"></MenuItem>
+			</Menu>
+		</DockPanel>
+		<Grid DockPanel.Dock="Bottom" ShowGridLines="true" ColumnDefinitions="*">
+			<Grid.RowDefinitions>
+				<RowDefinition MinHeight="100" Height="*"></RowDefinition>
+				<RowDefinition Height="Auto"></RowDefinition>
+				<RowDefinition MinHeight="60" Height="Auto"></RowDefinition>
+			</Grid.RowDefinitions>
+			<ScrollViewer>
+				<TextBlock Grid.Row="0" Grid.Column="0" Text="Treeview" Background="Aquamarine"/>
+			</ScrollViewer>
+			<GridSplitter Grid.Row="1" Grid.Column="0"/>
+			<ScrollViewer Grid.Row="2" Grid.Column="0">
+				<TextBlock Text="Console" Background="Aqua"/>
+			</ScrollViewer>
+		</Grid>
+
+
+
+
+
+	</DockPanel>
+
+
+</Window>

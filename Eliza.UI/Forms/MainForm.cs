@@ -1,5 +1,7 @@
 ﻿using Eto.Drawing;
 using Eto.Forms;
+using Eliza.UI.Helpers;
+using Eliza.UI.Widgets;
 using System;
 using Eliza.UI.Forms;
 using Eliza.Model;
@@ -15,6 +17,11 @@ namespace Eliza.Forms
         Button dataButton = new() { Text = "Data" };
         Button footerButton = new() { Text = "Footer" };
 
+        DropDown el_dd_version = new() {
+            Items = { "0", "1", "2", "3", "4", "5", "6", "7" }
+        };
+        TreeGridView tree = new();
+
         public MainForm()
         {
             this.Title = "Eliza";
@@ -29,16 +36,49 @@ namespace Eliza.Forms
             this.footerButton.Enabled = false;
             this.footerButton.Click += this.FooterButton_Click;
 
-            var layout = new StackLayout { Orientation = Orientation.Vertical, HorizontalContentAlignment = HorizontalAlignment.Center, Spacing = 5, Padding = new Padding(10) };
+            var el_layout_versionBox = new StackLayout() {
+                Orientation = Orientation.Horizontal,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                Spacing = 5,
+                Padding = new Padding(10)
+            };
+
+            var el_label_versionLabel = new Label() { Text = "Version" };
+
+            var layout = new StackLayout {
+                Orientation = Orientation.Horizontal,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                Spacing = 5,
+                Padding = new Padding(10)
+            };
 
             StackLayoutItem[] stackLayoutItems =
             {
-                this.headerButton,
-                this.dataButton,
-                this.footerButton
+                el_label_versionLabel,
+                this.el_dd_version
             };
 
-            foreach (var item in stackLayoutItems)
+            foreach (var item in stackLayoutItems) {
+                layout.Items.Add(item);
+            }
+
+            StackLayoutItem[] stackLayoutItems2 =
+            {
+                layout,
+                this.headerButton,
+                this.dataButton,
+                this.footerButton,
+                this.tree
+            };
+
+            layout = new StackLayout {
+                Orientation = Orientation.Vertical,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                Spacing = 5,
+                Padding = new Padding(10)
+            };
+
+            foreach (var item in stackLayoutItems2)
             {
                 layout.Items.Add(item);
             }
