@@ -4,13 +4,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
+using static Eliza.Core.Serialization.ElizaFlowControlAttribute;
 using Eliza.Model;
 using Eliza.Model.Save;
+using Eliza.Model.Status;
+using Eliza.Model.Event;
 
 namespace Eliza.Core.Serialization
 {
-    public class BinaryDeserializer : BinarySerialization
+    class BinaryDeserializer : BinarySerialization
     {
         public readonly BinaryReader Reader;
 
@@ -30,24 +34,25 @@ namespace Eliza.Core.Serialization
         // from previous reads. For most intents and purposes we stick
         // with default arguments and simply read the header, data,
         // and footer sequentially.
-        public RF5SaveDataHeader ReadSaveDataHeader()
+        public (RF5SaveDataHeader, ObjectGraphNode) ReadSaveDataHeader()
         {
-            return (RF5SaveDataHeader)this.ReadObject(typeof(RF5SaveDataHeader));
+            (object obj, ObjectGraphNode node) = this.ReadObject(typeof(RF5SaveDataHeader));
+            return ((RF5SaveDataHeader)obj, node);
         }
 
-        public RF5SaveData ReadSaveData()
+        public (RF5SaveData, ObjectGraphNode) ReadSaveData()
         {
-            return (RF5SaveData)this.ReadObject(typeof(RF5SaveData));
+            (object obj, ObjectGraphNode node) = this.ReadObject(typeof(RF5SaveData));
+            return ((RF5SaveData)obj, node);
         }
 
-        public RF5SaveDataFooter ReadSaveDataFooter()
+        public (RF5SaveDataFooter, ObjectGraphNode) ReadSaveDataFooter()
         {
-            //Aligned relative to data 256bits due to Rijndael crypto
-            this.BaseStream.Position = ((this.BaseStream.Position - 0x20 + 0x1F) & ~0x1F) + 0x20;
-            return (RF5SaveDataFooter)this.ReadObject(typeof(RF5SaveDataFooter));
+            (object obj, ObjectGraphNode node) = this.ReadObject(typeof(RF5SaveDataFooter));
+            return ((RF5SaveDataFooter)obj, node);
         }
 
-        protected object ReadValue(Type type)
+        protected (object, ObjectGraphNode) ReadValue(Type type)
         {
             if (type.IsPrimitive) {
                 return this.ReadPrimitive(Type.GetTypeCode(type));
@@ -68,18 +73,32 @@ namespace Eliza.Core.Serialization
         {
             switch (type)
             {
-                case TypeCode.Boolean: return this.Reader.ReadBoolean();
-                case TypeCode.Byte: return this.Reader.ReadByte();
-                case TypeCode.Char: return this.Reader.ReadChar();
-                case TypeCode.UInt16: return this.Reader.ReadUInt16();
-                case TypeCode.UInt32: return this.Reader.ReadUInt32();
-                case TypeCode.UInt64: return this.Reader.ReadUInt64();
-                case TypeCode.SByte: return this.Reader.ReadSByte();
-                case TypeCode.Int16: return this.Reader.ReadInt16();
-                case TypeCode.Int32: return this.Reader.ReadInt32();
-                case TypeCode.Int64: return this.Reader.ReadInt64();
-                case TypeCode.Single: return this.Reader.ReadSingle();
-                case TypeCode.Double: return this.Reader.ReadDouble();
+                case TypeCode.Boolean:
+                    
+                    var value = this.Reader.ReadBoolean();
+                    return (value, new ObjectGraphNode(ref value));
+                case TypeCode.Byte:
+                    return this.Reader.ReadByte();
+                case TypeCode.Char:
+                    return this.Reader.ReadChar();
+                case TypeCode.UInt16:
+                    return this.Reader.ReadUInt16();
+                case TypeCode.UInt32:
+                    return this.Reader.ReadUInt32();
+                case TypeCode.UInt64:
+                    return this.Reader.ReadUInt64();
+                case TypeCode.SByte:
+                    return this.Reader.ReadSByte();
+                case TypeCode.Int16:
+                    return this.Reader.ReadInt16();
+                case TypeCode.Int32:
+                    return this.Reader.ReadInt32();
+                case TypeCode.Int64:
+                    return this.Reader.ReadInt64();
+                case TypeCode.Single:
+                    return this.Reader.ReadSingle();
+                case TypeCode.Double:
+                    return this.Reader.ReadDouble();
 
                 default: return null;
             }
@@ -89,7 +108,7 @@ namespace Eliza.Core.Serialization
                                 TypeCode lengthType=ElizaListAttribute.DEFAULT_LENGTH_TYPECODE,
                                 int length=ElizaListAttribute.UNKNOWN_SIZE,
                                 int maxSize= ElizaListAttribute.UNKNOWN_SIZE,
-                                bool isMessagePackList=ElizaListAttribute.DEFAULT_ISMESSAGEPACK_LIST)
+                                bool isMessagePackList=ElizaListAttribute.DFEAULT_ISMESSAGEPACK_LIST)
         {
 
             IList ilist;
@@ -207,9 +226,10 @@ namespace Eliza.Core.Serialization
             return dict;
         }
 
-        protected object ReadObject(Type objectType)
+        protected (object, ObjectGraphNode) ReadObject(Type objectType)
         {
             var objectValue = Activator.CreateInstance(objectType);
+            ObjectGraphNode node = new(ref objectValue);
 
             // If known to be MessagePackObject
             if (objectType.IsDefined(typeof(MessagePackObjectAttribute))) {
@@ -217,7 +237,7 @@ namespace Eliza.Core.Serialization
 
             } else {
                 foreach (FieldInfo fieldInfo in GetFieldsOrdered(objectType)) {
-                    this.ReadField(objectValue, fieldInfo);
+                    this.ReadField(objectValue, fieldInfo, node);
                 }
             }
 
@@ -230,7 +250,7 @@ namespace Eliza.Core.Serialization
             //     var foo = 0; // Breakpoint
             // }
 
-            return objectValue;
+            return (objectValue, node);
         }
 
         protected object ReadMessagePackObject(Type type) {
@@ -239,12 +259,13 @@ namespace Eliza.Core.Serialization
             return MessagePackSerializer.Deserialize(type, data);
         }
 
-        protected void ReadField(object objectValue, FieldInfo fieldInfo)
+        protected void ReadField(object objectValue, FieldInfo fieldInfo, ObjectGraphNode parent)
         {
 
             Type fieldType = fieldInfo.FieldType;
             object fieldValue = null;
-
+            ObjectGraphNode node = null;
+            
             // The rule here is simple. If we have one or more control flow tags,
             // the read happens within the loop. We only reach the point after the loop
             // if there are no ElizaFlowControlAttributes.
@@ -277,30 +298,30 @@ namespace Eliza.Core.Serialization
                     if(attrType == typeof(ElizaStringAttribute)) {
                         var stringAttr = (ElizaStringAttribute)elizaAttr;
                         if (fieldType == typeof(string)) {
-                            fieldValue = this.ReadString(
-                                            max: stringAttr.MaxSize,
-                                            isUtf16Uuid: stringAttr.IsUtf16Uuid
-                                         );
+                            (fieldValue, node) = this.ReadString(
+                                                    max: stringAttr.MaxSize,
+                                                    isUtf16Uuid: stringAttr.IsUtf16Uuid
+                                                 );
                             hasRead = true;
                         } else { throw new UnsupportedAttributeException(stringAttr, fieldInfo); }
 
                     } else if(attrType == typeof(ElizaListAttribute)) {
                         var listAttr = (ElizaListAttribute)elizaAttr;
                         if (IsList(fieldType)) {
-                            fieldValue = this.ReadList(
-                                            type: fieldType,
-                                            lengthType: listAttr.LengthType,
-                                            length: listAttr.FixedSize,
-                                            maxSize: listAttr.MaxSize,
-                                            isMessagePackList: listAttr.IsMessagePackList
-                                         );
+                            (fieldValue, node) = this.ReadList(
+                                                    type: fieldType,
+                                                    lengthType: listAttr.LengthType,
+                                                    length: listAttr.FixedSize,
+                                                    maxSize: listAttr.MaxSize,
+                                                    isMessagePackList: listAttr.IsMessagePackList
+                                                 );
                             hasRead = true;
                         } else { throw new UnsupportedAttributeException(listAttr, fieldInfo); }
 
                     } else {
 
                         // This is a normal field with a tag.
-                        fieldValue = this.ReadValue(fieldType);
+                        (fieldValue, node) = this.ReadValue(fieldType);
                         hasRead = true;
                     }
 
@@ -310,11 +331,12 @@ namespace Eliza.Core.Serialization
             // TODO: value tags
 
             if ((! hasControlTag) && (! hasRead)) {
-                fieldValue = this.ReadValue(fieldType);
+                (fieldValue, node) = this.ReadValue(fieldType);
             }
 
             // Finally set the value into the field, for all cases above
             fieldInfo.SetValue(objectValue, fieldValue);
+            parent.AppendChild(ref node);
             return;
         }
 

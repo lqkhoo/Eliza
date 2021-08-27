@@ -3,16 +3,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using Eliza.Model;
 using Eliza.Model.Save;
-using static Eliza.Core.Serialization.ElizaFlowControlAttribute;
 
 namespace Eliza.Core.Serialization
 {
-    class BinarySerializer : BinarySerialization
+    public class BinarySerializer : BinarySerialization
     {
         public BinaryWriter Writer;
 
@@ -59,7 +57,7 @@ namespace Eliza.Core.Serialization
             }
         }
 
-        protected void WritePrimitive(object value, TypeCode typeCode=TypeCode.Empty)
+        protected void WritePrimitive(object value)
         {
             var type = value.GetType();
 
@@ -83,7 +81,7 @@ namespace Eliza.Core.Serialization
                                 TypeCode lengthType=ElizaListAttribute.DEFAULT_LENGTH_TYPECODE,
                                 int length=ElizaListAttribute.UNKNOWN_SIZE,
                                 int max=ElizaListAttribute.UNKNOWN_SIZE,
-                                bool isMessagePackList=ElizaListAttribute.DFEAULT_ISMESSAGEPACK_LIST)
+                                bool isMessagePackList=ElizaListAttribute.DEFAULT_ISMESSAGEPACK_LIST)
         {
 
             if (length == ElizaListAttribute.UNKNOWN_SIZE) {

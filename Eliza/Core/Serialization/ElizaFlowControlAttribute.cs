@@ -6,8 +6,13 @@ namespace Eliza.Core.Serialization
     // Seal leaf-level attributes
     // https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/attributes
 
+    public abstract class ElizaAttribute : Attribute
+    {
+
+    }
+
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
-    public class ElizaFlowControlAttribute : Attribute
+    public class ElizaFlowControlAttribute : ElizaAttribute
     {
 
         // Inclusive.
@@ -30,7 +35,7 @@ namespace Eliza.Core.Serialization
     {
         public const int UNKNOWN_SIZE = 0;
         public const TypeCode DEFAULT_LENGTH_TYPECODE = TypeCode.Int32;
-        public const bool DFEAULT_ISMESSAGEPACK_LIST = false;
+        public const bool DEFAULT_ISMESSAGEPACK_LIST = false;
 
         /// <summary>
         /// Denotes the data type encoding length information in the serialized data.
@@ -53,7 +58,7 @@ namespace Eliza.Core.Serialization
         /// <summary>
         /// Denotes that this is a list or array of MessagePack objects.
         /// </summary>
-        public bool IsMessagePackList { get; set; } = DFEAULT_ISMESSAGEPACK_LIST;
+        public bool IsMessagePackList { get; set; } = DEFAULT_ISMESSAGEPACK_LIST;
     }
 
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
@@ -85,7 +90,7 @@ namespace Eliza.Core.Serialization
     /// Annotates that a fields which have non-default values in edge cases.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field)]
-    public sealed class ElizaValueAttribute : Attribute
+    public sealed class ElizaValueAttribute : ElizaAttribute
     {
         /// <summary>
         /// Specifies a non-default value when an empty or otherwise

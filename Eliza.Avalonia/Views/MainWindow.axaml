@@ -14,7 +14,7 @@
 
 	<DockPanel LastChildFill="true">
 		<DockPanel DockPanel.Dock="Top" LastChildFill="true">
-			<Menu DockPanel.Dock="Top">
+			<Menu DockPanel.Dock="Top" Background="#EEEEEE">
 				<MenuItem Header="_File">
 					<MenuItem Header="_Open">
 						<MenuItem Header="_JP">
@@ -26,7 +26,7 @@
 							<MenuItem Header="None"/>
 						</MenuItem>
 					</MenuItem>
-					<MenuItem Header="_Save" Command="{Binding CMD_Save}" />
+					<MenuItem Header="_Save" Command="{Binding CMD_SaveEncrypted}" />
 					<Separator/>
 					<MenuItem Header="_Developer">
 						<MenuItem Header="Open JP">
@@ -45,24 +45,24 @@
 						<MenuItem Header="Open EN">
 							<MenuItem Header="(None)"/>
 						</MenuItem>
-						<MenuItem Header="Save Decrypted"/>
+						<MenuItem Header="Save Decrypted" Command="{Binding CMD_SaveDecrypted}"/>
 					</MenuItem>
 				</MenuItem>
 				<MenuItem Header="Placeholder"></MenuItem>
 			</Menu>
 		</DockPanel>
-		<Grid DockPanel.Dock="Bottom" ShowGridLines="true" ColumnDefinitions="*">
+		<Grid DockPanel.Dock="Bottom" ShowGridLines="false" ColumnDefinitions="*">
 			<Grid.RowDefinitions>
 				<RowDefinition MinHeight="100" Height="*"></RowDefinition>
 				<RowDefinition Height="Auto"></RowDefinition>
 				<RowDefinition MinHeight="60" Height="Auto"></RowDefinition>
 			</Grid.RowDefinitions>
 			<ScrollViewer>
-				<TextBlock Grid.Row="0" Grid.Column="0" Text="Treeview" Background="Aquamarine"/>
+				<TreeView Items="{Binding OBSV_BaseList}"/>
 			</ScrollViewer>
-			<GridSplitter Grid.Row="1" Grid.Column="0"/>
+			<GridSplitter Grid.Row="1" Grid.Column="0" Background="#EEEEEE"/>
 			<ScrollViewer Grid.Row="2" Grid.Column="0">
-				<TextBlock Text="Console" Background="Aqua"/>
+				<TextBox IsReadOnly="True" Text="{Binding OBSV_Log}" FontFamily="Consolas"/>
 			</ScrollViewer>
 		</Grid>
 

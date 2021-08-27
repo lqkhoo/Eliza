@@ -122,35 +122,40 @@ namespace Eliza.Model
         }
 
 
-        public static void ToDecryptedFile(string inputPath, string outputPath,
+        public static void JustDecryptFile(string inputPath, string outputPath,
                                            int version, LOCALE locale,
                                            bool bypassSerialization = true)
         {
-            using (FileStream fs = new(outputPath, FileMode.OpenOrCreate, FileAccess.Write))
-            {
-                if(bypassSerialization) {
+            if(bypassSerialization) {
+                using (FileStream fs = new(outputPath, FileMode.OpenOrCreate, FileAccess.Write)) {
                     var (header, decryptedData, footer) = SaveData.DecryptFile(inputPath);
                     fs.SetLength(0); // Empty previous file contents
                     fs.Write(header);
                     fs.Write(decryptedData);
                     fs.Write(footer);
-                } else {
-                    SaveData save = SaveData.FromEncryptedFile(inputPath, version, locale);
-                    using MemoryStream ms = new();
-                    BinarySerializer serializer = new(ms, save.Locale, save.Version);
-                    serializer.WriteSaveDataHeader(save.header);
-                    serializer.WriteSaveData(save.saveData); // Plain write. No encryption.
-                    serializer.WriteSaveDataFooter(save.footer);
-                    serializer.BaseStream.SetLength(serializer.BaseStream.Position); // Truncate
-                    fs.SetLength(0);
-                    ms.CopyTo(fs);
                 }
+            } else {
+                SaveData save = SaveData.FromEncryptedFile(inputPath, version, locale);
+                save.ToDecryptedFile(outputPath);
             }
         }
 
 
-        public void ToEncryptedFile(string path, int version=SaveData.LATEST_JP_VER,
-                                    LOCALE locale=LOCALE.JP)
+        public void ToDecryptedFile(string outputPath)
+        {
+            using (FileStream fs = new(outputPath, FileMode.OpenOrCreate, FileAccess.Write)) {
+                using MemoryStream ms = new();
+                BinarySerializer serializer = new(ms, this.Locale, this.Version);
+                serializer.WriteSaveDataHeader(this.header);
+                serializer.WriteSaveData(this.saveData); // Plain write. No encryption.
+                serializer.WriteSaveDataFooter(this.footer);
+                serializer.BaseStream.SetLength(serializer.BaseStream.Position); // Truncate
+                fs.SetLength(0);
+                ms.CopyTo(fs);
+            }
+        }
+
+        public void ToEncryptedFile(string path)
         {
             using (FileStream fs = new(path, FileMode.Create, FileAccess.ReadWrite))
             {

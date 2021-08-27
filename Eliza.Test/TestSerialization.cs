@@ -36,7 +36,7 @@ namespace Eliza.Test
         {
             string inputPath = "../../../Saves/107/rf5_gm002";
             string outputPath = inputPath + "_test_decrypt_107";
-            SaveData.ToDecryptedFile(
+            SaveData.JustDecryptFile(
                     inputPath: inputPath,
                     outputPath: outputPath,
                     bypassSerialization: true,
