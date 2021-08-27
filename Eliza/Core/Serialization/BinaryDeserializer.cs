@@ -183,8 +183,7 @@ namespace Eliza.Core.Serialization
             var length = this.Reader.ReadInt32();
             int index = 0;
             bool flag;
-            do
-            {
+            do {
                 data.Add(this.Reader.ReadByte());
                 flag = index++ < (length - 1) >> 3;
             } while (flag);
@@ -201,16 +200,9 @@ namespace Eliza.Core.Serialization
             Type dictType = typeof(Dictionary<,>).MakeGenericType(keyType, valueType);
 
             var dict = (IDictionary)Activator.CreateInstance(dictType);
-
             var length = this.Reader.ReadInt32();
 
-
-            for (int index = 0; index < length; index++)
-            {
-                if (valueType == typeof(HumanStatusData))
-                {
-
-                }
+            for (int index = 0; index < length; index++) {
                 var keyValue = this.ReadValue(keyType);
                 var valueValue = this.ReadValue(valueType);
                 dict.Add(keyValue, valueValue);
@@ -239,9 +231,10 @@ namespace Eliza.Core.Serialization
             if (this._DebugTypeSet.Contains(objectType)) {
                 this._DebugList.Add(objectValue); // Helpful to breakpoint this line.
             }
-            if(objectType == typeof(SaveScenarioSupport)) {
-                var foo = 0;
-            }
+            // Then drill down
+            // if(objectType == typeof(SaveScenarioSupport)) {
+            //     var foo = 0; // Breakpoint
+            // }
 
             return objectValue;
         }

@@ -5,13 +5,13 @@ using Xunit;
 
 namespace Eliza.Test
 {
+
+    // Use different files to avoid race conditions.
+    // Otherwise put the tests in different collections to run them serially.
+
     [Collection("107")]
     public class TestSerialization107
     {
-
-        // Use different files to avoid race conditions.
-        // Otherwise put the tests in different collections to run them serially.
-
         [Fact]
         public void TestDecryptEncryptJP107()
         {

@@ -7,7 +7,7 @@ namespace Eliza.Model.Event
         public EventSaveParameter EventSaveParameter;
         public SaveFlagStorage SaveFlag;
         public SubEventSaveData SubEventSaveDatas;
-        [ElizaFlowControl(FromVersion = 7)]
+        [ElizaFlowControl(Locale=SaveData.LOCALE.JP, FromVersion=7)]
         public SaveScenarioSupport ScenarioSupport;
         public int MainScenarioStep;
         public int[] PresentSendActorList;

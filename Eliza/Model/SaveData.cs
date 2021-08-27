@@ -46,6 +46,9 @@ namespace Eliza.Model
         public const int LATEST_JP_VER = 7;
         public const int LATEST_EN_VER = -1;
 
+        public static readonly string[] SupportedLocales = new string[] { "JP", "EN" };
+        public static readonly int[] SupportedVersions = new int[] { 2, 3, 4, 5, 6, 7 };
+
 
         public RF5SaveDataHeader header;
         public RF5SaveData saveData;
