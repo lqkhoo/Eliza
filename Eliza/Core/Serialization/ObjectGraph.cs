@@ -9,13 +9,16 @@ using System.Threading.Tasks;
 
 namespace Eliza.Core.Serialization
 {
-    public class ObjectGraph
+    // TODO: Implement IComparable
+    public class ObjectGraph : IComparable<ObjectGraph>
     {
-        public List<ObjectGraph> Keys; // Used for dictionaries only.
+        public List<ObjectGraph> Keys;
         public List<ObjectGraph> Values;
+        public string FieldName;
         public Type Type;
         public object Value;
         public TypeCode LengthType; // For arrays only
+        public FieldInfo FieldInfo;
         public object[] Attrs;
 
         protected ObjectGraph()
@@ -26,16 +29,28 @@ namespace Eliza.Core.Serialization
         }
 
         public ObjectGraph(object objectValue, Type objectType=null,
-                            TypeCode lengthType=TypeCode.Empty, FieldInfo fieldInfo=null)
+                            TypeCode lengthType=TypeCode.Empty, FieldInfo fieldInfo=null) : this()
         {
+            // TODO: max/min ranges
+
             this.Value = objectValue;
-            if(objectType == null) {
-                this.Type = objectValue.GetType();
+            if(objectValue != null) {
+                if (objectType == null) {
+                    this.Type = objectValue.GetType();
+                } else if (fieldInfo != null) {
+                    this.Type = fieldInfo.FieldType;
+                } else {
+                    this.Type = null;
+                }
             }
-            if(lengthType != TypeCode.Empty) {
+            // If value and type are both null, nothing we can do. This is just null.
+
+            this.FieldName = (this.FieldInfo != null) ? this.FieldInfo.Name : "";
+            if (lengthType != TypeCode.Empty) {
                 this.LengthType = lengthType;
             }
             if(fieldInfo != null) {
+                this.FieldInfo = fieldInfo;
                 this.Attrs = fieldInfo.GetCustomAttributes(typeof(ElizaAttribute), inherit: true);
             }
         }
@@ -60,13 +75,15 @@ namespace Eliza.Core.Serialization
             return (this.Values.Count == 0);
         }
 
-        /*
         public override string ToString()
         {
-            //TODO
-            return this.Type.Name;
+            return String.Format("Graph: [{0}][{1}] {2}: {3}", this.Keys.Count, this.Values.Count, this.FieldName, this.Type.Name.ToString()); 
         }
-        */
 
+        public int CompareTo(ObjectGraph other)
+        {
+            // TODO
+            throw new NotImplementedException();
+        }
     }
 }

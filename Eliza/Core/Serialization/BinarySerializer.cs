@@ -10,7 +10,7 @@ using Eliza.Model.Save;
 
 namespace Eliza.Core.Serialization
 {
-    public class BinarySerializer : BinarySerialization
+    public class BinarySerializer : BinaryBaseSerializer
     {
         public BinaryWriter Writer;
 
@@ -18,6 +18,7 @@ namespace Eliza.Core.Serialization
         // Stores the position of the stream of this.Writer
         // just before writing the object of the type keyed.
         protected Dictionary<Type, long> _DebugAddressMap;
+
 
         public BinarySerializer(Stream baseStream, SaveData.LOCALE locale, int version)
                                 : base(baseStream, locale, version)

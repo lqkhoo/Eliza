@@ -30,30 +30,46 @@ namespace Eliza.Core.Serialization
             return this.WriteObject(footer);
         }
 
+        protected ObjectGraph WriteNull(FieldInfo fieldInfo)
+        {
+            ObjectGraph node = new(objectValue: null, fieldInfo: fieldInfo);
+            return node;
+        }
+
         protected ObjectGraph WriteValue(object value, FieldInfo fieldInfo)
         {
             ObjectGraph node;
-            var type = value.GetType();
-
-            if (type.IsPrimitive) {
-                node = this.WritePrimitive(value, fieldInfo);
-            } else if (IsList(type)) {
-                node = this.WriteList((IList)value, fieldInfo: fieldInfo);
-            } else if (type == typeof(string)) {
-                node = this.WriteString((string)value, fieldInfo: fieldInfo);
-            } else if (type == typeof(SaveFlagStorage)) {
-                node = this.WriteSaveFlagStorage((SaveFlagStorage)value, fieldInfo);
-            } else if (IsDictionary(type)) {
-                node = this.WriteDictionary((IDictionary)value, fieldInfo);
+            Type type;
+            if(value == null) {
+                node = this.WriteNull(fieldInfo);
             } else {
-                node = this.WriteObject(value, fieldInfo);
+                type = value.GetType();
+                if (type.IsPrimitive) {
+                    node = this.WritePrimitive(value, fieldInfo);
+                } else if (IsList(type)) {
+                    node = this.WriteList((IList)value, fieldInfo: fieldInfo);
+                } else if (type == typeof(string)) {
+                    node = this.WriteString((string)value, fieldInfo: fieldInfo);
+                } else if (type == typeof(SaveFlagStorage)) {
+                    node = this.WriteSaveFlagStorage((SaveFlagStorage)value, fieldInfo);
+                } else if (IsDictionary(type)) {
+                    node = this.WriteDictionary((IDictionary)value, fieldInfo);
+                } else {
+                    node = this.WriteObject(value, fieldInfo);
+                }
             }
+
             return node;
         }
 
         protected ObjectGraph WritePrimitive(object value, FieldInfo fieldInfo)
         {
-            ObjectGraph node = new(objectValue: value, fieldInfo: fieldInfo);
+            ObjectGraph node;
+            if(value == null) {
+                node = this.WriteNull(fieldInfo);
+            } else {
+                node = new(objectValue: value, fieldInfo: fieldInfo);
+            }
             return node;
         }
 
@@ -91,8 +107,6 @@ namespace Eliza.Core.Serialization
 
         protected ObjectGraph WriteDictionary(IDictionary dictionary, FieldInfo fieldInfo=null)
         {
-            // objectValue isn't used but null might be confused with
-            // an actual null field, so just copy the original dict.
             ObjectGraph node = new(objectValue: dictionary,
                                     objectType: dictionary.GetType(),
                                     fieldInfo: fieldInfo);
@@ -111,13 +125,17 @@ namespace Eliza.Core.Serialization
 
         protected ObjectGraph WriteObject(object objectValue, FieldInfo fi=null)
         {
-            var objectType = objectValue.GetType();
-
-            ObjectGraph node = new(objectValue: objectValue, fieldInfo: fi);
-            foreach (FieldInfo fieldInfo in GetFieldsOrdered(objectType)) {
-                object fieldValue = fieldInfo.GetValue(objectValue);
-                ObjectGraph child = this.WriteField(fieldValue, fieldInfo);
-                node.AppendChild(child);
+            ObjectGraph node;
+            if(objectValue == null) {
+                node = this.WriteNull(fi);
+            } else {
+                var objectType = objectValue.GetType();
+                node = new(objectValue: objectValue, fieldInfo: fi);
+                foreach (FieldInfo fieldInfo in GetFieldsOrdered(objectType)) {
+                    object fieldValue = fieldInfo.GetValue(objectValue);
+                    ObjectGraph child = this.WriteField(fieldValue, fieldInfo);
+                    node.AppendChild(child);
+                }
             }
             return node;
         }

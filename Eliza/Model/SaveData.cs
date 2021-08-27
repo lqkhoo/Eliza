@@ -49,14 +49,16 @@ namespace Eliza.Model
         };
 
         public const int LATEST_JP_VER = 7;
+        /*
         public static readonly Dictionary<string, int> JpVersionMap = new() {
             { "1.0.7-1.0.9", LATEST_JP_VER },
             { "1.0.4-1.0.6", 4 },
             { "1.0.2-1.0.3", 2 }
         };
+        */
 
         public const int LATEST_EN_VER = -1;
-        public static readonly Dictionary<string, int> EnVersionMap = new() {};
+        // public static readonly Dictionary<string, int> EnVersionMap = new() {};
 
         public readonly LOCALE Locale;
         public readonly int Version;
@@ -212,5 +214,23 @@ namespace Eliza.Model
                 buffer.CopyTo(fs, (int)buffer.Length);
             }
         }
+
+        public ObjectGraph ToObjectGraph()
+        {
+            ObjectGraph graph = new(null, objectType: this.GetType()); // Blank except children
+            GraphSerializer serializer = new(this.Locale, this.Version);
+            graph.AppendChild(serializer.WriteSaveDataHeader(this.header));
+            graph.AppendChild(serializer.WriteSaveData(this.saveData));
+            graph.AppendChild(serializer.WriteSaveDataFooter(this.footer));
+            return graph;
+        }
+
+        // TODO
+        /*
+        public static SaveData FromObjectGraph(ObjectGraph graph)
+        {
+            
+        }
+        */
     }
 }

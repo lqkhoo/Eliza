@@ -10,7 +10,7 @@ using Eliza.Model.Save;
 
 namespace Eliza.Core.Serialization
 {
-    public class BinaryDeserializer : BinarySerialization
+    public class BinaryDeserializer : BinaryBaseSerializer
     {
         public readonly BinaryReader Reader;
 
