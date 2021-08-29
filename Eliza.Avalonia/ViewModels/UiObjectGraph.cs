@@ -101,7 +101,8 @@ namespace Eliza.Avalonia.ViewModels
                     switch(typeCode) {
                         case TypeCode.Boolean: return 1;
                         case TypeCode.Byte: return byte.MaxValue;
-                        case TypeCode.Char: return char.MaxValue;
+                        // case TypeCode.Char: return char.MaxValue; // 65535, which is not what we want
+                        case TypeCode.Char: return byte.MaxValue;
                         case TypeCode.UInt16: return UInt16.MaxValue;
                         case TypeCode.UInt32: return UInt32.MaxValue;
                         case TypeCode.UInt64: return UInt64.MaxValue;
@@ -126,7 +127,8 @@ namespace Eliza.Avalonia.ViewModels
                     switch (typeCode) {
                         case TypeCode.Boolean: return 0;
                         case TypeCode.Byte: return byte.MinValue;
-                        case TypeCode.Char: return char.MinValue;
+                        // case TypeCode.Char: return char.MinValue;
+                        case TypeCode.Char: return byte.MinValue;
                         case TypeCode.UInt16: return UInt16.MinValue;
                         case TypeCode.UInt32: return UInt32.MinValue;
                         case TypeCode.UInt64: return UInt64.MinValue;

@@ -142,6 +142,13 @@
 			<Setter Property="Padding" Value="10 5 10 5"/>
 		</Style>
 		
+		<Style Selector="TextBox.editorString">
+			<Setter Property="MinWidth" Value="70"/>
+			<Setter Property="FontSize" Value="12"/>
+			<Setter Property="FontFamily" Value="Consolas"/>
+			<Setter Property="Padding" Value="10 5 10 5"/>
+		</Style>
+		
 		<Style Selector="TextBox.editorHexString">
 			<Setter Property="MinWidth" Value="70"/>
 			<Setter Property="FontSize" Value="12"/>

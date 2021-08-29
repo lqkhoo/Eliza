@@ -27,7 +27,7 @@ namespace Eliza.Avalonia.Views
         protected DummyEditorView DummyEditorView = new();
         protected BooleanEditorView BooleanEditorView = new();
         protected ByteEditorView ByteEditorView = new();
-        protected CharEditorView CharEditorView = new();
+        // protected CharEditorView CharEditorView = new();
         protected UInt16EditorView UInt16EditorView = new();
         protected UInt32EditorView UInt32EditorView = new();
         protected UInt64EditorView UInt64EditorView = new();
@@ -47,7 +47,7 @@ namespace Eliza.Avalonia.Views
 
             this.PrimitiveEditorMap.Add(TypeCode.Boolean, this.BooleanEditorView);
             this.PrimitiveEditorMap.Add(TypeCode.Byte, this.ByteEditorView);
-            this.PrimitiveEditorMap.Add(TypeCode.Char, this.CharEditorView);
+            // this.PrimitiveEditorMap.Add(TypeCode.Char, this.CharEditorView);
             this.PrimitiveEditorMap.Add(TypeCode.UInt16, this.UInt16EditorView);
             this.PrimitiveEditorMap.Add(TypeCode.UInt32, this.UInt32EditorView);
             this.PrimitiveEditorMap.Add(TypeCode.UInt64, this.UInt64EditorView);

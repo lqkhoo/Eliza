@@ -29,8 +29,36 @@
 			xmlns:Eliza.Model.World="using:Eliza.Model.World"
             >
 
-	<StackPanel>
-		<TextBlock>Int32Editor</TextBlock>
-	</StackPanel>
+	<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto Auto">
+		<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorFieldName" Text="{Binding FieldInfo.Name}"/>
+		<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto Auto" Grid.Row="0" Grid.Column="1">
+			<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorType" Text="Int32"></TextBlock>
+			<NumericUpDown Grid.Row="0" Grid.Column="1" Classes="editorNumericUpDown" Value="{Binding Value}" Maximum="{Binding PrimitiveMax}" Minimum="{Binding PrimitiveMin}"/>
+			<Grid RowDefinitions="Auto Auto" ColumnDefinitions="Auto" Grid.Row="0" Grid.Column="2">
+				<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto" Grid.Row="0">
+					<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorMax" Text="Max"/>
+					<TextBlock Grid.Row="1" Grid.Column="1" Classes="editorMax" Text="{Binding PrimitiveMax}"/>
+				</Grid>
+				<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto" Grid.Row="1">
+					<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorMin" Text="Min"/>
+					<TextBlock Grid.Row="0" Grid.Column="1" Classes="editorMin" Text="{Binding PrimitiveMin}"/>
+				</Grid>
+			</Grid>
+		</Grid>
+		<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto Auto" Grid.Row="0" Grid.Column="2">
+			<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorHexType" Text="Hex"></TextBlock>
+			<TextBox Grid.Row="0" Grid.Column="1" Classes="editorHexString" Text="{Binding Value, Converter={StaticResource Int32ToHexConverter}}"/>
+			<Grid RowDefinitions="Auto Auto" ColumnDefinitions="Auto" Grid.Row="0" Grid.Column="2">
+				<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto" Grid.Row="0">
+					<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorMax" Text="Max"/>
+					<TextBlock Grid.Row="1" Grid.Column="1" Classes="editorMax" Text="{Binding PrimitiveMax, Converter={StaticResource Int32ToHexConverter}}"/>
+				</Grid>
+				<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto" Grid.Row="1">
+					<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorMin" Text="Min"/>
+					<TextBlock Grid.Row="1" Grid.Column="1" Classes="editorMin" Text="{Binding PrimitiveMin, Converter={StaticResource Int32ToHexConverter}}"/>
+				</Grid>
+			</Grid>
+		</Grid>
+	</Grid>
 	
 </UserControl>
