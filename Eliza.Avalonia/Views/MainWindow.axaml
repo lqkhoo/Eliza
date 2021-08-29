@@ -31,15 +31,19 @@
 		xmlns:Eliza.Model.Status="using:Eliza.Model.Status"
 		xmlns:Eliza.Model.World="using:Eliza.Model.World"
 		xmlns:Eliza.Avalonia.ViewModels="using:Eliza.Avalonia.ViewModels"
+		xmlns:ValueConverters="using:Eliza.Avalonia.ValueConverters"
 		>
 	
 	<Design.DataContext>
 		<vm:MainWindowViewModel/>
-	</Design.DataContext>	
+	</Design.DataContext>
+	
+
 	
 	
 	<Window.Styles>
-					
+		
+		<!-- Menu -->
 		<Style Selector="Border.menuBorder">
 			<Setter Property="CornerRadius" Value="0"/>
 			<Setter Property="Padding" Value="0"/>
@@ -47,8 +51,8 @@
 			<Setter Property="BorderThickness" Value="1"/>
 			<Setter Property="Margin" Value="0 -1 0 0"/>
 		</Style>
-
-			
+		
+		<!-- Treeview -->
 		<Style Selector="TextBlock.treeText">
 			<Setter Property="Padding" Value="0 2 20 2"/><!-- L U R D-->
 			<Setter Property="FontSize" Value="11"/>
@@ -104,6 +108,19 @@
 			<Setter Property="Background" Value="#dddddd"/>
 		</Style>
 		
+		<!-- Editor -->
+		<Style Selector="ScrollViewer.editorMainScrollViewer">
+			<Setter Property="Padding" Value="10 10 10 10"/>
+		</Style>
+		
+		<Style Selector="Border.editorContextBorder">
+			<Setter Property="CornerRadius" Value="0"/>
+			<Setter Property="Padding" Value="0"/>
+			<Setter Property="BorderBrush" Value="#EEEEEE"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="Margin" Value="0 0 0 0"/>
+		</Style>
+			
 		<Style Selector="TextBlock.editorContext">
 			<Setter Property="Padding" Value="10 5 10 5"/><!-- L U R D-->
 			<Setter Property="Foreground" Value="#888888"/>
@@ -111,6 +128,60 @@
 			<Setter Property="Foreground" Value="#888888"/>
 		</Style>
 
+		<Style Selector="TextBlock.editorFieldName">
+			<Setter Property="Padding" Value="0 8 5 8"/>
+			<Setter Property="FontSize" Value="12"/>
+		</Style>
+			
+		<Style Selector="NumericUpDown">
+			<Setter Property="ShowButtonSpinner" Value="False"/>
+			<Setter Property="MinWidth" Value="120"/>
+			<Setter Property="FontSize" Value="12"/><!-- No effect -->
+			<Setter Property="FontFamily" Value="Consolas"/>
+			<Setter Property="FontStyle" Value="Italic"/>
+			<Setter Property="Padding" Value="10 5 10 5"/>
+		</Style>
+		
+		<Style Selector="TextBox.editorHexString">
+			<Setter Property="MinWidth" Value="70"/>
+			<Setter Property="FontSize" Value="12"/>
+			<Setter Property="FontFamily" Value="Consolas"/>
+			<Setter Property="Padding" Value="10 5 10 5"/>
+		</Style>
+		
+		<Style Selector="TextBox.editorHexString">
+			<Setter Property="MinWidth" Value="70"/>
+			<Setter Property="FontSize" Value="12"/>
+			<Setter Property="Padding" Value="10 5 10 5"/>
+		</Style>
+			
+		<Style Selector="TextBlock.editorType">
+			<Setter Property="Padding" Value="10 8 5 8"/>
+			<Setter Property="FontSize" Value="11"/>
+			<Setter Property="Foreground" Value="#888888"/>
+		</Style>
+		
+		<Style Selector="TextBlock.editorHexType">
+			<Setter Property="Padding" Value="10 8 5 8"/>
+			<Setter Property="FontSize" Value="11"/>
+			<Setter Property="Foreground" Value="#888888"/>
+		</Style>
+		
+		<Style Selector="TextBlock.editorMax">
+			<Setter Property="Foreground" Value="#888888"/>
+			<Setter Property="FontSize" Value="11"/>
+			<Setter Property="Padding" Value="3 1 1 1"/>
+			<Setter Property="FontFamily" Value="Consolas"/>
+		</Style>
+		
+		<Style Selector="TextBlock.editorMin">
+			<Setter Property="Foreground" Value="#888888"/>
+			<Setter Property="FontSize" Value="11"/>
+			<Setter Property="Padding" Value="3 1 1 1"/>
+			<Setter Property="FontFamily" Value="Consolas"/>
+		</Style>
+	
+		<!-- Console -->
 		<Style Selector="TextBox.console">
 			<Setter Property="FontSize" Value="12"/>
 			<Setter Property="FontFamily" Value="Consolas"/>
@@ -128,7 +199,7 @@
 					<TextBlock Classes="treeText treeType" Text="{Binding DisplayType}"></TextBlock>
 					<TextBlock Classes="treeText treeFieldName" Text="{Binding DisplayFieldName}"></TextBlock>
 					<Border Classes="treeValueBorder">
-						<TextBlock Classes="treeText treeValue" Text="{Binding DisplayValue}"></TextBlock>
+						<TextBlock Classes="treeText treeValue" IsVisible="{Binding This, Converter={StaticResource VisibilityValueConverter}}" Text="{Binding Value}"></TextBlock>
 					</Border>
 				</StackPanel>
 			<!--</Button>-->
@@ -138,8 +209,8 @@
 	
 	
 
-	<DockPanel LastChildFill="true">
-		<DockPanel DockPanel.Dock="Top" LastChildFill="true">
+	<Grid RowDefinitions="Auto *" ColumnDefinitions="*">
+		<DockPanel Grid.Row="0" Grid.Column="0" LastChildFill="true">
 			<Border Classes="menuBorder">
 				<Menu DockPanel.Dock="Top" Background="#EEEEEE">
 					<MenuItem Header="_File">
@@ -180,7 +251,7 @@
 			</Border>
 		</DockPanel>
 		
-		<Grid DockPanel.Dock="Bottom" ShowGridLines="false" ColumnDefinitions="*">
+		<Grid Grid.Row="1" Grid.Column="0" ShowGridLines="false" ColumnDefinitions="*">
 			<Grid.RowDefinitions>
 				<RowDefinition MinHeight="100" Height="*"/>
 				<RowDefinition Height="Auto"/>
@@ -200,17 +271,20 @@
 				
 				<GridSplitter Grid.Row="0" Grid.Column="1"></GridSplitter>
 
-				<DockPanel Grid.Row="0" Grid.Column="2" LastChildFill="true">
+					<Grid Grid.Row="0" Grid.Column="2" ColumnDefinitions="*" RowDefinitions="30 *" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+						<Border Grid.Row="0" Grid.Column="0" Classes="editorContextBorder" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+							<TextBlock Classes="editorContext" Text="{Binding STRING_EditorContext}"/>
+						</Border>
+						<ScrollViewer Grid.Row="1" Grid.Column="0" Classes="editorMainScrollViewer">
+							<UserControl Content="{Binding SUBVIEW_EditorPane}"/>
+						</ScrollViewer>
+					</Grid>
 
-				<TextBlock DockPanel.Dock="Top" Classes="editorContext" Text="{Binding STRING_EditorContext}"></TextBlock>
-				<ScrollViewer Content="{Binding SUBVIEW_EditorPane}"/>
-				</DockPanel>
 
-				
-
-				
 			</Grid>
+			
 			<GridSplitter Grid.Row="1" Grid.Column="0"/>
+				
 			<ScrollViewer Grid.Row="2" Grid.Column="0">
 				<TextBox x:Name="TextBox_Log" Classes="console" IsReadOnly="True" Text="{Binding OBSV_Log}"/>
 			</ScrollViewer>
@@ -220,7 +294,7 @@
 
 
 
-	</DockPanel>
+	</Grid>
 
 
 </Window>

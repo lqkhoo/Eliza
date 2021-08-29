@@ -19,6 +19,13 @@ namespace Eliza.Avalonia.ViewModels
         // public TypeCode LengthType; // For arrays only
         // public int ArrayIndex = NULL_ARRAY_INDEX; // For array members only
 
+        protected UiObjectGraph _This;
+        public UiObjectGraph This
+        {
+            get => this._This;
+            set => this.RaiseAndSetIfChanged(ref this._This, value);
+        }
+
         protected Type? _Type;
         public Type? Type
         {
@@ -61,25 +68,78 @@ namespace Eliza.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref this._Attrs, value);
         }
 
-        public UiObjectGraph _Parent = null;
+        protected UiObjectGraph _Parent = null;
         public UiObjectGraph Parent
         {
             get => this._Parent;
             set => this.RaiseAndSetIfChanged(ref this._Parent, value);
         }
 
-        public List<UiObjectGraph> _Keys = new List<UiObjectGraph>();
+        protected List<UiObjectGraph> _Keys = new List<UiObjectGraph>();
         public List<UiObjectGraph> Keys
         {
             get => this._Keys;
             set => this.RaiseAndSetIfChanged(ref this._Keys, value);
         }
 
-        public List<UiObjectGraph> _Values = new List<UiObjectGraph>();
+        protected List<UiObjectGraph> _Values = new List<UiObjectGraph>();
         public List<UiObjectGraph> Values
         {
             get => this._Values;
             set => this.RaiseAndSetIfChanged(ref this._Values, value);
+        }
+
+
+        // Non-reactive properties
+
+        public double PrimitiveMax
+        {
+            get
+            {
+                if (this.Type != null && this.Type.IsPrimitive) {
+                    TypeCode typeCode = Type.GetTypeCode(this.Type);
+                    switch(typeCode) {
+                        case TypeCode.Boolean: return 1;
+                        case TypeCode.Byte: return byte.MaxValue;
+                        case TypeCode.Char: return char.MaxValue;
+                        case TypeCode.UInt16: return UInt16.MaxValue;
+                        case TypeCode.UInt32: return UInt32.MaxValue;
+                        case TypeCode.UInt64: return UInt64.MaxValue;
+                        case TypeCode.SByte: return SByte.MaxValue;
+                        case TypeCode.Int16: return Int16.MaxValue;
+                        case TypeCode.Int32: return Int32.MaxValue;
+                        case TypeCode.Int64: return Int64.MaxValue;
+                        case TypeCode.Single: return Single.MaxValue;
+                        case TypeCode.Double: return Double.MaxValue;
+                    }
+                }
+                return 0;
+            }
+        }
+
+        public double PrimitiveMin
+        {
+            get
+            {
+                if(this.Type != null && this.Type.IsPrimitive) {
+                    TypeCode typeCode = Type.GetTypeCode(this.Type);
+                    switch (typeCode) {
+                        case TypeCode.Boolean: return 0;
+                        case TypeCode.Byte: return byte.MinValue;
+                        case TypeCode.Char: return char.MinValue;
+                        case TypeCode.UInt16: return UInt16.MinValue;
+                        case TypeCode.UInt32: return UInt32.MinValue;
+                        case TypeCode.UInt64: return UInt64.MinValue;
+                        case TypeCode.SByte: return SByte.MinValue;
+                        case TypeCode.Int16: return Int16.MinValue;
+                        case TypeCode.Int32: return Int32.MinValue;
+                        case TypeCode.Int64: return Int64.MinValue;
+                        case TypeCode.Single: return Single.MinValue;
+                        case TypeCode.Double: return Double.MinValue;
+                    }
+                }
+                return 0;
+            }
         }
 
         public List<UiObjectGraph> Ancestors
@@ -102,12 +162,13 @@ namespace Eliza.Avalonia.ViewModels
 
         public UiObjectGraph(ObjectGraph node)
         {
-            this.Type = node.Type;
-            this.Value = node.Value;
-            this.LengthType = node.LengthType;
-            this.ArrayIndex = node.ArrayIndex;
-            this.FieldInfo = node.FieldInfo;
-            this.Attrs = node.Attrs;
+            this._This = this;
+            this._Type = node.Type;
+            this._Value = node.Value;
+            this._LengthType = node.LengthType;
+            this._ArrayIndex = node.ArrayIndex;
+            this._FieldInfo = node.FieldInfo;
+            this._Attrs = node.Attrs;
 
             foreach(ObjectGraph keyNode in node.Keys) {
                 UiObjectGraph childKeyNode = new(keyNode);
@@ -168,10 +229,13 @@ namespace Eliza.Avalonia.ViewModels
         {
             get
             {
-                string str = this.Type.Name;
-                if (this.ArrayIndex != ObjectGraph.NULL_ARRAY_INDEX) {
-                    str += " " + this.ArrayIndex.ToString();
-                }
+                string str;
+                if(this.Type != null) {
+                    str = this.Type.Name;
+                    if (this.ArrayIndex != ObjectGraph.NULL_ARRAY_INDEX) {
+                        str += " " + this.ArrayIndex.ToString();
+                    }
+                } else { str = ""; }
                 return str;
             }
             set
@@ -203,13 +267,18 @@ namespace Eliza.Avalonia.ViewModels
         {
             get
             {
-                string str;
-                if (this.Type == null || !this.Type.IsPrimitive) {
-                    str = "";
-                } else {
-                    str = this.Value.ToString();
+                if(this.Type == typeof(string)) {
+                    if(this.Value == null) {
+                        return "";
+                    } else {
+                        return this.Value.ToString();
+                    }
                 }
-                return str;
+                if (this.Type == null || !this.Type.IsPrimitive) {
+                    return "";
+                } else {
+                    return this.Value.ToString();
+                }
             }
             set
             {

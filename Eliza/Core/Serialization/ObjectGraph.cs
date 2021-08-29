@@ -37,10 +37,6 @@ namespace Eliza.Core.Serialization
         public bool IsRoot { get => this.Parent == null; }
         public bool IsLeaf { get => this.Values.Count == 0; }
 
-        // UI binding properties
-        public ObjectGraph UiThis { get => this; }
-        // public ObjectGraphUiWrapper Ui { get; protected set; }
-
         protected ObjectGraph()
         {
             this.Keys = new List<ObjectGraph>();
@@ -148,96 +144,5 @@ namespace Eliza.Core.Serialization
             throw new NotImplementedException();
         }
     }
-
-
-
-    /*
-    public class ObjectGraphUiWrapper : ObjectGraph
-    {
-        public readonly ObjectGraph Node;
-        public ObjectGraphUiWrapper(ObjectGraph node)
-        {
-            this.Node = node;
-        }
-
-        // These are value converter implementations to bypass Avalonia's constraints.
-        public string DisplayType
-        {
-            get
-            {
-                string str = this.Node.Type.Name;
-                if (this.Node.ArrayIndex != ObjectGraph.NULL_ARRAY_INDEX) {
-                    str += " " + this.Node.ArrayIndex.ToString();
-                }
-                return str;
-            }
-            set
-            {
-                throw new NotImplementedException(); // One-way
-            }
-        }
-
-        public string DisplayFieldName
-        {
-            get
-            {
-                string str = (this.Node.FieldInfo != null) ? this.Node.FieldInfo.Name : "";
-                if (this.Node.Type != null) {
-                    if (BaseSerializer.IsList(this.Node.Type)
-                        || BaseSerializer.IsDictionary(this.Node.Type)) {
-                        str += String.Format("[{0}]", this.Node.Values.Count);
-                    }
-                }
-                return str;
-            }
-            set
-            {
-                throw new NotImplementedException(); // One-way
-            }
-        }
-
-        public string DisplayValue
-        {
-            get
-            {
-                string str;
-                if (this.Node.Type == null || !this.Node.Type.IsPrimitive) {
-                    str = "";
-                } else {
-                    str = this.Node.Value.ToString();
-                }
-                return str;
-            }
-            set
-            {
-                throw new NotImplementedException(); // One-way
-            }
-        }
-
-        public string DisplayAncestry
-        {
-            get
-            {
-                string displayString = "";
-                List<ObjectGraph> ancestors = this.Node.Ancestors;
-                ancestors.Reverse();
-                for(int idx=0; idx<ancestors.Count; idx++) {
-                    ObjectGraph node = ancestors[idx];
-                    if(idx < ancestors.Count-1) {
-                        displayString += node.Ui.DisplayType + ": " + node.Ui.DisplayFieldName + "   >   ";
-                    } else {
-                        displayString += node.Ui.DisplayType + ": " + node.Ui.DisplayFieldName;
-                    }
-                }
-                return displayString;
-            }
-            set
-            {
-                throw new NotImplementedException(); // One-way
-            }
-        }
-
-    }
-    */
 
 }

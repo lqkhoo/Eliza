@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System;
 
 using Eliza.Avalonia.Views.Editors;
+using Avalonia.Data.Converters;
+using System.Globalization;
 
 namespace Eliza.Avalonia.Views
 {
@@ -134,4 +136,5 @@ namespace Eliza.Avalonia.Views
             AvaloniaXamlLoader.Load(this);
         }
     }
+
 }
