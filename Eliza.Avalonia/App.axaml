@@ -32,6 +32,7 @@
 	<Application.Resources>
 		<ValueConverters:ByteToHexConverter x:Key="ByteToHexConverter"/>
 		<ValueConverters:VisibilityValueConverter x:Key="VisibilityValueConverter"/>
+		<ValueConverters:BoolToNumConverter x:Key="BoolToNumConverter"/>
 	</Application.Resources>
 	
 	

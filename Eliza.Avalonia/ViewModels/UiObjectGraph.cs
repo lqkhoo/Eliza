@@ -68,8 +68,8 @@ namespace Eliza.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref this._Attrs, value);
         }
 
-        protected UiObjectGraph _Parent = null;
-        public UiObjectGraph Parent
+        protected UiObjectGraph? _Parent = null;
+        public UiObjectGraph? Parent
         {
             get => this._Parent;
             set => this.RaiseAndSetIfChanged(ref this._Parent, value);

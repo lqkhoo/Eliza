@@ -28,7 +28,22 @@
 			xmlns:Eliza.Model.Status="using:Eliza.Model.Status"
 			xmlns:Eliza.Model.World="using:Eliza.Model.World"
 			 >
-	<StackPanel>
-		<TextBlock>BooleanEditor</TextBlock>
-	</StackPanel>
+	
+	<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto">
+		<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorFieldName" Text="{Binding FieldInfo.Name}"/>
+		<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto Auto" Grid.Row="0" Grid.Column="1">
+			<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorType" Text="Boolean"></TextBlock>
+			<NumericUpDown Grid.Row="0" Grid.Column="1" Classes="editorNumericUpDown" Value="{Binding Value, Converter={StaticResource BoolToNumConverter}}" Maximum="{Binding PrimitiveMax}" Minimum="{Binding PrimitiveMin}"/>
+			<Grid RowDefinitions="Auto Auto" ColumnDefinitions="Auto" Grid.Row="0" Grid.Column="2">
+				<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto" Grid.Row="0">
+					<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorMax" Text="Max"/>
+					<TextBlock Grid.Row="1" Grid.Column="1" Classes="editorMax" Text="{Binding PrimitiveMax}"/>
+				</Grid>
+				<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto" Grid.Row="1">
+					<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorMin" Text="Min"/>
+					<TextBlock Grid.Row="0" Grid.Column="1" Classes="editorMin" Text="{Binding PrimitiveMin}"/>
+				</Grid>
+			</Grid>
+		</Grid>
+	</Grid>
 </UserControl>
