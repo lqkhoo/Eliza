@@ -21,7 +21,7 @@ using Eliza.Model.World;
 
 namespace Eliza.Model.Save
 {
-    public class RF5SaveData
+    public class RF5SaveData : IElizaEnumerableClass
     {
         public int slotNo;
         public SaveFlagStorage saveFlag;

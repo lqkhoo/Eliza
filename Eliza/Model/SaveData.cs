@@ -6,6 +6,8 @@ using Eliza.Core;
 using Eliza.Core.Serialization;
 using Eliza.Model.Save;
 using System.Collections.Generic;
+using System.Collections;
+using System.Reflection;
 //TODO:
 //Generate JSON:
 //https://github.com/SinsofSloth/RF5-global-metadata/blob/1a4dc9fb55263296c8a8564176591a7ab9fa1745/_no_namespace/FarmManager.FARM_ID.cs
@@ -37,7 +39,7 @@ using System.Collections.Generic;
 //FarmManager.RF4_CROP_GROW_STATE 
 namespace Eliza.Model
 {
-    public class SaveData
+    public class SaveData : IElizaEnumerableClass
     {
         public const int HEADER_NBYTES = 0x20;
         public const int FOOTER_NBYTES = 0x10;
@@ -217,12 +219,19 @@ namespace Eliza.Model
 
         public ObjectGraph ToObjectGraph()
         {
-            ObjectGraph graph = new(null, objectType: this.GetType()); // Blank except children
             GraphSerializer serializer = new(this.Locale, this.Version);
-            graph.AppendChild(serializer.WriteSaveDataHeader(this.header));
-            graph.AppendChild(serializer.WriteSaveData(this.saveData));
-            graph.AppendChild(serializer.WriteSaveDataFooter(this.footer));
-            return graph;
+            return serializer.WriteRF5Save(this);
+        }
+
+        IEnumerable<Tuple<FieldInfo, object>> IElizaEnumerableClass.GetFieldsOrdered()
+        {
+            foreach (FieldInfo fieldInfo in this.GetType().GetFields()) {
+                if (fieldInfo.FieldType == typeof(RF5SaveDataHeader)
+                    || fieldInfo.FieldType == typeof(RF5SaveData)
+                    || fieldInfo.FieldType == typeof(RF5SaveDataFooter)) {
+                    yield return new Tuple<FieldInfo, object>(fieldInfo, fieldInfo.GetValue(this));
+                }
+            }
         }
 
         // TODO

@@ -6,63 +6,213 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Eliza.Avalonia.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
-        Title="Eliza.Avalonia">
-
+        Title="Eliza.Avalonia"
+		xmlns:Eliza.Core.Serialization="using:Eliza.Core.Serialization"
+		xmlns:Eliza.Model="using:Eliza.Model"
+		xmlns:Eliza.Model.Battle="using:Eliza.Model.Battle"
+		xmlns:Eliza.Model.Build="using:Eliza.Model.Build"
+		xmlns:Eliza.Model.Event="using:Eliza.Model.Event"
+		xmlns:Eliza.Model.Farm="using:Eliza.Model.Farm"
+		xmlns:Eliza.Model.FarmSupportMonster="using:Eliza.Model.FarmSupportMonster"
+		xmlns:Eliza.Model.Fishing="using:Eliza.Model.Fishing"
+		xmlns:Eliza.Model.Furniture="using:Eliza.Model.Furniture"
+		xmlns:Eliza.Model.Item="using:Eliza.Model.Item"
+		xmlns:Eliza.Model.ItemFlag="using:Eliza.Model.ItemFlag"
+		xmlns:Eliza.Model.Lpocket="using:Eliza.Model.Lpocket"
+		xmlns:Eliza.Model.Making="using:Eliza.Model.Making"
+		xmlns:Eliza.Model.Name="using:Eliza.Model.Name"
+		xmlns:Eliza.Model.Npc="using:Eliza.Model.Npc"
+		xmlns:Eliza.Model.Order="using:Eliza.Model.Order"
+		xmlns:Eliza.Model.Player="using:Eliza.Model.Player"
+		xmlns:Eliza.Model.PoliceBatch="using:Eliza.Model.PoliceBatch"
+		xmlns:Eliza.Model.Save="using:Eliza.Model.Save"
+		xmlns:Eliza.Model.Shipping="using:Eliza.Model.Shipping"
+		xmlns:Eliza.Model.Stamp="using:Eliza.Model.Stamp"
+		xmlns:Eliza.Model.Status="using:Eliza.Model.Status"
+		xmlns:Eliza.Model.World="using:Eliza.Model.World"
+		xmlns:Eliza.Avalonia.ViewModels="using:Eliza.Avalonia.ViewModels"
+		>
+	
 	<Design.DataContext>
 		<vm:MainWindowViewModel/>
-	</Design.DataContext>
+	</Design.DataContext>	
+	
+	
+	<Window.Styles>
+					
+		<Style Selector="Border.menuBorder">
+			<Setter Property="CornerRadius" Value="0"/>
+			<Setter Property="Padding" Value="0"/>
+			<Setter Property="BorderBrush" Value="#CCCCCC"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="Margin" Value="0 -1 0 0"/>
+		</Style>
+
+			
+		<Style Selector="TextBlock.treeText">
+			<Setter Property="Padding" Value="0 2 20 2"/><!-- L U R D-->
+			<Setter Property="FontSize" Value="11"/>
+			<Setter Property="MinHeight" Value="22"/>
+		</Style>
+		<Style Selector="TextBlock.treeType">
+			<Setter Property="Padding" Value="0 3 20 3"/><!-- L U R D-->
+			<Setter Property="FontSize" Value="11"/>
+			<Setter Property="Foreground" Value="#888888"/>
+			<Setter Property="MinWidth" Value="50"/>
+			<Setter Property="FontFamily" Value="Consolas"/>
+		</Style>
+		<Style Selector="TextBlock.treeFieldName">
+			<Setter Property="MinWidth" Value="120"/>
+			<Setter Property="Padding" Value="0 3 0 3"/><!-- L U R D-->
+		</Style>
+		
+		<Style Selector="TextBlock.treeValue">
+			<Setter Property="Padding" Value="5 2 5 2"/><!-- L U R D-->
+			<Setter Property="Foreground" Value="#FFFFFF"/>
+			<Setter Property="FontWeight" Value="Normal"/>
+			<Setter Property="FontSize" Value="12"/>
+			<Setter Property="FontFamily" Value="Consolas"/>
+		</Style>
+		
+		<Style Selector="Border.treeValueBorder">
+			<Setter Property="Background" Value="#AAAAEE"/>
+			<Setter Property="CornerRadius" Value="5"/>
+			<Setter Property="Padding" Value="0"/>
+		</Style>
+
+		<Style Selector="TreeViewItem">
+			<Setter Property="MinHeight" Value="21"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="BorderBrush" Value="#F6F6F6"/>
+			<Setter Property="Margin" Value="0 -1 0 0"/>
+		</Style>
+				
+		<Style Selector="Button.treeButton /template/ ContentPresenter">
+			<Setter Property="VerticalAlignment" Value="Stretch"/>
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="Padding" Value="0 0 0 0"/><!-- L U R D-->
+			<Setter Property="CornerRadius" Value="2"/>
+		</Style>
+		
+		<Style Selector="Button.treeButton:pressed /template/ ContentPresenter">
+			<Setter Property="Background" Value="#FFFFFF"/>
+		</Style>
+		
+		<Style Selector="GridSplitter">
+			<Setter Property="MinHeight" Value="4"/>
+			<Setter Property="MinWidth" Value="4"/>
+			<Setter Property="Background" Value="#dddddd"/>
+		</Style>
+		
+		<Style Selector="TextBlock.editorContext">
+			<Setter Property="Padding" Value="10 5 10 5"/><!-- L U R D-->
+			<Setter Property="Foreground" Value="#888888"/>
+			<Setter Property="FontSize" Value="12"/>
+			<Setter Property="Foreground" Value="#888888"/>
+		</Style>
+
+		<Style Selector="TextBox.console">
+			<Setter Property="FontSize" Value="12"/>
+			<Setter Property="FontFamily" Value="Consolas"/>
+		</Style>
+				
+	</Window.Styles>
+		
+
+	<Window.DataTemplates>
+		<!--x:Type Eliza.Avalonia.ViewModels:UiObjectGraph-->
+		<TreeDataTemplate DataType="{x:Type Eliza.Avalonia.ViewModels:UiObjectGraph}" ItemsSource="{Binding Values}">
+			<!-- Need to be a button to handle click events. Really? -->
+			<!--<Button HorizontalAlignment="Stretch" Classes="treeButton" Click="OnButtonClick">-->
+				<StackPanel Orientation="Horizontal">
+					<TextBlock Classes="treeText treeType" Text="{Binding DisplayType}"></TextBlock>
+					<TextBlock Classes="treeText treeFieldName" Text="{Binding DisplayFieldName}"></TextBlock>
+					<Border Classes="treeValueBorder">
+						<TextBlock Classes="treeText treeValue" Text="{Binding DisplayValue}"></TextBlock>
+					</Border>
+				</StackPanel>
+			<!--</Button>-->
+		</TreeDataTemplate>
+	
+	</Window.DataTemplates>
+	
+	
 
 	<DockPanel LastChildFill="true">
 		<DockPanel DockPanel.Dock="Top" LastChildFill="true">
-			<Menu DockPanel.Dock="Top" Background="#EEEEEE">
-				<MenuItem Header="_File">
-					<MenuItem Header="_Open">
-						<MenuItem Header="_JP">
-							<MenuItem Header="1.0.7-1.0.9" Command="{Binding CMD_Open_JP_107_109}"/>
-							<MenuItem Header="1.0.4-1.0.6" Command="{Binding CMD_Open_JP_104_106}"/>
-							<MenuItem Header="1.0.2-1.0.3" Command="{Binding CMD_Open_JP_102_103}"/>
+			<Border Classes="menuBorder">
+				<Menu DockPanel.Dock="Top" Background="#EEEEEE">
+					<MenuItem Header="_File">
+						<MenuItem Header="_Open">
+							<MenuItem Header="_JP">
+								<MenuItem x:Name="MenuItem_Open_JP_1.0.7-1.0.9" Header="1.0.7-1.0.9"/>
+								<MenuItem x:Name="MenuItem_Open_JP_1.0.4-1.0.6" Header="1.0.4-1.0.6"/>
+								<MenuItem x:Name="MenuItem_Open_JP_1.0.2-1.0.3" Header="1.0.2-1.0.3"/>
+							</MenuItem>
+							<MenuItem Header="_EN">
+								<MenuItem Header="None"/>
+							</MenuItem>
 						</MenuItem>
-						<MenuItem Header="_EN">
-							<MenuItem Header="None"/>
+						<MenuItem Name="MenuItem_Save" Header="_Save"/>
+						<Separator/>
+						<MenuItem Header="_Developer">
+							<MenuItem Header="Open JP">
+								<MenuItem Header="1.0.10"/>
+								<MenuItem Header="1.0.9"/>
+								<MenuItem Header="1.0.8"/>
+								<MenuItem Header="1.0.7"/>
+								<MenuItem Header="1.0.6"/>
+								<MenuItem Header="1.0.5"/>
+								<MenuItem Header="1.0.4"/>
+								<MenuItem Header="1.0.3"/>
+								<MenuItem Header="1.0.2"/>
+								<MenuItem Header="1.0.1"/>
+								<MenuItem Header="1.0.0"/>
+							</MenuItem>
+							<MenuItem Header="Open EN">
+								<MenuItem Header="(None)"/>
+							</MenuItem>
+							<MenuItem x:Name="MenuItem_SaveDecrypted" Header="Save Decrypted"/>
 						</MenuItem>
 					</MenuItem>
-					<MenuItem Header="_Save" Command="{Binding CMD_SaveEncrypted}" />
-					<Separator/>
-					<MenuItem Header="_Developer">
-						<MenuItem Header="Open JP">
-							<MenuItem Header="1.0.10"/>
-							<MenuItem Header="1.0.9"/>
-							<MenuItem Header="1.0.8"/>
-							<MenuItem Header="1.0.7"/>
-							<MenuItem Header="1.0.6"/>
-							<MenuItem Header="1.0.5"/>
-							<MenuItem Header="1.0.4"/>
-							<MenuItem Header="1.0.3"/>
-							<MenuItem Header="1.0.2"/>
-							<MenuItem Header="1.0.1"/>
-							<MenuItem Header="1.0.0"/>
-						</MenuItem>
-						<MenuItem Header="Open EN">
-							<MenuItem Header="(None)"/>
-						</MenuItem>
-						<MenuItem Header="Save Decrypted" Command="{Binding CMD_SaveDecrypted}"/>
-					</MenuItem>
-				</MenuItem>
-				<MenuItem Header="Placeholder"></MenuItem>
-			</Menu>
+					<MenuItem Header="Placeholder"></MenuItem>
+				</Menu>
+			</Border>
 		</DockPanel>
+		
 		<Grid DockPanel.Dock="Bottom" ShowGridLines="false" ColumnDefinitions="*">
 			<Grid.RowDefinitions>
-				<RowDefinition MinHeight="100" Height="*"></RowDefinition>
-				<RowDefinition Height="Auto"></RowDefinition>
-				<RowDefinition MinHeight="60" Height="Auto"></RowDefinition>
+				<RowDefinition MinHeight="100" Height="*"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition MinHeight="60" Height="Auto"/>
 			</Grid.RowDefinitions>
-			<ScrollViewer>
-				<TreeView Items="{Binding OBSV_BaseList}"/>
-			</ScrollViewer>
-			<GridSplitter Grid.Row="1" Grid.Column="0" Background="#EEEEEE"/>
+
+			<Grid ShowGridLines="false" RowDefinitions="*">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition MinWidth="300" Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition MinWidth="250" Width="*"/>
+			</Grid.ColumnDefinitions>
+				
+				<ScrollViewer Grid.Row="0" Grid.Column="0">
+					<TreeView x:Name="TreeView_MainTree" Items="{Binding OBSV_Graph}"></TreeView>
+				</ScrollViewer>
+				
+				<GridSplitter Grid.Row="0" Grid.Column="1"></GridSplitter>
+
+				<DockPanel Grid.Row="0" Grid.Column="2" LastChildFill="true">
+
+				<TextBlock DockPanel.Dock="Top" Classes="editorContext" Text="{Binding STRING_EditorContext}"></TextBlock>
+				<ScrollViewer Content="{Binding SUBVIEW_EditorPane}"/>
+				</DockPanel>
+
+				
+
+				
+			</Grid>
+			<GridSplitter Grid.Row="1" Grid.Column="0"/>
 			<ScrollViewer Grid.Row="2" Grid.Column="0">
-				<TextBox IsReadOnly="True" Text="{Binding OBSV_Log}" FontFamily="Consolas"/>
+				<TextBox x:Name="TextBox_Log" Classes="console" IsReadOnly="True" Text="{Binding OBSV_Log}"/>
 			</ScrollViewer>
 		</Grid>
 

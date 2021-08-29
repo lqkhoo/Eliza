@@ -15,6 +15,18 @@ namespace Eliza.Core.Serialization
         public GraphSerializer(SaveData.LOCALE locale, int version)
             : base(locale, version) { }
 
+        public ObjectGraph WriteRF5Save(SaveData save)
+        {
+            ObjectGraph baseNode = new(save);
+            foreach (Tuple<FieldInfo, object> tup in save) {
+                FieldInfo fieldInfo = tup.Item1;
+                object objectValue = tup.Item2;
+                ObjectGraph child = this.WriteObject(objectValue, fieldInfo);
+                baseNode.AppendChild(child);
+            }
+            return baseNode;
+        }
+
         public ObjectGraph WriteSaveDataHeader(RF5SaveDataHeader header)
         {
             return this.WriteObject(header);
@@ -84,8 +96,9 @@ namespace Eliza.Core.Serialization
                                     objectType: list.GetType(),
                                     lengthType: lengthType,
                                     fieldInfo: fieldInfo);
-            foreach(var item in list) {
-                node.AppendChild(this.WriteObject(item));
+            for(int idx=0; idx<list.Count; idx++) {
+                ObjectGraph child = this.WriteValue(list[idx], fieldInfo: fieldInfo);
+                node.AppendChild(child, idx);
             }
             return node;
         }
@@ -110,30 +123,29 @@ namespace Eliza.Core.Serialization
             ObjectGraph node = new(objectValue: dictionary,
                                     objectType: dictionary.GetType(),
                                     fieldInfo: fieldInfo);
-
-            var keys = dictionary.Keys;
-            foreach(var key in keys) {
-                node.AppendKey(this.WriteObject(key));
-            }
-            var values = dictionary.Values;
-            foreach(var value in values) {
-                node.AppendChild(this.WriteObject(value));
+            int idx = 0;
+            foreach(var key in dictionary.Keys) {
+                ObjectGraph keyNode = this.WriteObject(key);
+                ObjectGraph valueNode = this.WriteObject(dictionary[key]);
+                node.AppendKey(keyNode, idx);
+                node.AppendChild(valueNode, idx);
+                idx++;
             }
 
             return node;
         }
 
-        protected ObjectGraph WriteObject(object objectValue, FieldInfo fi=null)
+        protected ObjectGraph WriteObject(object objectValue, FieldInfo fieldInfo=null)
         {
             ObjectGraph node;
             if(objectValue == null) {
-                node = this.WriteNull(fi);
+                node = this.WriteNull(fieldInfo);
             } else {
                 var objectType = objectValue.GetType();
-                node = new(objectValue: objectValue, fieldInfo: fi);
-                foreach (FieldInfo fieldInfo in GetFieldsOrdered(objectType)) {
-                    object fieldValue = fieldInfo.GetValue(objectValue);
-                    ObjectGraph child = this.WriteField(fieldValue, fieldInfo);
+                node = new(objectValue: objectValue, fieldInfo: fieldInfo);
+                foreach (FieldInfo childFieldInfo in GetFieldsOrdered(objectType)) {
+                    object fieldValue = childFieldInfo.GetValue(objectValue);
+                    ObjectGraph child = this.WriteField(fieldValue, childFieldInfo);
                     node.AppendChild(child);
                 }
             }

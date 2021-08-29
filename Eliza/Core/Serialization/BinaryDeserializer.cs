@@ -14,10 +14,9 @@ namespace Eliza.Core.Serialization
     {
         public readonly BinaryReader Reader;
 
-        // This contains a list of top-level RF5Save objects
-        // which have been successfully deserialized.
-        // Used for debugging only.
         protected List<object> _DebugList;
+        // This contains a list of top-level RF5Save objects which have
+        // been successfully deserialized. Used for debugging only.
 
         public BinaryDeserializer(Stream baseStream, SaveData.LOCALE locale, int version)
                                   : base(baseStream, locale, version)
@@ -26,7 +25,7 @@ namespace Eliza.Core.Serialization
             this._DebugList = new List<object>();
         }
 
-        // Public read methods preserve the position of this.Reader
+        // Public read methods preserve this.Reader.Position
         // from previous reads. For most intents and purposes we stick
         // with default arguments and simply read the header, data,
         // and footer sequentially.

@@ -20,8 +20,45 @@
     <Compile Update="App.axaml.cs">
       <DependentUpon>App.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\ContextView.axaml.cs">
+      <DependentUpon>ContextView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Editors\Primitives\BooleanEditorView.axaml.cs">
+      <DependentUpon>BooleanEditorView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Editors\Primitives\DoubleEditorView.axaml.cs">
+      <DependentUpon>DoubleEditorView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Editors\Primitives\SingleEditorView.axaml.cs">
+      <DependentUpon>SingleEditorView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Editors\Primitives\Int64EditorView.axaml.cs">
+      <DependentUpon>Int64EditorView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Editors\Primitives\Int32EditorView.axaml.cs">
+      <DependentUpon>Int32EditorView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Editors\Primitives\Int16EditorView.axaml.cs">
+      <DependentUpon>Int16EditorView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Editors\Primitives\SByteEditorView.axaml.cs">
+      <DependentUpon>SByteEditorView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Editors\Primitives\UInt64EditorView.axaml.cs">
+      <DependentUpon>UInt64EditorView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Editors\Primitives\UInt32EditorView.axaml.cs">
+      <DependentUpon>UInt32EditorView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Editors\Primitives\UInt16EditorView.axaml.cs">
+      <DependentUpon>UInt16EditorView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Editors\Primitives\CharEditorView.axaml.cs">
+      <DependentUpon>CharEditorView.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
+    <Folder Include="Views\Editors\Objects\" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Eliza.Avalonia.Views.Editors.UInt64EditorView"
+			xmlns:Eliza.Core.Serialization="using:Eliza.Core.Serialization"
+			xmlns:Eliza.Model="using:Eliza.Model"
+			xmlns:Eliza.Model.Battle="using:Eliza.Model.Battle"
+			xmlns:Eliza.Model.Build="using:Eliza.Model.Build"
+			xmlns:Eliza.Model.Event="using:Eliza.Model.Event"
+			xmlns:Eliza.Model.Farm="using:Eliza.Model.Farm"
+			xmlns:Eliza.Model.FarmSupportMonster="using:Eliza.Model.FarmSupportMonster"
+			xmlns:Eliza.Model.Fishing="using:Eliza.Model.Fishing"
+			xmlns:Eliza.Model.Furniture="using:Eliza.Model.Furniture"
+			xmlns:Eliza.Model.Item="using:Eliza.Model.Item"
+			xmlns:Eliza.Model.ItemFlag="using:Eliza.Model.ItemFlag"
+			xmlns:Eliza.Model.Lpocket="using:Eliza.Model.Lpocket"
+			xmlns:Eliza.Model.Making="using:Eliza.Model.Making"
+			xmlns:Eliza.Model.Name="using:Eliza.Model.Name"
+			xmlns:Eliza.Model.Npc="using:Eliza.Model.Npc"
+			xmlns:Eliza.Model.Order="using:Eliza.Model.Order"
+			xmlns:Eliza.Model.Player="using:Eliza.Model.Player"
+			xmlns:Eliza.Model.PoliceBatch="using:Eliza.Model.PoliceBatch"
+			xmlns:Eliza.Model.Save="using:Eliza.Model.Save"
+			xmlns:Eliza.Model.Shipping="using:Eliza.Model.Shipping"
+			xmlns:Eliza.Model.Stamp="using:Eliza.Model.Stamp"
+			xmlns:Eliza.Model.Status="using:Eliza.Model.Status"
+			xmlns:Eliza.Model.World="using:Eliza.Model.World"
+            >
+
+	<StackPanel>
+		<TextBlock>UInt64Editor</TextBlock>
+	</StackPanel>
+	
+</UserControl>
