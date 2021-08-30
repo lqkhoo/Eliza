@@ -36,45 +36,6 @@ namespace Eliza.Avalonia.ValueConverters
         }
     }
 
-    // This one needs some work.
-    public class CharToStringConverter : IValueConverter
-    {
-        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return ((char)value).ToString();
-        }
-
-        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            string str = "";
-            try {
-                str = (string)value;
-                return (string)value == "" ? 0x0 : str[0];
-            } catch (Exception e) {
-
-            }
-            return (char)0x0;
-        }
-    }
-
-    public class CharToHexConverter : IValueConverter
-    {
-        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return Convert.ToByte(value).ToString("X"); // Same as byte
-        }
-
-        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            byte val = 0;
-            try {
-                val = byte.Parse((string)value, System.Globalization.NumberStyles.HexNumber);
-            } catch (Exception e) {
-            }
-            return (char)val;
-        }
-    }
-
     public class ByteToHexConverter : IValueConverter
     {
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -256,6 +217,70 @@ namespace Eliza.Avalonia.ValueConverters
             } catch (Exception) {
             }
             return BitConverter.Int64BitsToDouble(val);
+        }
+    }
+
+
+    // Char conversions are nasty. It's only used in the header, so what works works.
+    // Force UI to ASCII to disable 2-byte entries e.g. Japanese characters.
+    // ASCII is all we ever see in char fields i.e. RF5\0.
+    public class CharToStringConverter : IValueConverter
+    {
+        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return ((char)value).ToString();
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            string str = (string)value;
+            if(str.Length == 0) {
+                return null;
+            } else {
+                return str[0];
+            }
+        }
+    }
+
+    public class CharToHexConverter : IValueConverter
+    {
+        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            #pragma warning disable CS8603 // Possible null reference return.
+            try {
+                
+                string str = value.ToString();
+                byte[] bytes = Encoding.ASCII.GetBytes((string)str);
+                return BitConverter.ToString(bytes).Replace("-", "");
+            } catch (Exception) {
+                return null;
+            }
+            #pragma warning restore CS8603 // Possible null reference return.
+
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try {
+                string hex = (string)value;
+                if (hex.Length % 2 == 0) {
+                    int numChars = hex.Length;
+                    byte[] bytes = new byte[numChars / 2];
+                    for (int i = 0; i < numChars; i += 2)
+                        bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+                    string str = Encoding.ASCII.GetString(bytes);
+                    return str[0];
+                } else {
+                    #pragma warning disable CS8603 // Possible null reference return.
+                    return null;
+                    #pragma warning restore CS8603 // Possible null reference return.
+                }
+            } catch (Exception) {
+                #pragma warning disable CS8603 // Possible null reference return.
+                return null;
+                #pragma warning restore CS8603 // Possible null reference return.
+            }
+
         }
     }
 

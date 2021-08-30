@@ -33,7 +33,7 @@
 		<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorFieldName" Text="{Binding FieldInfo.Name}"/>
 		<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto Auto" Grid.Row="0" Grid.Column="1">
 			<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorType" Text="Char"></TextBlock>
-			<TextBox Grid.Row="0" Grid.Column="1" Classes="editorString" MaxLength="1" Text="{Binding Value}"/>
+			<TextBox Grid.Row="0" Grid.Column="1" Classes="editorString" MaxLength="1" Text="{Binding Value, Converter={StaticResource CharToStringConverter}}"/>
 			<Grid RowDefinitions="Auto Auto" ColumnDefinitions="Auto" Grid.Row="0" Grid.Column="2">
 				<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto" Grid.Row="0">
 					<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorMax" Text="Max"/>
@@ -47,15 +47,15 @@
 		</Grid>
 		<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto Auto" Grid.Row="0" Grid.Column="2">
 			<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorHexType" Text="Hex"></TextBlock>
-			<TextBox Grid.Row="0" Grid.Column="1" Classes="editorHexString" Text="{Binding Value, Converter={StaticResource CharToHexConverter}}"/>
+			<TextBox Grid.Row="0" Grid.Column="1" Classes="editorHexString" MaxLength="{Binding NumNibbles}" Text="{Binding Value, Converter={StaticResource CharToHexConverter}}"/>
 			<Grid RowDefinitions="Auto Auto" ColumnDefinitions="Auto" Grid.Row="0" Grid.Column="2">
 				<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto" Grid.Row="0">
 					<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorMax" Text="Max"/>
-					<TextBlock Grid.Row="1" Grid.Column="1" Classes="editorMax" Text="{Binding PrimitiveMax, Converter={StaticResource CharToHexConverter}}"/>
+					<TextBlock Grid.Row="1" Grid.Column="1" Classes="editorMax" Text="{Binding PrimitiveMax, Converter={StaticResource ByteToHexConverter}}"/>
 				</Grid>
 				<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto" Grid.Row="1">
 					<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorMin" Text="Min"/>
-					<TextBlock Grid.Row="1" Grid.Column="1" Classes="editorMin" Text="{Binding PrimitiveMin, Converter={StaticResource CharToHexConverter}}"/>
+					<TextBlock Grid.Row="1" Grid.Column="1" Classes="editorMin" Text="{Binding PrimitiveMin, Converter={StaticResource ByteToHexConverter}}"/>
 				</Grid>
 			</Grid>
 		</Grid>

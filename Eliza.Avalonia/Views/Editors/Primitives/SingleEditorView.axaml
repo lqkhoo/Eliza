@@ -47,7 +47,7 @@
 		</Grid>
 		<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto Auto" Grid.Row="0" Grid.Column="2">
 			<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorHexType" Text="Hex"></TextBlock>
-			<TextBox Grid.Row="0" Grid.Column="1" Classes="editorHexString" Text="{Binding Value, Converter={StaticResource SingleToHexConverter}}"/>
+			<TextBox Grid.Row="0" Grid.Column="1" Classes="editorHexString" MaxLength="{Binding NumNibbles}" Text="{Binding Value, Converter={StaticResource SingleToHexConverter}}"/>
 			<Grid RowDefinitions="Auto Auto" ColumnDefinitions="Auto" Grid.Row="0" Grid.Column="2">
 				<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto" Grid.Row="0">
 					<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorMax" Text="Max"/>

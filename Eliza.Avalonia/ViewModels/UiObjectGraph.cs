@@ -150,6 +150,33 @@ namespace Eliza.Avalonia.ViewModels
             }
         }
 
+        // Used for hex input maxlength
+        public double NumNibbles
+        {
+            get
+            {
+                if (this.Type != null && this.Type.IsPrimitive) {
+                    TypeCode typeCode = Type.GetTypeCode(this.Type);
+                    switch (typeCode) {
+                        // case TypeCode.Boolean: return 1; Unused. Ill-defined anyway
+                        case TypeCode.Byte: return 2;
+                        // case TypeCode.Char: return char.MinValue;
+                        case TypeCode.Char: return 2;
+                        case TypeCode.UInt16: return 4;
+                        case TypeCode.UInt32: return 8;
+                        case TypeCode.UInt64: return 16;
+                        case TypeCode.SByte: return 2;
+                        case TypeCode.Int16: return 4;
+                        case TypeCode.Int32: return 8;
+                        case TypeCode.Int64: return 16;
+                        case TypeCode.Single: return 8;
+                        case TypeCode.Double: return 16;
+                    }
+                }
+                return 0;
+            }
+        }
+
         public List<UiObjectGraph> Ancestors
         {
             get
