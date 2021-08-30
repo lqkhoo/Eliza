@@ -40,6 +40,20 @@ namespace Eliza.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref this._Value, value);
         }
 
+        protected UiObjectGraph? _Parent = null;
+        public UiObjectGraph? Parent
+        {
+            get => this._Parent;
+            set => this.RaiseAndSetIfChanged(ref this._Parent, value);
+        }
+
+        protected List<UiObjectGraph> _Children = new List<UiObjectGraph>();
+        public List<UiObjectGraph> Children
+        {
+            get => this._Children;
+            set => this.RaiseAndSetIfChanged(ref this._Children, value);
+        }
+
         protected TypeCode _LengthType;
         public TypeCode LengthType
         {
@@ -52,6 +66,20 @@ namespace Eliza.Avalonia.ViewModels
         {
             get => this._ArrayIndex;
             set => this.RaiseAndSetIfChanged(ref this._ArrayIndex, value);
+        }
+
+        protected bool _IsUtf16UuidString;
+        public bool IsUtf16UuidString
+        {
+            get => this._IsUtf16UuidString;
+            set => this.RaiseAndSetIfChanged(ref this._IsUtf16UuidString, value);
+        }
+
+        protected int _MaxLength;
+        public int MaxLength
+        {
+            get => this._MaxLength;
+            set => this.RaiseAndSetIfChanged(ref this._MaxLength, value);
         }
 
         protected FieldInfo? _FieldInfo;
@@ -68,30 +96,8 @@ namespace Eliza.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref this._Attrs, value);
         }
 
-        protected UiObjectGraph? _Parent = null;
-        public UiObjectGraph? Parent
-        {
-            get => this._Parent;
-            set => this.RaiseAndSetIfChanged(ref this._Parent, value);
-        }
-
-        protected List<UiObjectGraph> _Keys = new List<UiObjectGraph>();
-        public List<UiObjectGraph> Keys
-        {
-            get => this._Keys;
-            set => this.RaiseAndSetIfChanged(ref this._Keys, value);
-        }
-
-        protected List<UiObjectGraph> _Values = new List<UiObjectGraph>();
-        public List<UiObjectGraph> Values
-        {
-            get => this._Values;
-            set => this.RaiseAndSetIfChanged(ref this._Values, value);
-        }
-
 
         // Non-reactive properties
-
         public double PrimitiveMax
         {
             get
@@ -150,13 +156,17 @@ namespace Eliza.Avalonia.ViewModels
             {
                 List<UiObjectGraph> ancestors = new();
                 UiObjectGraph currentNode = this;
-                UiObjectGraph parentNode;
-                do {
-                    parentNode = currentNode.Parent;
-                    ancestors.Add(currentNode);
-                    currentNode = parentNode;
+                UiObjectGraph? parentNode = currentNode.Parent;
+                ancestors.Add(this);
+                while(true) {
+                    if(parentNode != null) {
+                        currentNode = parentNode;
+                        ancestors.Add(currentNode);
+                        parentNode = currentNode.Parent;
+                    } else {
+                        break;
+                    }
                 }
-                while (parentNode != null);
                 return ancestors;
             }
         }
@@ -172,16 +182,10 @@ namespace Eliza.Avalonia.ViewModels
             this._FieldInfo = node.FieldInfo;
             this._Attrs = node.Attrs;
 
-            foreach(ObjectGraph keyNode in node.Keys) {
-                UiObjectGraph childKeyNode = new(keyNode);
-                childKeyNode.Parent = this;
-                this.Keys.Add(childKeyNode);
-            }
-
-            foreach (ObjectGraph valueNode in node.Values) {
+            foreach (ObjectGraph valueNode in node.Children) {
                 UiObjectGraph childValueNode = new(valueNode);
                 childValueNode.Parent = this;
-                this.Values.Add(childValueNode);
+                this.Children.Add(childValueNode);
             }
 
         }
@@ -197,10 +201,11 @@ namespace Eliza.Avalonia.ViewModels
                 type: uiNode.Type,
                 value: uiNode.Value,
                 parent: null,
-                keys: new List<ObjectGraph>(),
-                values: new List<ObjectGraph>(),
+                children: new List<ObjectGraph>(),
                 lengthType: uiNode.LengthType,
                 arrayIndex: uiNode.ArrayIndex,
+                isUtf16UuidString: uiNode.IsUtf16UuidString,
+                maxLength: uiNode.MaxLength,
                 fieldInfo: uiNode.FieldInfo,
                 attrs: uiNode.Attrs
             );
@@ -211,22 +216,17 @@ namespace Eliza.Avalonia.ViewModels
         {
             ObjectGraph node = UiObjectGraph.ShallowUnwrap(uiNode);
 
-            foreach(UiObjectGraph uiKeyNode in uiNode.Keys) {
-                ObjectGraph child = UiObjectGraph.Unwrap(uiKeyNode);
-                child.Parent = node;
-                node.Keys.Add(child);
-            }
-
-            foreach(UiObjectGraph uiValueNode in uiNode.Values) {
+            foreach(UiObjectGraph uiValueNode in uiNode.Children) {
                 ObjectGraph child = UiObjectGraph.Unwrap(uiValueNode);
                 child.Parent = node;
-                node.Values.Add(child);
+                node.Children.Add(child);
             }
             return node;
         }
 
 
-        // These are value converter implementations to bypass Avalonia's constraints.
+        // These are one-way properties that bind values that won't change.
+        // Basically lazy-mode value converters so we don't pollute that namespace.
         public string DisplayType
         {
             get
@@ -254,7 +254,7 @@ namespace Eliza.Avalonia.ViewModels
                 if (this.Type != null) {
                     if (BaseSerializer.IsList(this.Type)
                         || BaseSerializer.IsDictionary(this.Type)) {
-                        str += String.Format("[{0}]", this.Values.Count);
+                        str += String.Format("[{0}]", this.Children.Count);
                     }
                 }
                 return str;
@@ -269,17 +269,16 @@ namespace Eliza.Avalonia.ViewModels
         {
             get
             {
-                if(this.Type == typeof(string)) {
-                    if(this.Value == null) {
-                        return "";
-                    } else {
+                if(this.Value == null) {
+                    return "null";
+                } else  {
+                    if(this.Type != null && this.Type.IsPrimitive) {
+                        #pragma warning disable CS8603 // Possible null reference return.
                         return this.Value.ToString();
+                        #pragma warning restore CS8603 // Possible null reference return.
+                    } else {
+                        return "";
                     }
-                }
-                if (this.Type == null || !this.Type.IsPrimitive) {
-                    return "";
-                } else {
-                    return this.Value.ToString();
                 }
             }
             set
@@ -309,6 +308,12 @@ namespace Eliza.Avalonia.ViewModels
             {
                 throw new NotImplementedException(); // One-way
             }
+        }
+
+        public override string ToString()
+        {
+            string typeName = (this.Type == null) ? "" : this.Type.Name;
+            return String.Format("Graph: [{1}] {2}: {3}", this.Children.Count, this.DisplayFieldName, typeName);
         }
     }
 }

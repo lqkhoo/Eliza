@@ -1,4 +1,5 @@
-﻿using Avalonia.Data.Converters;
+﻿using Avalonia.Data;
+using Avalonia.Data.Converters;
 using Eliza.Avalonia.ViewModels;
 using Eliza.Core.Serialization;
 using System;
@@ -35,7 +36,7 @@ namespace Eliza.Avalonia.ValueConverters
         }
     }
 
-    /*
+    // This one needs some work.
     public class CharToStringConverter : IValueConverter
     {
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -45,18 +46,14 @@ namespace Eliza.Avalonia.ValueConverters
 
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string str="";
+            string str = "";
             try {
-                str = (string)value;                
+                str = (string)value;
+                return (string)value == "" ? 0x0 : str[0];
             } catch (Exception e) {
-                int foo = 3;
+
             }
-            if(str=="") {
-                return 0x00;
-            } else {
-                return str[0];
-            }
-            return str[0];
+            return (char)0x0;
         }
     }
 
@@ -73,12 +70,10 @@ namespace Eliza.Avalonia.ValueConverters
             try {
                 val = byte.Parse((string)value, System.Globalization.NumberStyles.HexNumber);
             } catch (Exception e) {
-                int foo = 3;
             }
             return (char)val;
         }
     }
-    */
 
     public class ByteToHexConverter : IValueConverter
     {
@@ -264,5 +259,53 @@ namespace Eliza.Avalonia.ValueConverters
         }
     }
 
+
+    public class StringToHexConverter : IValueConverter
+    {
+        // https://stackoverflow.com/a/311179
+        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            byte[] bytes = Encoding.Unicode.GetBytes((string)value);
+            return BitConverter.ToString(bytes).Replace("-", "");
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            // Pragmas are ugly but they're the best way to do it.
+            // Convert() will handle the nullvalue exception and move on.
+            try {
+                string hex = (string)value;
+                if(hex.Length % 4 == 0) {
+                    int numChars = hex.Length;
+                    byte[] bytes = new byte[numChars / 2];
+                    for (int i = 0; i < numChars; i += 2)
+                        bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+                    return Encoding.Unicode.GetString(bytes);
+                } else {
+                    #pragma warning disable CS8603 // Possible null reference return.
+                    return null;
+                    #pragma warning restore CS8603 // Possible null reference return.
+                }
+            } catch (Exception) {
+                #pragma warning disable CS8603 // Possible null reference return.
+                return null;
+                #pragma warning restore CS8603 // Possible null reference return.
+            }
+
+        }
+    }
+
+    public class UuidStringToHexConverter : IValueConverter
+    {
+        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 
 }

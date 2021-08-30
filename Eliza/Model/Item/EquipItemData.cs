@@ -25,7 +25,9 @@ namespace Eliza.Model.Item
         [Key(11)]
         public int DualWorkParam;
         [IgnoreMember]
+        #pragma warning disable IDE0051 // Remove unused private members
         private static Dictionary<int, int> SameItemNum;
+        #pragma warning restore IDE0051 // Remove unused private members
 
         public EquipItemData()
         {

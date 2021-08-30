@@ -1,4 +1,5 @@
-﻿using Eliza.Core.Serialization.MessagePackFormatters;
+﻿using Eliza.Core.Serialization;
+using Eliza.Core.Serialization.MessagePackFormatters;
 using MessagePack;
 
 namespace Eliza.Model.Status

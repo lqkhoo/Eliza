@@ -16,6 +16,13 @@ using Avalonia.Input;
 
 namespace Eliza.Avalonia.ViewModels
 {
+
+    // Any reactive prooperties have to be defined within a class
+    // which inherits from ReactiveObject, i.e. ViewModelBase.
+
+    // On the other hand, event handlers can only be defined
+    // inside views.
+
     public class MainWindowViewModel : ViewModelBase
     {
         // protected ViewModelBase Content; // Shouldn't be necessary. We only have one view.
@@ -24,35 +31,24 @@ namespace Eliza.Avalonia.ViewModels
 
         protected SaveData.LOCALE Requested_Locale;
         protected int Requested_Version;
-        protected SaveData _SaveData;
+        protected SaveData? _SaveData;
 
-
-        // Reactive properties and subviews for binding
-        /*
-        protected UserControl _ContextPane;
-        public UserControl SUBVIEW_ContextPane
-        {
-            get => this._ContextPane;
-            set => this.RaiseAndSetIfChanged(ref this._ContextPane, value);
-        }
-        */
-
-        protected UserControl _EditorPane;
-        public UserControl SUBVIEW_EditorPane
+        protected UserControl? _EditorPane;
+        public UserControl? SUBVIEW_EditorPane
         {
             get => this._EditorPane;
             set => this.RaiseAndSetIfChanged(ref this._EditorPane, value);
         }
 
-        protected string _EditorContext;
+        protected string _EditorContext = "";
         public string STRING_EditorContext
         {
             get => this._EditorContext;
             set => this.RaiseAndSetIfChanged(ref this._EditorContext, value);
         }
 
-        protected ObservableCollection<UiObjectGraph> _ObsvObjectGraph; // ObjectGraph generated from savedata
-        public ObservableCollection<UiObjectGraph> OBSV_Graph
+        protected ObservableCollection<UiObjectGraph>? _ObsvObjectGraph; // ObjectGraph generated from savedata
+        public ObservableCollection<UiObjectGraph>? OBSV_Graph
         {
             get => this._ObsvObjectGraph;
             set => this.RaiseAndSetIfChanged(ref this._ObsvObjectGraph, value);
@@ -77,7 +73,6 @@ namespace Eliza.Avalonia.ViewModels
         // Event handlers have to be defined within the views themselves.
 
 
-
         public MainWindowViewModel() : base()
         {
             this.MainWindowView = MainWindow.Instance;
@@ -86,17 +81,16 @@ namespace Eliza.Avalonia.ViewModels
             this.CMD_Open_JP_104_106 = ReactiveCommand.Create(() => { Task task = this.Cmd_OpenAsync(SaveData.LOCALE.JP, 4); });
             this.CMD_Open_JP_107_109 = ReactiveCommand.Create(() => { Task task = this.Cmd_OpenAsync(SaveData.LOCALE.JP, 7); });
             this.CMD_SaveEncrypted = ReactiveCommand.Create(() => { Task task = this.Cmd_SaveEncrypted(); });
-            this.CMD_SaveEncrypted = ReactiveCommand.Create(() => { Task task = this.Cmd_SaveDecrypted(); });
+            this.CMD_SaveDecrypted = ReactiveCommand.Create(() => { Task task = this.Cmd_SaveDecrypted(); });
 
             this.MainWindowView.FindControl<MenuItem>("MenuItem_Open_JP_1.0.7-1.0.9").Command = this.CMD_Open_JP_107_109;
             this.MainWindowView.FindControl<MenuItem>("MenuItem_Open_JP_1.0.4-1.0.6").Command = this.CMD_Open_JP_104_106;
             this.MainWindowView.FindControl<MenuItem>("MenuItem_Open_JP_1.0.2-1.0.3").Command = this.CMD_Open_JP_102_103;
 
             this.MainWindowView.FindControl<MenuItem>("MenuItem_Save").Command = this.CMD_SaveEncrypted;
-            this.MainWindowView.FindControl<MenuItem>("MenuItem_SaveDecrypted").Command = this.CMD_SaveEncrypted;
+            this.MainWindowView.FindControl<MenuItem>("MenuItem_SaveDecrypted").Command = this.CMD_SaveDecrypted;
 
             // No idea how to bind these from code. Currently bound via XAML
-
             // mainTree.Bind(mainTree.Items, OBSV_Graph);
             // TextBox console = this.MainWindowView.Find<TextBox>("TextBox_Log").Text = this.OBSV_Log;
             // console.Bind(console.Text, this.OBSV_Log);
@@ -107,12 +101,13 @@ namespace Eliza.Avalonia.ViewModels
 
         protected void GenerateObjectGraph()
         {
-            SaveData save = this._SaveData;
-            if(save != null) {
+            if(this._SaveData != null) {
+                SaveData save = this._SaveData;
                 GraphSerializer serializer = new(save.Locale, save.Version);
                 ObjectGraph baseNode = serializer.WriteRF5Save(save);
+                // this.baseNode = serializer.WriteRF5Save(save);
                 UiObjectGraph uiBaseNode = UiObjectGraph.Wrap(baseNode);
-                this.OBSV_Graph = new ObservableCollection<UiObjectGraph>(uiBaseNode.Values);
+                this.OBSV_Graph = new ObservableCollection<UiObjectGraph>(uiBaseNode.Children);
             }
         }
 

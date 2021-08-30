@@ -1,4 +1,5 @@
-﻿using MessagePack;
+﻿using Eliza.Core.Serialization;
+using MessagePack;
 using System;
 
 namespace Eliza.Model.Npc

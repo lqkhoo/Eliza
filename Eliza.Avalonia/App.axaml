@@ -32,10 +32,8 @@
 	<Application.Resources>
 		<ValueConverters:VisibilityValueConverter x:Key="VisibilityValueConverter"/>
 		<ValueConverters:BoolToNumConverter x:Key="BoolToNumConverter"/>
-		<!--
 		<ValueConverters:CharToStringConverter x:Key="CharToStringConverter"/>
 		<ValueConverters:CharToHexConverter x:Key="CharToHexConverter"/>
-		-->
 		<ValueConverters:ByteToHexConverter x:Key="ByteToHexConverter"/>
 		<ValueConverters:UInt16ToHexConverter x:Key="UInt16ToHexConverter"/>
 		<ValueConverters:UInt32ToHexConverter x:Key="UInt32ToHexConverter"/>
@@ -46,6 +44,7 @@
 		<ValueConverters:Int64ToHexConverter x:Key="Int64ToHexConverter"/>
 		<ValueConverters:SingleToHexConverter x:Key="SingleToHexConverter"/>
 		<ValueConverters:DoubleToHexConverter x:Key="DoubleToHexConverter"/>
+		<ValueConverters:StringToHexConverter x:Key="StringToHexConverter"/>
 		
 	</Application.Resources>
 	

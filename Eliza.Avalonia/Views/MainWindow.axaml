@@ -128,6 +128,12 @@
 			<Setter Property="Foreground" Value="#888888"/>
 		</Style>
 
+		<Style Selector="TextBlock.editorStringWarning">
+			<Setter Property="Padding" Value="0 8 5 8"/>
+			<Setter Property="FontSize" Value="11"/>
+			<Setter Property="Foreground" Value="#888888"/>
+		</Style>
+			
 		<Style Selector="TextBlock.editorFieldName">
 			<Setter Property="Padding" Value="0 8 5 8"/>
 			<Setter Property="FontSize" Value="12"/>
@@ -199,7 +205,7 @@
 
 	<Window.DataTemplates>
 		<!--x:Type Eliza.Avalonia.ViewModels:UiObjectGraph-->
-		<TreeDataTemplate DataType="{x:Type Eliza.Avalonia.ViewModels:UiObjectGraph}" ItemsSource="{Binding Values}">
+		<TreeDataTemplate DataType="{x:Type Eliza.Avalonia.ViewModels:UiObjectGraph}" ItemsSource="{Binding Children}">
 			<!-- Need to be a button to handle click events. Really? -->
 			<!--<Button HorizontalAlignment="Stretch" Classes="treeButton" Click="OnButtonClick">-->
 				<StackPanel Orientation="Horizontal">

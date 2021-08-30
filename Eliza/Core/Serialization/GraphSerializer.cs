@@ -9,6 +9,13 @@ namespace Eliza.Core.Serialization
     // For a graph, anything that writes primitives e.g. string
     // should return the primitive. Otherwise return a node.
 
+    // Remember: for WriteList, WriteDict or any method that handles
+    // unwrapping some already-serialized object,
+    // since we don't have FieldInfo to operate off of, we always need
+    // to append type information to the ObjectGraph being generated off
+    // of the list elements, because the value itself could be null,
+    // which means there's no other way to infer type information.
+
     public class GraphSerializer : BaseSerializer
     {
 
@@ -48,7 +55,7 @@ namespace Eliza.Core.Serialization
             return node;
         }
 
-        protected ObjectGraph WriteValue(object value, FieldInfo fieldInfo)
+        protected ObjectGraph WriteValue(object value, FieldInfo fieldInfo=null)
         {
             ObjectGraph node;
             Type type;
@@ -97,7 +104,13 @@ namespace Eliza.Core.Serialization
                                     lengthType: lengthType,
                                     fieldInfo: fieldInfo);
             for(int idx=0; idx<list.Count; idx++) {
-                ObjectGraph child = this.WriteValue(list[idx], fieldInfo: fieldInfo);
+
+                ObjectGraph child = this.WriteValue(list[idx]);
+                if(list[idx] != null) {
+                    child.Type = list[idx].GetType();
+                } else {
+                    child.Type = list.GetType().GetElementType();
+                }
                 node.AppendChild(child, idx);
             }
             return node;
@@ -110,6 +123,7 @@ namespace Eliza.Core.Serialization
                                    FieldInfo fieldInfo=null)
         {
             ObjectGraph node = new(value, fieldInfo: fieldInfo);
+            node.isUtf16UuidString = isUtf16Uuid;
             return node;
         }
 
@@ -118,16 +132,25 @@ namespace Eliza.Core.Serialization
             return this.WriteObject(saveFlagStorage, fieldInfo);
         }
 
+        // Note that we simply interleave key and value nodes.
+        // Packing as a tuple makes UI binding difficult.
+        // Alternative is to make the value node a child of the key node, but that
+        // breaks node ancestry.
         protected ObjectGraph WriteDictionary(IDictionary dictionary, FieldInfo fieldInfo=null)
         {
             ObjectGraph node = new(objectValue: dictionary,
                                     objectType: dictionary.GetType(),
                                     fieldInfo: fieldInfo);
+            Type[] arguments = dictionary.GetType().GetGenericArguments();
+            Type keyType = arguments[0];
+            Type valueType = arguments[1];
             int idx = 0;
             foreach(var key in dictionary.Keys) {
-                ObjectGraph keyNode = this.WriteObject(key);
-                ObjectGraph valueNode = this.WriteObject(dictionary[key]);
-                node.AppendKey(keyNode, idx);
+                ObjectGraph keyNode = this.WriteValue(key);
+                keyNode.Type = keyType; // Specify type info from here.
+                ObjectGraph valueNode = this.WriteValue(dictionary[key]);
+                valueNode.Type = valueType;
+                node.AppendChild(keyNode, idx);
                 node.AppendChild(valueNode, idx);
                 idx++;
             }

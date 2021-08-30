@@ -11,22 +11,29 @@ namespace Eliza.Core.Serialization
 {
     // TODO: Implement IComparable
 
-    // This is a semantically-rich object encapsulating
-    // both the functions of the class it is derived from, as well
-    // as exposing values in a flat list of properties so that
-    // they could be bound easily to the UI.
+    // This is our basis for constructing a graph out of 
+    // the classes representing RF5's save file.
     public class ObjectGraph : IComparable<ObjectGraph>
     {
         public const int NULL_ARRAY_INDEX = -1;
+        public const int NULL_MAX_LENGTH = 0;
+        public const TypeCode NULL_LENGTH_TYPE = TypeCode.Empty;
 
         // Core serialization fields
         public Type Type;
         public object Value;
-        public ObjectGraph Parent = null;
-        public TypeCode LengthType; // For arrays only
-        public int ArrayIndex = NULL_ARRAY_INDEX; // For array members only
-        public List<ObjectGraph> Keys;
-        public List<ObjectGraph> Values;
+        public ObjectGraph Parent;
+        public List<ObjectGraph> Children;
+
+        public TypeCode LengthType = NULL_LENGTH_TYPE; // For arrays only
+        public int ArrayIndex = NULL_ARRAY_INDEX; // For array-like members only
+
+        // Cached properties. These are redundant. For convenience of access for the wrapper
+        // so we don't have to search through the whole array of FieldInfo every time.
+        // Cache of the property from ElizaStringAttribute
+        public bool isUtf16UuidString = false; // For strings only.
+        // Cache of the property MaxSize from either ElizaString or ElizaList attributes.
+        public int MaxLength = NULL_MAX_LENGTH;
 
         // Attribute-related properties
         public FieldInfo FieldInfo;
@@ -35,17 +42,16 @@ namespace Eliza.Core.Serialization
         // "Method-like properties"
         public bool HasAttrs { get => this.Attrs.Length == 0; }
         public bool IsRoot { get => this.Parent == null; }
-        public bool IsLeaf { get => this.Values.Count == 0; }
+        public bool IsLeaf { get => this.Children.Count == 0; }
 
         protected ObjectGraph()
         {
-            this.Keys = new List<ObjectGraph>();
-            this.Values = new List<ObjectGraph>();
+            this.Children = new List<ObjectGraph>();
             this.Attrs = Array.Empty<object>();
         }
 
         public ObjectGraph(object objectValue, Type objectType=null,
-                            TypeCode lengthType=TypeCode.Empty,
+                            TypeCode lengthType= NULL_LENGTH_TYPE,
                             int arrayIndex=NULL_ARRAY_INDEX,
                             FieldInfo fieldInfo=null)
             : this()
@@ -53,13 +59,17 @@ namespace Eliza.Core.Serialization
             // TODO: max/min ranges
 
             this.Value = objectValue;
-            if(objectValue != null) {
-                if (objectType == null) {
-                    this.Type = objectValue.GetType();
-                } else if (fieldInfo != null) {
+
+            // Get type information. At least one case must be true.
+            if(objectType != null) {
+                this.Type = objectType;
+            } else {
+                if(fieldInfo != null) {
                     this.Type = fieldInfo.FieldType;
+                } else if (objectType != null) {
+                    this.Type = objectValue.GetType();
                 } else {
-                    this.Type = null;
+                    // This should never happen
                 }
             }
 
@@ -75,27 +85,20 @@ namespace Eliza.Core.Serialization
 
 
         // For the wrapper to call. Can't reference wrapper due to circular dependency.
-        public ObjectGraph(Type type, object value, ObjectGraph parent, List<ObjectGraph> keys,
-            List<ObjectGraph> values, TypeCode lengthType, int arrayIndex, FieldInfo fieldInfo, object[] attrs)
+        public ObjectGraph(Type type, object value, ObjectGraph parent, List<ObjectGraph> children,
+            TypeCode lengthType, int arrayIndex, bool isUtf16UuidString, int maxLength,
+            FieldInfo fieldInfo, object[] attrs)
             : this()
         {
             this.Type = type;
             this.Value = value;
             this.Parent = parent;
-            this.Keys = keys;
-            this.Values = values;
+            this.Children = children;
             this.LengthType = lengthType;
             this.ArrayIndex = arrayIndex;
+            this.isUtf16UuidString = isUtf16UuidString;
+            this.MaxLength = maxLength;
             this.Attrs = attrs;
-        }
-
-        public void AppendKey(ObjectGraph child, int arrayIndex=NULL_ARRAY_INDEX)
-        {
-            if (arrayIndex != NULL_ARRAY_INDEX) {
-                child.ArrayIndex = arrayIndex;
-            }
-            child.Parent = this;
-            this.Keys.Add(child);
         }
 
         public void AppendChild(ObjectGraph child, int arrayIndex=NULL_ARRAY_INDEX)
@@ -104,7 +107,7 @@ namespace Eliza.Core.Serialization
                 child.ArrayIndex = arrayIndex;
             }
             child.Parent = this;
-            this.Values.Add(child);
+            this.Children.Add(child);
         }
 
         protected string GetDisplayFieldName()
@@ -113,7 +116,7 @@ namespace Eliza.Core.Serialization
             if (this.Type != null) {
                 if (BaseSerializer.IsList(this.Type)
                     || BaseSerializer.IsDictionary(this.Type)) {
-                    str += String.Format("[{0}]", this.Values.Count);
+                    str += String.Format("[{0}]", this.Children.Count);
                 }
             }
             return str;
@@ -135,7 +138,7 @@ namespace Eliza.Core.Serialization
 
         public override string ToString()
         {
-            return String.Format("Graph: [{0}][{1}] {2}: {3}", this.Keys.Count, this.Values.Count, this.GetDisplayFieldName(), this.Type.Name); 
+            return String.Format("Graph: [{1}] {2}: {3}", this.Children.Count, this.GetDisplayFieldName(), this.Type.Name); 
         }
 
         public int CompareTo(ObjectGraph other)

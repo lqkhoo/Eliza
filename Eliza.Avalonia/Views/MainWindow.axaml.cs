@@ -19,7 +19,9 @@ namespace Eliza.Avalonia.Views
     public partial class MainWindow : Window
     {
         public static MainWindow? Instance { get; private set; }
-        protected MainWindowViewModel ViewModel => DataContext as MainWindowViewModel;
+        protected MainWindowViewModel? ViewModel => DataContext as MainWindowViewModel;
+
+        public TreeView TreeView;
 
         // Sub-views
         protected ContextView ContextView = new();
@@ -36,6 +38,9 @@ namespace Eliza.Avalonia.Views
         protected Int64EditorView Int64EditorView = new();
         protected SingleEditorView SingleEditorView = new();
         protected DoubleEditorView DoubleEditorView = new();
+
+        protected StringEditorView StringEditorView = new();
+        protected UnsafeStringEditorView UnsafeStringEditorView = new();
 
         protected Dictionary<TypeCode, UserControl> PrimitiveEditorMap = new();
         protected Dictionary<Type, UserControl> ObjectEditorMap = new();
@@ -58,10 +63,17 @@ namespace Eliza.Avalonia.Views
             this.PrimitiveEditorMap.Add(TypeCode.Double, this.DoubleEditorView);
             //TODO: object editor views
 
+            this.ObjectEditorMap.Add(typeof(string), this.StringEditorView);
+
+            this.TreeView = this.Find<TreeView>("TreeView_MainTree");
 
             // This will catch all click events and we'll capture the context
             // from the event itself.
-            this.AddHandler(PointerPressedEvent, OnClickHandler, handledEventsToo: true);
+
+            #pragma warning disable CS8622 // Nullability of reference types in type of parameter doesn't match the target delegate (possibly because of nullability attributes).
+            this.TreeView.AddHandler(PointerPressedEvent, OnTreeViewClickHandler, handledEventsToo: true);
+            #pragma warning restore CS8622 // Nullability of reference types in type of parameter doesn't match the target delegate (possibly because of nullability attributes).
+
 
             #if DEBUG
             this.AttachDevTools();
@@ -71,62 +83,60 @@ namespace Eliza.Avalonia.Views
         // Rather than work with arcane rules of what could be bound to what,
         // We capture the click event at the window level and dispatch the event
         // to whatever we see fit.
-        public void OnClickHandler(object sender, RoutedEventArgs e)
+        public void OnTreeViewClickHandler(object sender, RoutedEventArgs e)
         {
             var source = e.Source as Control;
-
-            // Maybe check if it's a button
-
-            if(source != null && source.DataContext != null) {
+            if(source != null && source.DataContext != null && this.ViewModel != null) {
                 Type contextType = source.DataContext.GetType();
                 if (contextType == typeof(UiObjectGraph)) {
-                    UiObjectGraph node = source.DataContext as UiObjectGraph; // Context
-
-                    // UserControl contextView = this.ViewModel.SUBVIEW_ContextPane;
-                    // contextView.DataContext = source.DataContext;
+                    // Reset previously-used editor context to blank.
+                    UserControl? previousEditor = this.ViewModel.SUBVIEW_EditorPane;
+                    if(previousEditor != null) {
+                        previousEditor.DataContext = null;
+                    }
+                    // Configure new editor.
+                    UiObjectGraph node = (UiObjectGraph)source.DataContext; // Context
                     UserControl editorView = this.GetEditorView(node);
-                    
                     editorView.DataContext = source.DataContext;
                     this.ViewModel.SUBVIEW_EditorPane = editorView;
                     this.ViewModel.STRING_EditorContext = node.DisplayAncestry;
                 }
-
+                /*
                 switch (source.Name) {
-
                 }
+                */
             }
 
-            this.ViewModel.LogWrite("Clicked");
+            if(this.ViewModel != null) {
+                this.ViewModel.LogWrite("Treeview clicked.");
+            }
             e.Handled = true;
         }
 
         protected UserControl GetEditorView(UiObjectGraph node)
         {
-            Type nodeType = node.Type;
-            if (nodeType.IsPrimitive) {
-                TypeCode typeCode = Type.GetTypeCode(nodeType);
-                if (this.PrimitiveEditorMap.ContainsKey(typeCode)) {
-                    return this.PrimitiveEditorMap[typeCode];
-                }
-            } else {
-                if (this.ObjectEditorMap.ContainsKey(nodeType)) {
-                    return this.ObjectEditorMap[nodeType];
+            if(node.Type != null) {
+                Type nodeType = node.Type;
+                if (nodeType.IsPrimitive) {
+                    TypeCode typeCode = Type.GetTypeCode(nodeType);
+                    if (this.PrimitiveEditorMap.ContainsKey(typeCode)) {
+                        return this.PrimitiveEditorMap[typeCode];
+                    }
+                } else if (nodeType == typeof(string)) {
+                    if(node.MaxLength != ObjectGraph.NULL_MAX_LENGTH) {
+                        return this.StringEditorView;
+                    } else {
+                        return this.UnsafeStringEditorView;
+                    }
+                } else {
+                    if (this.ObjectEditorMap.ContainsKey(nodeType)) {
+                        return this.ObjectEditorMap[nodeType];
+                    }
                 }
             }
             return this.DummyEditorView;
         }
 
-
-
-        /*
-        public void OnPointerEnter(object sender, RoutedEventArgs e)
-        {
-            var source = e.Source as Control;
-            switch (source.Name) {
-            }
-            this.ViewModel.LogWrite("Pointer enter.");
-        }
-        */
 
 
 
