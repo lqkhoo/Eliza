@@ -89,14 +89,18 @@ namespace Eliza.Core.Serialization
             } while (objectType != null);
 
             while (typeStack.Count > 0) {
+
                 objectType = typeStack.Pop();
                 foreach (FieldInfo fieldInfo in objectType.GetFields()) {
+
                     // yield return fieldInfo;
-                    if (!fieldInfo.IsDefined(typeof(CompilerGeneratedAttribute))) {
+                    if ((! fieldInfo.IsDefined(typeof(CompilerGeneratedAttribute)))
+                            && fieldInfo.DeclaringType == objectType) {
                         yield return fieldInfo;
                     }
 
                 }
+
             }
 
         }
