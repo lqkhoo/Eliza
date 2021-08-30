@@ -284,7 +284,6 @@ namespace Eliza.Avalonia.ValueConverters
         }
     }
 
-
     public class StringToHexConverter : IValueConverter
     {
         // https://stackoverflow.com/a/311179
@@ -317,6 +316,39 @@ namespace Eliza.Avalonia.ValueConverters
                 #pragma warning restore CS8603 // Possible null reference return.
             }
 
+        }
+    }
+
+    public class AsciiStringToHexConverter : IValueConverter
+    {
+        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            byte[] bytes = Encoding.ASCII.GetBytes((string)value);
+            return BitConverter.ToString(bytes).Replace("-", "");
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            // Pragmas are ugly but they're the best way to do it.
+            // Convert() will handle the nullvalue exception and move on.
+            try {
+                string hex = (string)value;
+                if (hex.Length % 2 == 0) {
+                    int numChars = hex.Length;
+                    byte[] bytes = new byte[numChars / 2];
+                    for (int i = 0; i < numChars; i += 2)
+                        bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+                    return Encoding.ASCII.GetString(bytes);
+                } else {
+                    #pragma warning disable CS8603 // Possible null reference return.
+                    return null;
+                    #pragma warning restore CS8603 // Possible null reference return.
+                }
+            } catch (Exception) {
+                #pragma warning disable CS8603 // Possible null reference return.
+                return null;
+                #pragma warning restore CS8603 // Possible null reference return.
+            }
         }
     }
 

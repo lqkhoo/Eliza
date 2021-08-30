@@ -45,6 +45,7 @@
 		<ValueConverters:SingleToHexConverter x:Key="SingleToHexConverter"/>
 		<ValueConverters:DoubleToHexConverter x:Key="DoubleToHexConverter"/>
 		<ValueConverters:StringToHexConverter x:Key="StringToHexConverter"/>
+		<ValueConverters:AsciiStringToHexConverter x:Key="AsciiStringToHexConverter"/>
 		
 	</Application.Resources>
 	

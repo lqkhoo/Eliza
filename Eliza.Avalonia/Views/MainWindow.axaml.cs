@@ -41,6 +41,7 @@ namespace Eliza.Avalonia.Views
 
         protected StringEditorView StringEditorView = new();
         protected UnsafeStringEditorView UnsafeStringEditorView = new();
+        protected UuidStringEditorView UuidStringEditorView = new();
 
         protected Dictionary<TypeCode, UserControl> PrimitiveEditorMap = new();
         protected Dictionary<Type, UserControl> ObjectEditorMap = new();
@@ -125,6 +126,8 @@ namespace Eliza.Avalonia.Views
                 } else if (nodeType == typeof(string)) {
                     if(node.MaxLength != ObjectGraph.NULL_MAX_LENGTH) {
                         return this.StringEditorView;
+                    } else if(node.IsUtf16UuidString) {
+                        return this.UuidStringEditorView;
                     } else {
                         return this.UnsafeStringEditorView;
                     }

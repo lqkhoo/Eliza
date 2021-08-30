@@ -206,6 +206,7 @@ namespace Eliza.Avalonia.ViewModels
             this._Value = node.Value;
             this._LengthType = node.LengthType;
             this._ArrayIndex = node.ArrayIndex;
+            this._IsUtf16UuidString = node.isUtf16UuidString;
             this._FieldInfo = node.FieldInfo;
             this._Attrs = node.Attrs;
 

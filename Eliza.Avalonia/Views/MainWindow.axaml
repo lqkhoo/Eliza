@@ -6,7 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Eliza.Avalonia.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
-        Title="Eliza.Avalonia"
+        Title="Eliza+: RF5 Save Editor"
 		xmlns:Eliza.Core.Serialization="using:Eliza.Core.Serialization"
 		xmlns:Eliza.Model="using:Eliza.Model"
 		xmlns:Eliza.Model.Battle="using:Eliza.Model.Battle"

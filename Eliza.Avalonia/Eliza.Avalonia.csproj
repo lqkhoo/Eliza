@@ -23,6 +23,9 @@
     <Compile Update="Views\ContextView.axaml.cs">
       <DependentUpon>ContextView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Editors\Objects\UuidStringEditorView.axaml.cs">
+      <DependentUpon>UuidStringEditorView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Editors\Objects\UnsafeStringEditorView.axaml.cs">
       <DependentUpon>UnsafeStringEditorView.axaml</DependentUpon>
     </Compile>
