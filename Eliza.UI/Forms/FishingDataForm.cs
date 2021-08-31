@@ -35,7 +35,7 @@ namespace Eliza.UI.Forms
                 fishRecordList.SelectedIndexChanged += (object sender, EventArgs e) =>
                 {
                     id.ChangeReferenceValue(
-                        new Ref<int>(() => fishingData.FishRecord[fishRecordList.SelectedIndex].Id, v => { fishingData.FishRecord[fishRecordList.SelectedIndex].Id = v; })
+                        new Ref<int>(() => fishingData.FishRecord[fishRecordList.SelectedIndex].ItemId, v => { fishingData.FishRecord[fishRecordList.SelectedIndex].ItemId = v; })
                     );
                     min.ChangeReferenceValue(
                         new Ref<int>(() => fishingData.FishRecord[fishRecordList.SelectedIndex].Min, v => { fishingData.FishRecord[fishRecordList.SelectedIndex].Min = v; })

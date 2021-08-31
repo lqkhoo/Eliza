@@ -9,7 +9,7 @@ namespace Eliza.Model.World
         public Vector3 Position;
         public int CropID;
         public int mineTypeID;
-        public int ItemID;
+        public int ItemId; // Original: ItemID
         public int HP;
     }
 }

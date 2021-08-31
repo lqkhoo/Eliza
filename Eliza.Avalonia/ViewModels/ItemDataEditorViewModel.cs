@@ -53,7 +53,7 @@ namespace Eliza.Avalonia.ViewModels
 
         public void Init()
         {
-            this.MethodDispatcher.Add("ItemID", (x) => this.UnwrapItemId(x));
+            this.MethodDispatcher.Add("ItemId", (x) => this.UnwrapItemId(x));
             this.MethodDispatcher.Add("Level", (x) => this.UnwrapLevel(x));
             this.MethodDispatcher.Add("LevelAmount", (x) => this.UnwrapLevelAmount(x));
             this.MethodDispatcher.Add("SourceItems", (x) => this.UnwrapSourceItems(x));

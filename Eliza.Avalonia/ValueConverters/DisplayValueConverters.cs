@@ -1,10 +1,13 @@
-﻿using Avalonia.Data.Converters;
+﻿using Avalonia;
+using Avalonia.Data.Converters;
 using Eliza.Avalonia.ViewModels;
 using Eliza.Core.Serialization;
+using Eliza.Data;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +18,39 @@ namespace Eliza.Avalonia.ValueConverters
 
 
     // These are one-way value converters for display-only values.
+
+    // Input is UiObjectGraph. If node.Child[0].ItemId is int, return item's name as string.
+    public class DisplayUiObjectGraphItemIdToNameConverter : IValueConverter
+    {
+        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if(value != null && value.GetType() != typeof(UnsetValueType)) {
+                try {
+                    UiObjectGraph uiNode = (UiObjectGraph)value;
+                    Type? type = uiNode.Type;
+                    FieldInfo? fieldInfo = uiNode.FieldInfo;
+                    object? nodeVal = uiNode.Value;
+                    if (type == typeof(int) && fieldInfo != null && nodeVal != null) {
+                        int val = (int)nodeVal;
+                        string fieldName = fieldInfo.Name;
+                        if (fieldName == "ItemId") {
+                            return String.Format("{0} {1}", Items.ItemIdToJapaneseName[val], Items.ItemIdToEnglishName[val]);
+                        }
+                    }
+                } catch (Exception) {
+                    // This converter is called potentially thousands of times.
+                    // Make sure no exceptions are thrown.
+                }
+            }
+            return "";
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
 
     /// <summary>
     /// Takes an instance of UiObjectGraph and returns its pretty-printed field name. Used in treeview.

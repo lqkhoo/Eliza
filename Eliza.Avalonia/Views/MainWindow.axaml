@@ -300,17 +300,15 @@
 	<Window.DataTemplates>
 		<!--x:Type Eliza.Avalonia.ViewModels:UiObjectGraph-->
 		<TreeDataTemplate DataType="{x:Type Eliza.Avalonia.ViewModels:UiObjectGraph}" ItemsSource="{Binding Children}">
-			<!-- Need to be a button to handle click events. Really? -->
-			<!--<Button HorizontalAlignment="Stretch" Classes="treeButton" Click="OnButtonClick">-->
 				<StackPanel Orientation="Horizontal">
-					<TextBlock Classes="treeText treeType" Text="{Binding Type.Name}"></TextBlock>
-					<TextBlock Classes="treeText treeArrayIndex" Text="{Binding ArrayIndex, Converter={StaticResource DisplayArrayIndexConverter}}"></TextBlock>
+					<TextBlock Classes="treeText treeType" Text="{Binding Type.Name}"/>
+					<TextBlock Classes="treeText treeArrayIndex" Text="{Binding ArrayIndex, Converter={StaticResource DisplayArrayIndexConverter}}"/>
+					<TextBlock Classes="treeText treeItemName" Text="{Binding Children[0], Converter={StaticResource DisplayUiObjectGraphItemIdToNameConverter}}"/>
 					<TextBlock Classes="treeText treeFieldName" Text="{Binding DisplayFieldName}"></TextBlock>
 					<Border Classes="treeValueBorder">
-						<TextBlock Classes="treeText treeValue" IsVisible="{Binding This, Converter={StaticResource VisibilityValueConverter}}" Text="{Binding Value}"></TextBlock>
+						<TextBlock Classes="treeText treeValue" IsVisible="{Binding This, Converter={StaticResource VisibilityValueConverter}}" Text="{Binding Value}"/>
 					</Border>
 				</StackPanel>
-			<!--</Button>-->
 		</TreeDataTemplate>
 	
 	</Window.DataTemplates>
@@ -374,7 +372,7 @@
 				<ColumnDefinition MinWidth="250" Width="*"/>
 			</Grid.ColumnDefinitions>
 				
-				<ScrollViewer Grid.Row="0" Grid.Column="0">
+				<ScrollViewer Grid.Row="0" Grid.Column="0" HorizontalScrollBarVisibility="Auto">
 					<TreeView x:Name="TreeView_MainTree" Items="{Binding OBSV_Graph}"></TreeView>
 				</ScrollViewer>
 				

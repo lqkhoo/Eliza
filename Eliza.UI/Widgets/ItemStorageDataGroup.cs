@@ -298,7 +298,7 @@ namespace Eliza.UI.Widgets
                 {
                     levelAmountList.Items.Clear();
                     itemID.ChangeReferenceValue(
-                        new Ref<int>(() => item.ItemID, v => { item.ItemID = v; })
+                        new Ref<int>(() => item.ItemId, v => { item.ItemId = v; })
                     );
 
                     if (this.list.SelectedIndex >= 0)
@@ -369,7 +369,7 @@ namespace Eliza.UI.Widgets
                 {
                     levelAmountList.Items.Clear();
                     itemID.ChangeReferenceValue(
-                        new Ref<int>(() => item.ItemID, v => { item.ItemID = v; })
+                        new Ref<int>(() => item.ItemId, v => { item.ItemId = v; })
                     );
 
                     if (this.list.SelectedIndex >= 0)
@@ -447,7 +447,7 @@ namespace Eliza.UI.Widgets
                     sourceItemsList.Items.Clear();
                     //ItemData
                     itemID.ChangeReferenceValue(
-                        new Ref<int>(() => ((FoodItemData)item).ItemID, v => { ((FoodItemData)item).ItemID = v; })
+                        new Ref<int>(() => ((FoodItemData)item).ItemId, v => { ((FoodItemData)item).ItemId = v; })
                     );
 
                     //NotAmountItemData
@@ -598,7 +598,7 @@ namespace Eliza.UI.Widgets
                     arrangedItemsList.Items.Clear();
                     //ItemData
                     itemID.ChangeReferenceValue(
-                        new Ref<int>(() => ((EquipItemData)item).ItemID, v => { ((EquipItemData)item).ItemID = v; })
+                        new Ref<int>(() => ((EquipItemData)item).ItemId, v => { ((EquipItemData)item).ItemId = v; })
                     );
 
                     //NotAmountItemData
@@ -708,7 +708,7 @@ namespace Eliza.UI.Widgets
                 {
                     //ItemData
                     itemID.ChangeReferenceValue(
-                        new Ref<int>(() => ((RuneAbilityItemData)item).ItemID, v => { ((RuneAbilityItemData)item).ItemID = v; })
+                        new Ref<int>(() => ((RuneAbilityItemData)item).ItemId, v => { ((RuneAbilityItemData)item).ItemId = v; })
                     );
 
                     //NotAmountItemData
@@ -752,7 +752,7 @@ namespace Eliza.UI.Widgets
                 {
                     //ItemData
                     itemID.ChangeReferenceValue(
-                        new Ref<int>(() => ((FishItemData)item).ItemID, v => { ((FishItemData)item).ItemID = v; })
+                        new Ref<int>(() => ((FishItemData)item).ItemId, v => { ((FishItemData)item).ItemId = v; })
                     );
 
                     //NotAmountItemData
@@ -888,7 +888,7 @@ namespace Eliza.UI.Widgets
                     arrangedItemsList.Items.Clear();
                     //ItemData
                     itemID.ChangeReferenceValue(
-                        new Ref<int>(() => ((PotToolItemData)item).ItemID, v => { ((PotToolItemData)item).ItemID = v; })
+                        new Ref<int>(() => ((PotToolItemData)item).ItemId, v => { ((PotToolItemData)item).ItemId = v; })
                     );
 
                     //NotAmountItemData
@@ -1325,7 +1325,7 @@ namespace Eliza.UI.Widgets
         //                        {
         //                            //ItemData
         //                            var itemID = new SpinBox(
-        //                                new Ref<int>(() => item.ItemID, v => { item.ItemID = v; }),
+        //                                new Ref<int>(() => item.ItemId, v => { item.ItemId = v; }),
         //                                "Item ID"
         //                            );
 
@@ -1364,7 +1364,7 @@ namespace Eliza.UI.Widgets
         //                        {
         //                            //ItemData
         //                            var itemID = new SpinBox(
-        //                                new Ref<int>(() => item.ItemID, v => { item.ItemID = v; }),
+        //                                new Ref<int>(() => item.ItemId, v => { item.ItemId = v; }),
         //                                "Item ID"
         //                            );
 
@@ -1395,7 +1395,7 @@ namespace Eliza.UI.Widgets
         //                        {
         //                            //ItemData
         //                            var itemID = new SpinBox(
-        //                                new Ref<int>(() => item.ItemID, v => { item.ItemID = v; }),
+        //                                new Ref<int>(() => item.ItemId, v => { item.ItemId = v; }),
         //                                "Item ID"
         //                            );
 
@@ -1574,7 +1574,7 @@ namespace Eliza.UI.Widgets
         //                        {
         //                            //ItemData
         //                            var itemID = new SpinBox(
-        //                                new Ref<int>(() => item.ItemID, v => { item.ItemID = v; }),
+        //                                new Ref<int>(() => item.ItemId, v => { item.ItemId = v; }),
         //                                "Item ID"
         //                            );
 
@@ -1650,7 +1650,7 @@ namespace Eliza.UI.Widgets
         //                        {
         //                            //ItemData
         //                            var itemID = new SpinBox(
-        //                                new Ref<int>(() => item.ItemID, v => { item.ItemID = v; }),
+        //                                new Ref<int>(() => item.ItemId, v => { item.ItemId = v; }),
         //                                "Item ID"
         //                            );
 
@@ -1710,7 +1710,7 @@ namespace Eliza.UI.Widgets
         //                        {
         //                            //ItemData
         //                            var itemID = new SpinBox(
-        //                                new Ref<int>(() => item.ItemID, v => { item.ItemID = v; }),
+        //                                new Ref<int>(() => item.ItemId, v => { item.ItemId = v; }),
         //                                "Item ID"
         //                            );
 

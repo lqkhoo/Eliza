@@ -21,6 +21,6 @@ namespace Eliza.Model.Item
     public abstract class ItemData
     {
         [Key(0)]
-        public int ItemID;
+        public int ItemId; // Original: ItemID
     }
 }

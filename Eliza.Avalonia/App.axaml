@@ -30,6 +30,7 @@
 			 >
 
 	<Application.Resources>
+		<ValueConverters:DisplayUiObjectGraphItemIdToNameConverter x:Key="DisplayUiObjectGraphItemIdToNameConverter"/>
 		<ValueConverters:DisplayArrayIndexConverter x:Key="DisplayArrayIndexConverter"/>
 		<ValueConverters:VisibilityValueConverter x:Key="VisibilityValueConverter"/>
 		<ValueConverters:BoolToNumConverter x:Key="BoolToNumConverter"/>

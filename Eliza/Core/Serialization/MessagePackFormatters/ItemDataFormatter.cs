@@ -26,7 +26,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             var itemData = new AmountItemData();
                             var list = new List<int>();
 
-                            itemData.ItemID = reader.ReadInt32();
+                            itemData.ItemId = reader.ReadInt32();
 
                             //AmountItemDataBase
                             var length = reader.ReadArrayHeader();
@@ -44,7 +44,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             var itemData = new SeedItemData();
                             var list = new List<int>();
 
-                            itemData.ItemID = reader.ReadInt32();
+                            itemData.ItemId = reader.ReadInt32();
 
                             //AmountItemData
                             var length = reader.ReadArrayHeader();
@@ -61,7 +61,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                     case 2: {
                             var itemData = new FoodItemData();
 
-                            itemData.ItemID = reader.ReadInt32();
+                            itemData.ItemId = reader.ReadInt32();
 
                             //NotAmountItemData
                             itemData.Level = reader.ReadInt32();
@@ -85,7 +85,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                     case 3: {
                             var itemData = new EquipItemData();
 
-                            itemData.ItemID = reader.ReadInt32();
+                            itemData.ItemId = reader.ReadInt32();
 
                             //NotAmountData
                             itemData.Level = reader.ReadInt32();
@@ -133,7 +133,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                     case 4: {
                             var itemData = new RuneAbilityItemData();
 
-                            itemData.ItemID = reader.ReadInt32();
+                            itemData.ItemId = reader.ReadInt32();
 
                             //NotAmountItemData
                             itemData.Level = reader.ReadInt32();
@@ -144,7 +144,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                     case 5: {
                             var itemData = new FishItemData();
 
-                            itemData.ItemID = reader.ReadInt32();
+                            itemData.ItemId = reader.ReadInt32();
 
                             //NotAmountItemData
                             itemData.Level = reader.ReadInt32();
@@ -158,7 +158,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                     case 6: {
                             var itemData = new PotToolItemData();
 
-                            itemData.ItemID = reader.ReadInt32();
+                            itemData.ItemId = reader.ReadInt32();
 
                             //EquipItemData
 
@@ -228,7 +228,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             //Items
                             writer.WriteArrayHeader(13);
 
-                            writer.Write(itemData.ItemID);
+                            writer.Write(itemData.ItemId);
 
                             //NotAmountData
                             writer.Write(itemData.Level);
@@ -269,7 +269,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             //Items
                             writer.WriteArrayHeader(3);
 
-                            writer.Write(itemData.ItemID);
+                            writer.Write(itemData.ItemId);
 
                             //NotAmountData
                             writer.Write(itemData.Level);
@@ -285,7 +285,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             //Items
                             writer.WriteArrayHeader(2);
 
-                            writer.Write(itemData.ItemID);
+                            writer.Write(itemData.ItemId);
 
                             //NotAmountData
                             writer.Write(itemData.Level);
@@ -298,7 +298,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             //Items
                             writer.WriteArrayHeader(12);
 
-                            writer.Write(itemData.ItemID);
+                            writer.Write(itemData.ItemId);
 
                             //NotAmountData
                             writer.Write(itemData.Level);
@@ -336,7 +336,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             //Items
                             writer.WriteArrayHeader(4);
 
-                            writer.Write(itemData.ItemID);
+                            writer.Write(itemData.ItemId);
 
                             //NotAmountItemData
                             writer.Write(itemData.Level);
@@ -358,7 +358,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             //Items
                             writer.WriteArrayHeader(2);
 
-                            writer.Write(itemData.ItemID);
+                            writer.Write(itemData.ItemId);
                             writer.WriteArrayHeader(itemData.LevelAmount.Count);
 
                             foreach (var item in itemData.LevelAmount) {
@@ -373,7 +373,7 @@ namespace Eliza.Core.Serialization.MessagePackFormatters
                             //Items
                             writer.WriteArrayHeader(2);
 
-                            writer.Write(itemData.ItemID);
+                            writer.Write(itemData.ItemId);
                             writer.WriteArrayHeader(itemData.LevelAmount.Count);
                             foreach (var item in itemData.LevelAmount) {
                                 writer.Write(item);

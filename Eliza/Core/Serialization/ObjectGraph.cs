@@ -26,6 +26,7 @@ namespace Eliza.Core.Serialization
         public List<ObjectGraph> Children;
 
         public TypeCode LengthType = NULL_LENGTH_TYPE; // For arrays only
+        // public int ArrayLength = 0; // We don't store dynamic length because that can change
         public int ArrayIndex = NULL_ARRAY_INDEX; // For array-like members only
 
         // Cached properties. These are redundant. For convenience of access for the wrapper
@@ -50,7 +51,7 @@ namespace Eliza.Core.Serialization
             this.Attrs = Array.Empty<object>();
         }
 
-        public ObjectGraph(object objectValue, Type objectType=null,
+        public ObjectGraph(object objectValue,
                             TypeCode lengthType= NULL_LENGTH_TYPE,
                             int arrayIndex=NULL_ARRAY_INDEX,
                             FieldInfo fieldInfo=null)
@@ -61,13 +62,15 @@ namespace Eliza.Core.Serialization
             this.Value = objectValue;
 
             // Get type information. At least one case must be true.
-            if(objectType != null) {
-                this.Type = objectType;
+            // The check order here is critical to handle polymorphism correctly.
+            // If the object has a type, use its type.
+            // Otherwise the object is null so just use declared field type,
+            // which could be an abstract class or interface.
+            if(objectValue != null) {
+                this.Type = objectValue.GetType();
             } else {
                 if(fieldInfo != null) {
                     this.Type = fieldInfo.FieldType;
-                } else if (objectType != null) {
-                    this.Type = objectValue.GetType();
                 } else {
                     // This should never happen
                 }

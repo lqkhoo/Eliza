@@ -22,7 +22,7 @@ namespace Eliza.Test
                 list.Add(fieldInfo);
             }
             Assert.True(list.Count == 2);
-            Assert.True(list[0].Name == "ItemID");
+            Assert.True(list[0].Name == "ItemId");
             Assert.True(list[1].Name == "LevelAmount");
 
         }

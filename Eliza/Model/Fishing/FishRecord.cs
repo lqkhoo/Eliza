@@ -2,7 +2,7 @@
 {
     public class FishRecord
     {
-        public int Id;
+        public int ItemId; // Original: Id
         public int Min;
         public int Max;
         public int Stamp;

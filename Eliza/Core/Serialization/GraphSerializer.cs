@@ -16,15 +16,19 @@ namespace Eliza.Core.Serialization
     // of the list elements, because the value itself could be null,
     // which means there's no other way to infer type information.
 
+    // The GraphSerializer takes any object and outputs an ObjectGraph
     public class GraphSerializer : BaseSerializer
     {
 
         public GraphSerializer(SaveData.LOCALE locale, int version)
             : base(locale, version) { }
 
+        // Be aware that this method only serializes the header, save, and footer.
         public ObjectGraph WriteRF5Save(SaveData save)
         {
             ObjectGraph baseNode = new(save);
+
+            // Make use of IElizaEnumerableClass
             foreach (Tuple<FieldInfo, object> tup in save) {
                 FieldInfo fieldInfo = tup.Item1;
                 object objectValue = tup.Item2;
@@ -69,8 +73,8 @@ namespace Eliza.Core.Serialization
                     node = this.WriteList((IList)value, fieldInfo: fieldInfo);
                 } else if (type == typeof(string)) {
                     node = this.WriteString((string)value, fieldInfo: fieldInfo);
-                } else if (type == typeof(SaveFlagStorage)) {
-                    node = this.WriteSaveFlagStorage((SaveFlagStorage)value, fieldInfo);
+                // } else if (type == typeof(SaveFlagStorage)) {
+                //     node = this.WriteSaveFlagStorage((SaveFlagStorage)value, fieldInfo);
                 } else if (IsDictionary(type)) {
                     node = this.WriteDictionary((IDictionary)value, fieldInfo);
                 } else {
@@ -100,7 +104,6 @@ namespace Eliza.Core.Serialization
                                 FieldInfo fieldInfo=null)
         {
             ObjectGraph node = new(objectValue: list,
-                                    objectType: list.GetType(),
                                     lengthType: lengthType,
                                     fieldInfo: fieldInfo);
             for(int idx=0; idx<list.Count; idx++) {
@@ -127,10 +130,12 @@ namespace Eliza.Core.Serialization
             return node;
         }
 
+        /*
         protected ObjectGraph WriteSaveFlagStorage(SaveFlagStorage saveFlagStorage, FieldInfo fieldInfo=null)
         {
             return this.WriteObject(saveFlagStorage, fieldInfo);
         }
+        */
 
         // Note that we simply interleave key and value nodes.
         // Packing as a tuple makes UI binding difficult.
@@ -139,7 +144,6 @@ namespace Eliza.Core.Serialization
         protected ObjectGraph WriteDictionary(IDictionary dictionary, FieldInfo fieldInfo=null)
         {
             ObjectGraph node = new(objectValue: dictionary,
-                                    objectType: dictionary.GetType(),
                                     fieldInfo: fieldInfo);
             Type[] arguments = dictionary.GetType().GetGenericArguments();
             Type keyType = arguments[0];
@@ -168,14 +172,13 @@ namespace Eliza.Core.Serialization
                 node = new(objectValue: objectValue, fieldInfo: fieldInfo);
                 foreach (FieldInfo childFieldInfo in GetFieldsOrdered(objectType)) {
                     object fieldValue = childFieldInfo.GetValue(objectValue);
-                    ObjectGraph child = this.WriteField(fieldValue, childFieldInfo);
-                    node.AppendChild(child);
+                    this.WriteField(node, fieldValue, childFieldInfo);                    
                 }
             }
             return node;
         }
 
-        protected ObjectGraph WriteField(object fieldValue, FieldInfo fieldInfo=null)
+        protected void WriteField(ObjectGraph parent, object fieldValue, FieldInfo fieldInfo=null)
         {
             // See BinaryDeserializer for notes.
             ObjectGraph node = null;
@@ -245,8 +248,9 @@ namespace Eliza.Core.Serialization
             if ((!hasControlTag) && (!hasWritten)) {
                 node = this.WriteValue(fieldValue, fieldInfo);
             }
-
-            return node;
+            if(node != null) {
+                parent.AppendChild(node);
+            }
         }
 
     }

@@ -9,8 +9,8 @@ namespace Eliza.Test
     // Use different files to avoid race conditions.
     // Otherwise put the tests in different collections to run them serially.
 
-    [Collection("107")]
-    public class TestSerialization107
+    [Collection("JP107")]
+    public class TestBinarySerialization107
     {
         [Fact]
         public void TestDecryptEncryptJP107()
@@ -29,6 +29,7 @@ namespace Eliza.Test
             SaveData save2 = SaveData.FromEncryptedFile(inputPath2, version: 7, locale: SaveData.LOCALE.JP);
             save2.ToEncryptedFile(outputPath2);
             Assert.True(TestUtils.AreFilesIdentical(inputPath2, outputPath2));
+
         }
 
         [Fact]

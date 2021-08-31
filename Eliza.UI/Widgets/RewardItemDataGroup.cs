@@ -16,7 +16,7 @@ namespace Eliza.UI.Widgets
         {
             this._rewardItemData = rewardItemData;
 
-            this.itemId = new SpinBox(new Ref<int>(() => this._rewardItemData.ItemID, v => { this._rewardItemData.ItemID = v; }), "Item ID");
+            this.itemId = new SpinBox(new Ref<int>(() => this._rewardItemData.ItemId, v => { this._rewardItemData.ItemId = v; }), "Item ID");
             this.amount = new SpinBox(new Ref<int>(() => this._rewardItemData.Amount, v => { this._rewardItemData.Amount = v; }), "Amount");
             this.level = new SpinBox(new Ref<int>(() => this._rewardItemData.Level, v => { this._rewardItemData.Level = v; }), "Level");
 
@@ -57,7 +57,7 @@ namespace Eliza.UI.Widgets
         public void ChangeReferenceValue(RewardItemData rewardItemData)
         {
             this._rewardItemData = rewardItemData;
-            this.itemId.ChangeReferenceValue(new Ref<int>(() => this._rewardItemData.ItemID, v => { this._rewardItemData.ItemID = v; }));
+            this.itemId.ChangeReferenceValue(new Ref<int>(() => this._rewardItemData.ItemId, v => { this._rewardItemData.ItemId = v; }));
             this.amount.ChangeReferenceValue(new Ref<int>(() => this._rewardItemData.Amount, v => { this._rewardItemData.Amount = v; }));
             this.level.ChangeReferenceValue(new Ref<int>(() => this._rewardItemData.Level, v => { this._rewardItemData.Level = v; }));
         }

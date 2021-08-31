@@ -115,7 +115,7 @@ namespace Eliza.UI.Forms
                     );
                     cropId.ChangeReferenceValue(new Ref<int>(() => worldData.MiningPointSaveDatas[miningPointList.SelectedIndex].CropID, v => { worldData.MiningPointSaveDatas[miningPointList.SelectedIndex].CropID = v; }));
                     mineTypeId.ChangeReferenceValue(new Ref<int>(() => worldData.MiningPointSaveDatas[miningPointList.SelectedIndex].mineTypeID, v => { worldData.MiningPointSaveDatas[miningPointList.SelectedIndex].mineTypeID = v; }));
-                    itemId.ChangeReferenceValue(new Ref<int>(() => worldData.MiningPointSaveDatas[miningPointList.SelectedIndex].ItemID, v => { worldData.MiningPointSaveDatas[miningPointList.SelectedIndex].ItemID = v; }));
+                    itemId.ChangeReferenceValue(new Ref<int>(() => worldData.MiningPointSaveDatas[miningPointList.SelectedIndex].ItemId, v => { worldData.MiningPointSaveDatas[miningPointList.SelectedIndex].ItemId = v; }));
                     hp.ChangeReferenceValue(new Ref<int>(() => worldData.MiningPointSaveDatas[miningPointList.SelectedIndex].HP, v => { worldData.MiningPointSaveDatas[miningPointList.SelectedIndex].HP = v; }));
                 };
 

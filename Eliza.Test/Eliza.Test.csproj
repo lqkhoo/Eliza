@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Eliza.Avalonia\Eliza.Avalonia.csproj" />
     <ProjectReference Include="..\Eliza\Eliza.csproj" />
   </ItemGroup>
 

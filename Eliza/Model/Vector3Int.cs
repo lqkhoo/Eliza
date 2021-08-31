@@ -18,6 +18,14 @@ namespace Eliza.Model
         [Key(2)]
         public int z;
 
+        // Required for GraphDeserializer
+        public Vector3Int()
+        {
+            this.x = 0;
+            this.y = 0;
+            this.z = 0;
+        }
+
         public Vector3Int(int x, int y, int z)
         {
             this.x = x;

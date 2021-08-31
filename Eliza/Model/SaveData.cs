@@ -73,6 +73,15 @@ namespace Eliza.Model
         public readonly byte[] _originalSaveData;
         public readonly byte[] _originalFooter;
 
+        /// <summary>
+        /// Calling this constructor should be considered carefully, as we do not preserve
+        /// original data from the serialized file on disk, which is necessary to reconstruct
+        /// the checksum, due to how the game overwrites data. If we don't care about
+        /// exact reproduction of files (for unit tests, especially), then there are no caveats
+        /// with using this method.
+        /// </summary>
+        public SaveData() { }
+
         protected SaveData(byte[] headerBytes, byte[] decryptedDataBytes, byte[] footerBytes,
                            int version= LATEST_JP_VER, LOCALE locale=LOCALE.JP)
         {
@@ -223,6 +232,15 @@ namespace Eliza.Model
             return serializer.WriteRF5Save(this);
         }
 
+        public void FromObjectGraph(ObjectGraph node)
+        {
+            GraphDeserializer deserializer = new(this.Locale, this.Version);
+            SaveData savedata = deserializer.ReadRF5Save(node);
+            this.header = savedata.header;
+            this.saveData = savedata.saveData;
+            this.footer = savedata.footer;
+        }
+
         IEnumerable<Tuple<FieldInfo, object>> IElizaEnumerableClass.GetFieldsOrdered()
         {
             foreach (FieldInfo fieldInfo in this.GetType().GetFields()) {
@@ -234,12 +252,5 @@ namespace Eliza.Model
             }
         }
 
-        // TODO
-        /*
-        public static SaveData FromObjectGraph(ObjectGraph graph)
-        {
-            
-        }
-        */
     }
 }
