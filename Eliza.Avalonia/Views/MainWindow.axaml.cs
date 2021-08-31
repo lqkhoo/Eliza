@@ -1,12 +1,12 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Interactivity;
 using Eliza.Model;
+using Eliza.Model.Item;
 using Eliza.Model.Save;
 using Eliza.Core.Serialization;
 using Eliza.Avalonia.ViewModels;
-using Avalonia.Input;
-using Avalonia.Interactivity;
 using System.Collections.Generic;
 using System;
 
@@ -42,6 +42,7 @@ namespace Eliza.Avalonia.Views
         protected StringEditorView StringEditorView = new();
         protected UnsafeStringEditorView UnsafeStringEditorView = new();
         protected UuidStringEditorView UuidStringEditorView = new();
+        protected ItemDataEditorView ItemDataEditorView = new(new ItemDataEditorViewModel());
 
         protected Dictionary<TypeCode, UserControl> PrimitiveEditorMap = new();
         protected Dictionary<Type, UserControl> ObjectEditorMap = new();
@@ -62,15 +63,17 @@ namespace Eliza.Avalonia.Views
             this.PrimitiveEditorMap.Add(TypeCode.Int64, this.Int64EditorView);
             this.PrimitiveEditorMap.Add(TypeCode.Single, this.SingleEditorView);
             this.PrimitiveEditorMap.Add(TypeCode.Double, this.DoubleEditorView);
-            //TODO: object editor views
 
             this.ObjectEditorMap.Add(typeof(string), this.StringEditorView);
+            this.ObjectEditorMap.Add(typeof(ItemData), this.ItemDataEditorView);
+            this.ObjectEditorMap.Add(typeof(EquipItemData), this.ItemDataEditorView);
+            this.ObjectEditorMap.Add(typeof(SeedItemData), this.ItemDataEditorView);
+            this.ObjectEditorMap.Add(typeof(PotToolItemData), this.ItemDataEditorView);
+            this.ObjectEditorMap.Add(typeof(RuneAbilityItemData), this.ItemDataEditorView);
+            this.ObjectEditorMap.Add(typeof(AmountItemData), this.ItemDataEditorView);
+            this.ObjectEditorMap.Add(typeof(FoodItemData), this.ItemDataEditorView);
 
             this.TreeView = this.Find<TreeView>("TreeView_MainTree");
-
-            // This will catch all click events and we'll capture the context
-            // from the event itself.
-
             #pragma warning disable CS8622 // Nullability of reference types in type of parameter doesn't match the target delegate (possibly because of nullability attributes).
             this.TreeView.AddHandler(PointerPressedEvent, OnTreeViewClickHandler, handledEventsToo: true);
             #pragma warning restore CS8622 // Nullability of reference types in type of parameter doesn't match the target delegate (possibly because of nullability attributes).
@@ -98,19 +101,19 @@ namespace Eliza.Avalonia.Views
                     // Configure new editor.
                     UiObjectGraph node = (UiObjectGraph)source.DataContext; // Context
                     UserControl editorView = this.GetEditorView(node);
-                    editorView.DataContext = source.DataContext;
+                    if(editorView.GetType() != typeof(ItemDataEditorView)) {
+                        editorView.DataContext = source.DataContext;
+                    } else {
+                        ((ItemDataEditorView)editorView).LoadContext(
+                            new ItemDataEditorViewModel((UiObjectGraph)source.DataContext)
+                        );
+                    }
+                    
                     this.ViewModel.SUBVIEW_EditorPane = editorView;
                     this.ViewModel.STRING_EditorContext = node.DisplayAncestry;
                 }
-                /*
-                switch (source.Name) {
-                }
-                */
             }
-
-            if(this.ViewModel != null) {
-                this.ViewModel.LogWrite("Treeview clicked.");
-            }
+            // if(this.ViewModel != null) { this.ViewModel.LogWrite("Treeview clicked."); }
             e.Handled = true;
         }
 

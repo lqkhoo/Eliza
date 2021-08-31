@@ -8,6 +8,8 @@ using Avalonia.Interactivity;
 using Avalonia.Input;
 using ReactiveUI;
 using System.Reflection;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Eliza.Avalonia.ViewModels
 {
@@ -20,6 +22,17 @@ namespace Eliza.Avalonia.ViewModels
         // public int ArrayIndex = NULL_ARRAY_INDEX; // For array members only
 
         protected UiObjectGraph _This;
+
+        /*
+        // For storing the original contents of this node.
+        // Used to undo from item editing.
+        // Cache(), RestoreFromCache(), and ClearChildren() governs behavior of this field.
+        // Note that the cache is a shallow copy, so if we want to overwrite this
+        // node, make sure we clear the children and populate it with new UiObjectGraph
+        // instances, otherwise operations will modify items inside this cache.
+        protected UiObjectGraph _ShallowCache;
+        */
+
         public UiObjectGraph This
         {
             get => this._This;
@@ -218,6 +231,51 @@ namespace Eliza.Avalonia.ViewModels
 
         }
 
+        protected UiObjectGraph()
+        {
+
+        }
+
+        /*
+        public void Cache()
+        {
+            // Cache-related function. Shallow copy.
+            UiObjectGraph cacheNode = new();
+            cacheNode.This = cacheNode;
+            cacheNode.Type = this.Type;
+            cacheNode.Value = this.Value;
+            cacheNode.LengthType = this.LengthType;
+            cacheNode.IsUtf16UuidString = this.IsUtf16UuidString;
+            cacheNode.FieldInfo = this.FieldInfo;
+            cacheNode.Attrs = this.Attrs;
+            foreach(UiObjectGraph child in this.Children) {
+                cacheNode.Children.Add(child);
+            }
+        }
+
+        public void RestoreFromCache()
+        {
+            // Cache-related function. Shallow copy back.
+            this.Type = this._ShallowCache.Type;
+            this.Value = this._ShallowCache.Value;
+            this.LengthType = this._ShallowCache.LengthType;
+            this.IsUtf16UuidString = this._ShallowCache.IsUtf16UuidString;
+            this.FieldInfo = this._ShallowCache.FieldInfo;
+            this.Attrs = this._ShallowCache.Attrs;
+            foreach(UiObjectGraph child in this._ShallowCache.Children) {
+                this.Children.Add(child);
+            }
+        }
+
+        public void ClearChildren()
+        {
+            // Cache - related function. Clear children references so we keep
+            // the cache clean from modification.
+            this.Children = new List<UiObjectGraph>();
+        }
+        */
+
+
         public static UiObjectGraph Wrap(ObjectGraph root)
         {
             return new UiObjectGraph(root);
@@ -251,6 +309,15 @@ namespace Eliza.Avalonia.ViewModels
             }
             return node;
         }
+
+
+
+
+
+
+
+
+
 
 
         // These are one-way properties that bind values that won't change.

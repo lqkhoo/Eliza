@@ -1,0 +1,160 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Eliza.Avalonia.Views.Editors.ItemDataEditorView"
+			xmlns:Eliza.Core.Serialization="using:Eliza.Core.Serialization"
+			xmlns:Eliza.Model="using:Eliza.Model"
+			xmlns:Eliza.Model.Battle="using:Eliza.Model.Battle"
+			xmlns:Eliza.Model.Build="using:Eliza.Model.Build"
+			xmlns:Eliza.Model.Event="using:Eliza.Model.Event"
+			xmlns:Eliza.Model.Farm="using:Eliza.Model.Farm"
+			xmlns:Eliza.Model.FarmSupportMonster="using:Eliza.Model.FarmSupportMonster"
+			xmlns:Eliza.Model.Fishing="using:Eliza.Model.Fishing"
+			xmlns:Eliza.Model.Furniture="using:Eliza.Model.Furniture"
+			xmlns:Eliza.Model.Item="using:Eliza.Model.Item"
+			xmlns:Eliza.Model.ItemFlag="using:Eliza.Model.ItemFlag"
+			xmlns:Eliza.Model.Lpocket="using:Eliza.Model.Lpocket"
+			xmlns:Eliza.Model.Making="using:Eliza.Model.Making"
+			xmlns:Eliza.Model.Name="using:Eliza.Model.Name"
+			xmlns:Eliza.Model.Npc="using:Eliza.Model.Npc"
+			xmlns:Eliza.Model.Order="using:Eliza.Model.Order"
+			xmlns:Eliza.Model.Player="using:Eliza.Model.Player"
+			xmlns:Eliza.Model.PoliceBatch="using:Eliza.Model.PoliceBatch"
+			xmlns:Eliza.Model.Save="using:Eliza.Model.Save"
+			xmlns:Eliza.Model.Shipping="using:Eliza.Model.Shipping"
+			xmlns:Eliza.Model.Stamp="using:Eliza.Model.Stamp"
+			xmlns:Eliza.Model.Status="using:Eliza.Model.Status"
+			xmlns:Eliza.Model.World="using:Eliza.Model.World"
+			xmlns:Eliza.Avalonia.ViewModels="using:Eliza.Avalonia.ViewModels"
+			xmlns:ValueConverters="using:Eliza.Avalonia.ValueConverters"
+            >
+
+	<UserControl.Styles>
+
+	</UserControl.Styles>
+
+	<!-- 10 cols -->
+	<Grid RowDefinitions="Auto Auto Auto Auto Auto Auto Auto Auto Auto Auto" ColumnDefinitions="Auto 60 60 60 60 60 60 60 60 60" ShowGridLines="True">
+		<!-- Follow messagepack keys -->
+		<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="10">Warning: Not editing item in rucksack. Putting items in wrong container type can have unintended consequences!</TextBlock>
+		<!-- Top panel -->
+		<Image Grid.Row="1" Grid.Column="0"></Image>
+		<Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="9">
+			<Grid RowDefinitions="Auto Auto Auto" ColumnDefinitions="Auto Auto Auto">
+				<TextBlock     Grid.Row="0" Grid.Column="0">ItemId</TextBlock>
+				<TextBlock     Grid.Row="1" Grid.Column="0">Level</TextBlock>
+				<TextBlock     Grid.Row="2" Grid.Column="0">LevelAmount</TextBlock>
+				<StackPanel    Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+					<NumericUpDown Value="{Binding ItemId}" Classes="itemEditor itemId"/>
+					<DropDown></DropDown>
+					<Button>Finalize</Button>
+				</StackPanel>
+				<NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding Level}" Classes="itemEditor level" Maximum="9" Minimum="0"/>
+				<StackPanel    Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+					<NumericUpDown Value="{Binding LevelAmount0}" Classes="itemEditor levelAmount" Maximum="9" Minimum="0"/>
+					<NumericUpDown Value="{Binding LevelAmount1}" Classes="itemEditor levelAmount" Maximum="9" Minimum="0"/>
+					<NumericUpDown Value="{Binding LevelAmount2}" Classes="itemEditor levelAmount" Maximum="9" Minimum="0"/>
+					<NumericUpDown Value="{Binding LevelAmount3}" Classes="itemEditor levelAmount" Maximum="9" Minimum="0"/>
+					<NumericUpDown Value="{Binding LevelAmount4}" Classes="itemEditor levelAmount" Maximum="9" Minimum="0"/>
+					<NumericUpDown Value="{Binding LevelAmount5}" Classes="itemEditor levelAmount" Maximum="9" Minimum="0"/>
+					<NumericUpDown Value="{Binding LevelAmount6}" Classes="itemEditor levelAmount" Maximum="9" Minimum="0"/>
+					<NumericUpDown Value="{Binding LevelAmount7}" Classes="itemEditor levelAmount" Maximum="9" Minimum="0"/>
+					<NumericUpDown Value="{Binding LevelAmount8}" Classes="itemEditor levelAmount" Maximum="9" Minimum="0"/>
+				</StackPanel>
+			</Grid>
+		</Grid>
+		
+		<TextBlock	   Grid.Row="2" Grid.Column="0">Size Key2</TextBlock>
+		<NumericUpDown Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="9" Value="{Binding Size}" Classes="itemEditor"/>
+
+		<TextBlock	   Grid.Row="3" Grid.Column="0">AddedItems Key2</TextBlock>
+		<NumericUpDown Grid.Row="3" Grid.Column="1"  Value="{Binding AddedItems0}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+		<NumericUpDown Grid.Row="3" Grid.Column="2"  Value="{Binding AddedItems1}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+		<NumericUpDown Grid.Row="3" Grid.Column="3"  Value="{Binding AddedItems2}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+		<NumericUpDown Grid.Row="3" Grid.Column="4"  Value="{Binding AddedItems3}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+		<NumericUpDown Grid.Row="3" Grid.Column="5"  Value="{Binding AddedItems4}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+		<NumericUpDown Grid.Row="3" Grid.Column="6"  Value="{Binding AddedItems5}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+		<NumericUpDown Grid.Row="3" Grid.Column="7"  Value="{Binding AddedItems6}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+		<NumericUpDown Grid.Row="3" Grid.Column="8"  Value="{Binding AddedItems7}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+		<NumericUpDown Grid.Row="3" Grid.Column="9"  Value="{Binding AddedItems8}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+
+		<TextBlock     Grid.Row="4" Grid.Column="0">SourceItems</TextBlock>
+		<NumericUpDown Grid.Row="4" Grid.Column="1"  Value="{Binding SourceItems0}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+		<NumericUpDown Grid.Row="4" Grid.Column="2"  Value="{Binding SourceItems1}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+		<NumericUpDown Grid.Row="4" Grid.Column="3"  Value="{Binding SourceItems2}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+		<NumericUpDown Grid.Row="4" Grid.Column="4"  Value="{Binding SourceItems3}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+		<NumericUpDown Grid.Row="4" Grid.Column="5"  Value="{Binding SourceItems4}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+		<NumericUpDown Grid.Row="4" Grid.Column="6"  Value="{Binding SourceItems5}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+
+		<TextBlock     Grid.Row="5" Grid.Column="0">ArrangeItems</TextBlock>
+		<NumericUpDown Grid.Row="5" Grid.Column="1"  Value="{Binding ArrangeItems0}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+		<NumericUpDown Grid.Row="5" Grid.Column="2"  Value="{Binding ArrangeItems1}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+		<NumericUpDown Grid.Row="5" Grid.Column="3"  Value="{Binding ArrangeItems2}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+		<StackPanel    Grid.Row="5" Grid.Column="4" Grid.ColumnSpan="5" Orientation="Horizontal">
+			<TextBlock>IsArrange</TextBlock>
+			<CheckBox IsChecked="{Binding IsArrange}"></CheckBox>
+		</StackPanel>
+
+
+		<TextBlock     Grid.Row="6" Grid.Column="0">ArrangeOverride</TextBlock>
+		<NumericUpDown Grid.Row="6" Grid.Column="1"  Value="{Binding ArrangeOverride}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+
+		<TextBlock     Grid.Row="7" Grid.Column="1">BaseLevel</TextBlock>
+		<NumericUpDown Grid.Row="8" Grid.Column="1"  Value="{Binding BaseLevel}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+
+		<TextBlock     Grid.Row="7" Grid.Column="2">SozaiLevel</TextBlock>
+		<NumericUpDown Grid.Row="8" Grid.Column="2"  Value="{Binding SozaiLevel}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+
+		<TextBlock     Grid.Row="7" Grid.Column="3">DualWorkSmithBonusType</TextBlock>
+		<NumericUpDown Grid.Row="8" Grid.Column="3"  Value="{Binding DualWorkSmithBonusType}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+
+		<TextBlock     Grid.Row="7" Grid.Column="4">DualWorkLoveLevel</TextBlock>
+		<NumericUpDown Grid.Row="8" Grid.Column="4"  Value="{Binding DualWorkLoveLevel}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+
+		<TextBlock     Grid.Row="7" Grid.Column="5">DualWorkActor</TextBlock>
+		<NumericUpDown Grid.Row="8" Grid.Column="5"  Value="{Binding DualWorkActor}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+
+		<TextBlock     Grid.Row="7" Grid.Column="6">DualWorkParam</TextBlock>
+		<NumericUpDown Grid.Row="8" Grid.Column="6"  Value="{Binding DualWorkParam}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+
+		<TextBlock     Grid.Row="7" Grid.Column="7">Capacity</TextBlock>
+		<NumericUpDown Grid.Row="8" Grid.Column="7"  Value="{Binding Capacity}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+
+	</Grid>
+	<!--
+	<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto Auto">
+		<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorFieldName" Text="{Binding FieldInfo.Name}"/>
+		<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto Auto" Grid.Row="0" Grid.Column="1">
+			<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorType" Text="Byte"></TextBlock>
+			<NumericUpDown Grid.Row="0" Grid.Column="1" Classes="editorNumericUpDown" Value="{Binding Value}" Maximum="{Binding PrimitiveMax}" Minimum="{Binding PrimitiveMin}"/>
+			<Grid RowDefinitions="Auto Auto" ColumnDefinitions="Auto" Grid.Row="0" Grid.Column="2">
+				<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto" Grid.Row="0">
+					<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorMax" Text="Max"/>
+					<TextBlock Grid.Row="1" Grid.Column="1" Classes="editorMax" Text="{Binding PrimitiveMax}"/>
+				</Grid>
+				<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto" Grid.Row="1">
+					<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorMin" Text="Min"/>
+					<TextBlock Grid.Row="0" Grid.Column="1" Classes="editorMin" Text="{Binding PrimitiveMin}"/>
+				</Grid>
+			</Grid>
+		</Grid>
+		<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto Auto" Grid.Row="0" Grid.Column="2">
+			<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorHexType" Text="Hex"></TextBlock>
+			<TextBox Grid.Row="0" Grid.Column="1" Classes="editorHexString" MaxLength="{Binding NumNibbles}" Text="{Binding Value, Converter={StaticResource ByteToHexConverter}}"/>
+			<Grid RowDefinitions="Auto Auto" ColumnDefinitions="Auto" Grid.Row="0" Grid.Column="2">
+				<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto" Grid.Row="0">
+					<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorMax" Text="Max"/>
+					<TextBlock Grid.Row="1" Grid.Column="1" Classes="editorMax" Text="{Binding PrimitiveMax, Converter={StaticResource ByteToHexConverter}}"/>
+				</Grid>
+				<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto" Grid.Row="1">
+					<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorMin" Text="Min"/>
+					<TextBlock Grid.Row="1" Grid.Column="1" Classes="editorMin" Text="{Binding PrimitiveMin, Converter={StaticResource ByteToHexConverter}}"/>
+				</Grid>
+			</Grid>
+		</Grid>
+	</Grid>
+	-->
+	
+</UserControl>

@@ -20,16 +20,17 @@ namespace Eliza.Avalonia.ValueConverters
     /// Takes an instance of UiObjectGraph and returns its pretty-printed field name. Used in treeview.
     /// This is not a dynamic property since it binds to .This
     /// </summary>
-    public class DisplayTypeNameConverter : IValueConverter
+    public class DisplayArrayIndexConverter : IValueConverter
     {
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            UiObjectGraph val = (UiObjectGraph)value;
-            string str = val.Type.Name;
-            if (val.ArrayIndex != ObjectGraph.NULL_ARRAY_INDEX) {
-                str += " " + val.ArrayIndex.ToString();
+            if(value != null) {
+                int val = (int)value;
+                if(val != ObjectGraph.NULL_ARRAY_INDEX) {
+                    return val.ToString();
+                }
             }
-            return str;
+            return "";
         }
 
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

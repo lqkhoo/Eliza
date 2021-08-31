@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
@@ -8,10 +8,10 @@
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.7" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.7" />
-    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.7" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.7" />
+    <PackageReference Include="Avalonia" Version="0.10.2" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.2" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.2" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Eliza\Eliza.csproj" />
@@ -22,6 +22,9 @@
     </Compile>
     <Compile Update="Views\ContextView.axaml.cs">
       <DependentUpon>ContextView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Editors\Objects\ItemDataEditorView.axaml.cs">
+      <DependentUpon>ItemDataEditorView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\Editors\Objects\UuidStringEditorView.axaml.cs">
       <DependentUpon>UuidStringEditorView.axaml</DependentUpon>

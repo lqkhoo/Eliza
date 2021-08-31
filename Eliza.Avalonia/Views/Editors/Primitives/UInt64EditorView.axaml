@@ -51,9 +51,7 @@
 			<Grid RowDefinitions="Auto Auto" ColumnDefinitions="Auto" Grid.Row="0" Grid.Column="2">
 				<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto" Grid.Row="0">
 					<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorMax" Text="Max"/>
-					<!-- Overflow as value is passed as double by Avalonia.
 					<TextBlock Grid.Row="1" Grid.Column="1" Classes="editorMax" Text="{Binding PrimitiveMax, Converter={StaticResource UInt64ToHexConverter}}"/>
-					 -->
 					<TextBlock Grid.Row="1" Grid.Column="1" Classes="editorMax" Text="FFFFFFFFFFFFFFFF"/>
 				</Grid>
 				<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto" Grid.Row="1">

@@ -365,4 +365,40 @@ namespace Eliza.Avalonia.ValueConverters
         }
     }
 
+
+
+    public class IntToStringConverter : IValueConverter
+    {
+        // https://stackoverflow.com/a/311179
+        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if(value != null) {
+                int val = (int)value;
+                return val.ToString();
+            } else {
+                return "0";
+            }
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            // Pragmas are ugly but they're the best way to do it.
+            // Convert() will handle the nullvalue exception and move on.
+            try {
+                if (value != null) {
+                    int m = Int32.Parse((string)value);
+                    if(m > Int32.MaxValue) {
+                        m = Int32.MaxValue;
+                    }
+                    if(m < Int32.MinValue) {
+                        m = Int32.MinValue;
+                    }
+                    return m;
+                }
+            } catch (Exception) {
+            }
+            return 0;
+        }
+    }
+
 }
