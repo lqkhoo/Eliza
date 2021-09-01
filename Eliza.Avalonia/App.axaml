@@ -30,9 +30,11 @@
 			 >
 
 	<Application.Resources>
+		<!-- Value converters -->
 		<ValueConverters:DisplayUiObjectGraphItemIdToNameConverter x:Key="DisplayUiObjectGraphItemIdToNameConverter"/>
 		<ValueConverters:DisplayArrayIndexConverter x:Key="DisplayArrayIndexConverter"/>
 		<ValueConverters:VisibilityValueConverter x:Key="VisibilityValueConverter"/>
+		<ValueConverters:ItemIdToImageConverter x:Key="ItemIdToImageConverter"/>
 		<ValueConverters:BoolToNumConverter x:Key="BoolToNumConverter"/>
 		<ValueConverters:CharToStringConverter x:Key="CharToStringConverter"/>
 		<ValueConverters:CharToHexConverter x:Key="CharToHexConverter"/>
@@ -49,7 +51,7 @@
 		<ValueConverters:StringToHexConverter x:Key="StringToHexConverter"/>
 		<ValueConverters:AsciiStringToHexConverter x:Key="AsciiStringToHexConverter"/>
 		<ValueConverters:IntToStringConverter x:Key="IntToStringConverter"/>
-		
+
 	</Application.Resources>
 	
 	

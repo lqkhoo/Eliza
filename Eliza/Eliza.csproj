@@ -10,6 +10,14 @@
     <None Remove="Model\EventData\**" />
   </ItemGroup>
 
+
+	<ItemGroup>
+		<None Remove="Data\Images\**"/>
+		<EmbeddedResource Include="Data\Images\**"/>
+	</ItemGroup>
+	
+
+
   <ItemGroup>
     <PackageReference Include="BouncyCastle.NetCore" Version="1.8.8" />
     <PackageReference Include="MessagePack" Version="2.2.85" />

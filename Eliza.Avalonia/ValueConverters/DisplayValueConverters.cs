@@ -1,5 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Data.Converters;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Eliza.Avalonia.ViewModels;
 using Eliza.Core.Serialization;
 using Eliza.Data;
@@ -98,4 +100,29 @@ namespace Eliza.Avalonia.ValueConverters
             throw new NotImplementedException();
         }
     }
+
+
+    public class ItemIdToImageConverter : IValueConverter
+    {
+        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            int val = 0;
+            if(value != null) {
+                val = (int)value;
+            }
+            string str = Items.ItemIdToAssemblyResourceUri[val];
+            var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
+            var asset = assets.Open(new Uri(str));
+            return new Bitmap(asset);
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
+
+
 }

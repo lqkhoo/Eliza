@@ -40,7 +40,11 @@
 		<!-- Follow messagepack keys -->
 		<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="10">Warning: Not editing item in rucksack. Putting items in wrong container type can have unintended consequences!</TextBlock>
 		<!-- Top panel -->
-		<Image Grid.Row="1" Grid.Column="0"></Image>
+		<!-- <Image Grid.Row="1" Grid.Column="0" Source="avares://Eliza/Data/Images/Icon_Item_Collection_001.png"/> 
+		resm:Eliza.Data.Images.Weapon.BattleHammers.Icon_Item_Weapon_130.png?assembly=Eliza
+		
+		-->
+		<Image Grid.Row="1" Grid.Column="0" Source="{Binding ItemId, Converter={StaticResource ItemIdToImageConverter}}"/>
 		<Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="9">
 			<Grid RowDefinitions="Auto Auto Auto" ColumnDefinitions="Auto Auto Auto">
 				<TextBlock     Grid.Row="0" Grid.Column="0">ItemId</TextBlock>

@@ -20,6 +20,9 @@ namespace Eliza.Test
             Assert.True(Items.ItemIdToJapaneseName.Count == itemCount, String.Format("Counts: {0} {1}", itemCount, Items.ItemIdToJapaneseName.Count));
             Assert.True(Items.ItemIdToItemType.Count == itemCount, String.Format("Counts: {0} {1}", itemCount, Items.ItemIdToItemType.Count));
 
+            // None-type item doesn't have an icon.
+            Assert.True(Items.ItemIdToAssemblyResourceUri.Count == itemCount - 1, String.Format("Counts: {0} {1}", itemCount, Items.ItemIdToAssemblyResourceUri.Count));
+
             foreach (int itemId in Items.ItemIds) {
                 Assert.True(Items.ItemIdToEnglishName.ContainsKey(itemId));
                 Assert.True(Items.ItemIdToJapaneseName.ContainsKey(itemId));

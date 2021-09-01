@@ -13,6 +13,8 @@ using System;
 using Eliza.Avalonia.Views.Editors;
 using Avalonia.Data.Converters;
 using System.Globalization;
+using System.Reflection;
+using Avalonia.Platform;
 
 namespace Eliza.Avalonia.Views
 {
@@ -79,7 +81,7 @@ namespace Eliza.Avalonia.Views
             #pragma warning restore CS8622 // Nullability of reference types in type of parameter doesn't match the target delegate (possibly because of nullability attributes).
 
 
-            #if DEBUG
+#if DEBUG
             this.AttachDevTools();
             #endif
         }
