@@ -5888,6 +5888,7 @@ namespace Eliza.Data
     public static partial class Items
     {
         public static readonly Dictionary<int, string> ItemIdToAssemblyResourceUri = new() {
+            { 0, "resm:Eliza.Data.Images.Empty.png?assembly=Eliza"}, // Added manually
             { 1, "resm:Eliza.Data.Images.Crop.Crops.Icon_Item_Crops_005.png?assembly=Eliza" },
             { 2, "resm:Eliza.Data.Images.Crop.Crops.Icon_Item_Crops_006.png?assembly=Eliza" },
             { 3, "resm:Eliza.Data.Images.Crop.Crops.Icon_Item_Crops_010.png?assembly=Eliza" },

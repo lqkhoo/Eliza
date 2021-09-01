@@ -40,7 +40,7 @@
 
 	<Window.Styles>
 		<!-- https://stackoverflow.com/questions/61435806/how-to-create-a-separate-file-for-styles-in-avalonia -->
-		<StyleInclude Source="avares://Eliza.Avalonia/Styles/MainWindow.axaml"/>
+		<StyleInclude Source="avares://Eliza.Avalonia/Styles/MainWindowStyle.axaml"/>
 	</Window.Styles>
 		
 
@@ -48,9 +48,27 @@
 		<!--x:Type Eliza.Avalonia.ViewModels:UiObjectGraph -->
 		<TreeDataTemplate DataType="{x:Type Eliza.Avalonia.ViewModels:UiObjectGraph}" ItemsSource="{Binding Children}">
 				<StackPanel Orientation="Horizontal">
+					<Image Classes="treeImage"
+						   Source="{MultiBinding Children[0], Converter={StaticResource DisplayUiObjectGraphItemIdToImageConverter}}"
+						   IsVisible="{Binding Children[0], Converter={StaticResource DisplayUiObjectGraphItemIdToVisibilityConverter}}"
+						   />
 					<TextBlock Classes="treeText treeType" Text="{Binding Type.Name}"/>
 					<TextBlock Classes="treeText treeArrayIndex" Text="{Binding ArrayIndex, Converter={StaticResource DisplayArrayIndexConverter}}"/>
-					<TextBlock Classes="treeText treeItemName" Text="{Binding Children[0], Converter={StaticResource DisplayUiObjectGraphItemIdToNameConverter}}"/>
+					<TextBlock Classes="treeText treeItemName"
+							   Text="{Binding Children[0], Converter={StaticResource DisplayUiObjectGraphItemIdToJapaneseNameConverter}}"
+							   IsVisible="{Binding Children[0], Converter={StaticResource DisplayUiObjectGraphItemIdToVisibilityConverter}}"
+							   />
+					<TextBlock Classes="treeText treeItemName"
+							   Text="{Binding Children[0], Converter={StaticResource DisplayUiObjectGraphItemIdToEnglishNameConverter}}"
+							   IsVisible="{Binding Children[0], Converter={StaticResource DisplayUiObjectGraphItemIdToVisibilityConverter}}"
+							   />
+					<!--
+					<Grid ColumnDefinitions="Auto Auto" RowDefinitions="Auto Auto">
+						<Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Source="{Binding Children[0].ItemId}, Converter={StaticResource ItemIdToImageConverter}}"/>
+						<TextBlock Grid.Row="0" Grid.Column="1" Classes="treeText treeItemName" Text="{Binding Children[0], Converter={StaticResource DisplayUiObjectGraphItemIdToJapaneseNameConverter}}"/>
+						<TextBlock Grid.Row="1" Grid.Column="1" Classes="treeText treeItemName" Text="{Binding Children[0], Converter={StaticResource DisplayUiObjectGraphItemIdToEnglishNameConverter}}"/>
+					</Grid>
+					-->
 					<TextBlock Classes="treeText treeFieldName" Text="{Binding DisplayFieldName}"></TextBlock>
 					<Border Classes="treeValueBorder">
 						<TextBlock Classes="treeText treeValue" IsVisible="{Binding This, Converter={StaticResource VisibilityValueConverter}}" Text="{Binding Value}"/>

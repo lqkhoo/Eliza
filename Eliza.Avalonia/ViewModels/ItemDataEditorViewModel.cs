@@ -5,11 +5,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Eliza.Model;
+using Eliza.Model.Item;
 
 namespace Eliza.Avalonia.ViewModels
 {
     public class ItemDataEditorViewModel : ViewModelBase
     {
+
+        public readonly SaveData.LOCALE Locale;
+        public readonly int Version;
 
         public const int InputMax = Int32.MaxValue;
         public const int InputMin = -1;
@@ -17,7 +22,7 @@ namespace Eliza.Avalonia.ViewModels
         protected UiObjectGraph OriginalContext;
 
         // Break everything down. We'll leverage the serializers to
-        // reassemble a UiObjectNode afterwards.
+        // reassemble a UiObjectGraph afterwards.
 
         protected int _ItemId = 0; // Key 0 ItemData
         protected int _Level = 0;  // Key 1 NotAmountItemData : ItemData
@@ -38,36 +43,38 @@ namespace Eliza.Avalonia.ViewModels
         protected int _Capacity = 0;                // Key 12
         protected int _Size = 0;                    // Key 2 FishItemData : NotAmountItemData
 
-        protected Dictionary<string, Action<UiObjectGraph>> MethodDispatcher = new() { };
+        protected Dictionary<string, Action<UiObjectGraph>> UnwrapMethodDispatcher = new() { };
 
         public ItemDataEditorViewModel() {
             this.Init();
         }
 
-        public ItemDataEditorViewModel(UiObjectGraph context)
+        public ItemDataEditorViewModel(UiObjectGraph context, SaveData.LOCALE locale, int version)
         {
+            this.Locale = locale;
+            this.Version = version;
             this.Init();
             this.LoadContext(context);
-            var foo = 3;
         }
 
         public void Init()
         {
-            this.MethodDispatcher.Add("ItemId", (x) => this.UnwrapItemId(x));
-            this.MethodDispatcher.Add("Level", (x) => this.UnwrapLevel(x));
-            this.MethodDispatcher.Add("LevelAmount", (x) => this.UnwrapLevelAmount(x));
-            this.MethodDispatcher.Add("SourceItems", (x) => this.UnwrapSourceItems(x));
-            this.MethodDispatcher.Add("IsArrange", (x) => this.UnwrapIsArrange(x));
-            this.MethodDispatcher.Add("AddedItems", (x) => this.UnwrapAddedItems(x));
-            this.MethodDispatcher.Add("ArrangeItems", (x) => this.UnwrapArrangeItems(x));
-            this.MethodDispatcher.Add("BaseLevel", (x) => this.UnwrapBaseLevel(x));
-            this.MethodDispatcher.Add("SozaiLevel", (x) => this.UnwrapSozaiLevel(x));
-            this.MethodDispatcher.Add("DualWorkSmithBonusType", (x) => this.UnwrapDualWorkSmithBonusType(x));
-            this.MethodDispatcher.Add("DualWorkLoveLevel", (x) => this.UnwrapDualWorkLoveLevel(x));
-            this.MethodDispatcher.Add("DualWorkActor", (x) => this.UnwrapDualWorkActor(x));
-            this.MethodDispatcher.Add("DualWorkParam", (x) => this.UnwrapDualWorkParam(x));
-            this.MethodDispatcher.Add("Capacity", (x) => this.UnwrapCapacity(x));
-            this.MethodDispatcher.Add("Size", (x) => this.UnwrapSize(x));
+            this.UnwrapMethodDispatcher.Add("ItemId", (x) => this.UnwrapItemId(x));
+            this.UnwrapMethodDispatcher.Add("Level", (x) => this.UnwrapLevel(x));
+            this.UnwrapMethodDispatcher.Add("LevelAmount", (x) => this.UnwrapLevelAmount(x));
+            this.UnwrapMethodDispatcher.Add("SourceItems", (x) => this.UnwrapSourceItems(x));
+            this.UnwrapMethodDispatcher.Add("IsArrange", (x) => this.UnwrapIsArrange(x));
+            this.UnwrapMethodDispatcher.Add("AddedItems", (x) => this.UnwrapAddedItems(x));
+            this.UnwrapMethodDispatcher.Add("ArrangeItems", (x) => this.UnwrapArrangeItems(x));
+            this.UnwrapMethodDispatcher.Add("BaseLevel", (x) => this.UnwrapBaseLevel(x));
+            this.UnwrapMethodDispatcher.Add("SozaiLevel", (x) => this.UnwrapSozaiLevel(x));
+            this.UnwrapMethodDispatcher.Add("DualWorkSmithBonusType", (x) => this.UnwrapDualWorkSmithBonusType(x));
+            this.UnwrapMethodDispatcher.Add("DualWorkLoveLevel", (x) => this.UnwrapDualWorkLoveLevel(x));
+            this.UnwrapMethodDispatcher.Add("DualWorkActor", (x) => this.UnwrapDualWorkActor(x));
+            this.UnwrapMethodDispatcher.Add("DualWorkParam", (x) => this.UnwrapDualWorkParam(x));
+            this.UnwrapMethodDispatcher.Add("Capacity", (x) => this.UnwrapCapacity(x));
+            this.UnwrapMethodDispatcher.Add("Size", (x) => this.UnwrapSize(x));
+
         }
 
 
@@ -75,12 +82,11 @@ namespace Eliza.Avalonia.ViewModels
         {
             this.OriginalContext = context;
             foreach (UiObjectGraph child in context.Children) {
-                int foo = 3;
                 // I loathe to key by string of fieldname, but what else could we do?
-                if(child.FieldInfo != null && child.Value != null) {
+                if (child.FieldInfo != null && child.Value != null) {
                     string fieldName = child.FieldInfo.Name;
-                    if(this.MethodDispatcher.ContainsKey(fieldName)) {
-                        this.MethodDispatcher[fieldName](child);
+                    if (this.UnwrapMethodDispatcher.ContainsKey(fieldName)) {
+                        this.UnwrapMethodDispatcher[fieldName](child);
                     }
                 }
             }
@@ -89,7 +95,7 @@ namespace Eliza.Avalonia.ViewModels
         protected int ReadIntHelper(UiObjectGraph uiNode)
         {
             int val;
-            if(uiNode.Value != null) {
+            if (uiNode.Value != null) {
                 val = (int)uiNode.Value;
             } else {
                 val = 0;
@@ -97,7 +103,9 @@ namespace Eliza.Avalonia.ViewModels
             return val;
         }
 
-        protected void UnwrapItemId(UiObjectGraph x)  { this.ItemId = this.ReadIntHelper(x); }
+        #region Unwrappers
+
+        protected void UnwrapItemId(UiObjectGraph x) { this.ItemId = this.ReadIntHelper(x); }
 
         protected void UnwrapLevel(UiObjectGraph x) { this.Level = this.ReadIntHelper(x); }
 
@@ -134,7 +142,7 @@ namespace Eliza.Avalonia.ViewModels
         protected void UnwrapIsArrange(UiObjectGraph x)
         {
             bool val;
-            if(x.Value != null) {
+            if (x.Value != null) {
                 val = (bool)x.Value;
             } else {
                 val = false;
@@ -191,7 +199,79 @@ namespace Eliza.Avalonia.ViewModels
         protected void UnwrapSize(UiObjectGraph x) { this.Size = this.ReadIntHelper(x); }
 
 
+        #endregion Unwrappers
 
+        public UiObjectGraph GetEditedContext()
+        {
+
+            Type itemType = Eliza.Data.Items.ItemIdToItemType[ItemId];
+            ObjectGraph node = this.GetObjectGraph(itemType);
+            // TODO
+            return null;
+        }
+
+        protected ObjectGraph GetObjectGraph(Type itemType)
+        {
+            if(itemType == typeof(ItemData)) {
+                return this.GetItemDataGraph();
+            } else if(itemType == typeof(AmountItemData)) {
+                return this.GetAmountItemDataGraph();
+            } else if (itemType == typeof(SeedItemData)) {
+                return this.GetSeedItemDataGraph();
+            } else if (itemType == typeof(EquipItemData)) {
+                return this.GetEquipItemDataGraph();
+            } else if (itemType == typeof(FishItemData)) {
+                return this.GetFishItemDataGraph();
+            } else if (itemType == typeof(FoodItemData)) {
+                return this.GetFoodItemDataGraph();
+            } else if (itemType == typeof(PotToolItemData)) {
+                return this.GetPotToolItemDataGraph();
+            } else if (itemType == typeof(RuneAbilityItemData)) {
+                return this.GetRuneAbilityItemDataGraph();
+            } else {
+                throw new NotImplementedException();
+            }
+        }
+
+        protected ObjectGraph GetItemDataGraph()
+        {
+            return null;
+        }
+
+        protected ObjectGraph GetAmountItemDataGraph()
+        {
+            return null;
+        }
+
+        protected ObjectGraph GetSeedItemDataGraph()
+        {
+            return null;
+        }
+
+        protected ObjectGraph GetEquipItemDataGraph()
+        {
+            return null;
+        }
+
+        protected ObjectGraph GetFishItemDataGraph()
+        {
+            return null;
+        }
+
+        protected ObjectGraph GetFoodItemDataGraph()
+        {
+            return null;
+        }
+
+        protected ObjectGraph GetPotToolItemDataGraph()
+        {
+            return null;
+        }
+
+        protected ObjectGraph GetRuneAbilityItemDataGraph()
+        {
+            return null;
+        }
 
 
         /*
@@ -224,6 +304,7 @@ namespace Eliza.Avalonia.ViewModels
         protected int _ArrangeItems2 = 0;
         */
 
+        #region Reactive properties
 
         public int ItemId
         {
@@ -428,6 +509,8 @@ namespace Eliza.Avalonia.ViewModels
             get => this._Size;
             set => this.RaiseAndSetIfChanged(ref this._Size, value);
         }
+
+        #endregion Reactive properties
 
     }
 }

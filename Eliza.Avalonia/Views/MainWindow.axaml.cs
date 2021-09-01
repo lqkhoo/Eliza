@@ -107,7 +107,9 @@ namespace Eliza.Avalonia.Views
                         editorView.DataContext = source.DataContext;
                     } else {
                         ((ItemDataEditorView)editorView).LoadContext(
-                            new ItemDataEditorViewModel((UiObjectGraph)source.DataContext)
+                            new ItemDataEditorViewModel((UiObjectGraph)source.DataContext,
+                                    this.ViewModel.RequestedLocale,
+                                    this.ViewModel.RequestedVersion)
                         );
                     }
                     

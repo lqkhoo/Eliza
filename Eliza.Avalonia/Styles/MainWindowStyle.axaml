@@ -19,12 +19,19 @@
 	</Style>
 
 	<!-- Treeview -->
+	<Style Selector="Image.treeImage">
+		<Setter Property="Height" Value="36"/>
+		<Setter Property="Width" Value="36"/>
+	</Style>
+	
 	<Style Selector="TextBlock.treeText">
 		<Setter Property="Padding" Value="0 2 20 2"/>
 		<!-- L U R D-->
 		<Setter Property="FontSize" Value="11"/>
 		<Setter Property="MinHeight" Value="22"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
 	</Style>
+	
 	<Style Selector="TextBlock.treeType">
 		<Setter Property="Padding" Value="0 3 5 3"/>
 		<!-- L U R D-->
@@ -33,6 +40,7 @@
 		<Setter Property="MinWidth" Value="50"/>
 		<Setter Property="FontFamily" Value="Consolas"/>
 	</Style>
+	
 	<Style Selector="TextBlock.treeArrayIndex">
 		<Setter Property="Padding" Value="0 3 10 3"/>
 		<!-- L U R D-->
@@ -88,6 +96,7 @@
 		<Setter Property="Background" Value="#dddddd"/>
 	</Style>
 
+	
 	<!-- Editor -->
 	<Style Selector="ScrollViewer.editorMainScrollViewer">
 		<Setter Property="Padding" Value="10 10 10 10"/>
@@ -172,6 +181,23 @@
 
 	<!-- item editor -->
 
+	<Style Selector="Grid.itemEditor Border.itemEditorHline">
+		<Setter Property="BorderBrush" Value="#AAAAAA"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="MinHeight" Value="1"/>
+		<Setter Property="Height" Value="1"/>
+	</Style>
+	
+	<Style Selector="Grid.itemEditor TextBlock">
+		<Setter Property="Padding" Value="3"/>
+		<Setter Property="FontSize" Value="11"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
+	</Style>
+
+	<Style Selector="TextBlock.itemEditorHeader">
+		<Setter Property="FontSize" Value="12"/>
+	</Style>
+	
 	<Style Selector="NumericUpDown /template/ TextBox">
 		<Setter Property="FontSize" Value="12"/>
 		<Setter Property="FontStyle" Value="Italic"/>
@@ -232,7 +258,7 @@
 	<Style Selector="NumericUpDown.levelAmount">
 		<Setter Property="Width" Value="30"/>
 		<Setter Property="MinWidth" Value="30"/>
-		<Setter Property="Margin" Value="5 0 5 0"/>
+		<Setter Property="Margin" Value="0 0 10 0"/>
 	</Style>
 
 	<Style Selector="NumericUpDown.levelAmount /template/ TextBox">
@@ -243,6 +269,14 @@
 	<Style Selector="NumericUpDown.levelAmountEditor /template/ TextBox /template/ Border">
 		<Setter Property="Width" Value="30"/>
 		<Setter Property="MinWidth" Value="30"/>
+	</Style>
+
+	<Style Selector="TextBlock.itemEditorName">
+		<Setter Property="HorizontalAlignment" Value="Center"/>
+	</Style>
+	
+	<Style Selector="TextBlock.itemEditorCheckbox">
+		<Setter Property="HorizontalAlignment" Value="Center"/>
 	</Style>
 
 	<Style Selector="NumericUpDown.subEq">
@@ -259,6 +293,16 @@
 	<Style Selector="NumericUpDown.subEq /template/ TextBox /template/ Border">
 		<Setter Property="Width" Value="50"/>
 		<Setter Property="MinWidth" Value="50"/>
+	</Style>
+
+	<Style Selector="Image.itemEditorImage">
+		<Setter Property="Height" Value="50"/>
+		<Setter Property="Width" Value="50"/>
+	</Style>
+
+	<Style Selector="Image.itemEditorMainImage">
+		<Setter Property="Height" Value="120"/>
+		<Setter Property="Width" Value="120"/>
 	</Style>
 
 

@@ -29,8 +29,8 @@ namespace Eliza.Avalonia.ViewModels
         protected MainWindow? MainWindowView;
 
 
-        protected SaveData.LOCALE Requested_Locale;
-        protected int Requested_Version;
+        public SaveData.LOCALE RequestedLocale;
+        public int RequestedVersion;
         protected SaveData? _SaveData;
 
         protected UserControl? _EditorPane;
@@ -114,8 +114,8 @@ namespace Eliza.Avalonia.ViewModels
 
         protected async Task Cmd_OpenAsync(SaveData.LOCALE locale, int version)
         {
-            this.Requested_Locale = locale;
-            this.Requested_Version = version;
+            this.RequestedLocale = locale;
+            this.RequestedVersion = version;
 
             OpenFileDialog dialog = new() {
                 Title = String.Format("Open File ({0} ver {1})", locale, version),
@@ -124,8 +124,8 @@ namespace Eliza.Avalonia.ViewModels
             };
             string[] inputPaths = await dialog.ShowAsync(this.MainWindowView);
             this._SaveData = SaveData.FromEncryptedFile(path: inputPaths[0],
-                                                    version: this.Requested_Version,
-                                                    locale: this.Requested_Locale);
+                                                    version: this.RequestedVersion,
+                                                    locale: this.RequestedLocale);
             this.GenerateObjectGraph();
 
             this.LogWrite(String.Format("Loaded file from {0}.", inputPaths[0]));
@@ -134,7 +134,7 @@ namespace Eliza.Avalonia.ViewModels
         protected async Task Cmd_SaveEncrypted()
         {
             SaveFileDialog dialog = new() {
-                Title = String.Format("Open File ({0} ver {1})", this.Requested_Locale, this.Requested_Version)
+                Title = String.Format("Open File ({0} ver {1})", this.RequestedLocale, this.RequestedVersion)
                 // Filters = new List<FileDialogFilter> { }, // Nothing to filter
             };
             
@@ -148,7 +148,7 @@ namespace Eliza.Avalonia.ViewModels
         protected async Task Cmd_SaveDecrypted()
         {
             SaveFileDialog dialog = new() {
-                Title = String.Format("Open File ({0} ver {1})", this.Requested_Locale, this.Requested_Version)
+                Title = String.Format("Open File ({0} ver {1})", this.RequestedLocale, this.RequestedVersion)
                 // Filters = new List<FileDialogFilter> { }, // Nothing to filter
             };
             

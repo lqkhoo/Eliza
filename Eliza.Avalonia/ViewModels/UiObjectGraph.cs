@@ -367,10 +367,5 @@ namespace Eliza.Avalonia.ViewModels
             }
         }
 
-        public override string ToString()
-        {
-            string typeName = (this.Type == null) ? "" : this.Type.Name;
-            return String.Format("Graph: [{1}] {2}: {3}", this.Children.Count, this.DisplayFieldName, typeName);
-        }
     }
 }
