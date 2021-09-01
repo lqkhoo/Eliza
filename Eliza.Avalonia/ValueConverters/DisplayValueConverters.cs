@@ -5,6 +5,7 @@ using Avalonia.Platform;
 using Eliza.Avalonia.ViewModels;
 using Eliza.Core.Serialization;
 using Eliza.Data;
+using Eliza.Model.Item;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -21,69 +22,9 @@ namespace Eliza.Avalonia.ValueConverters
 
     // These are one-way value converters for display-only values.
 
+
+
     // Input is UiObjectGraph. If node.Child[0].ItemId is int, return item's name as string.
-    public class DisplayUiObjectGraphItemIdToJapaneseNameConverter : IValueConverter
-    {
-        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if(value != null && value.GetType() != typeof(UnsetValueType)) {
-                try {
-                    UiObjectGraph uiNode = (UiObjectGraph)value;
-                    Type? type = uiNode.Type;
-                    FieldInfo? fieldInfo = uiNode.FieldInfo;
-                    object? nodeVal = uiNode.Value;
-                    if (type == typeof(int) && fieldInfo != null && nodeVal != null) {
-                        int val = (int)nodeVal;
-                        string fieldName = fieldInfo.Name;
-                        if (fieldName == "ItemId") {
-                            return Items.ItemIdToJapaneseName[val];
-                        }
-                    }
-                } catch (Exception) {
-                    // This converter is called potentially thousands of times.
-                    // Make sure no exceptions are thrown.
-                }
-            }
-            return "";
-        }
-
-        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-
-    public class DisplayUiObjectGraphItemIdToEnglishNameConverter : IValueConverter
-    {
-        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value != null && value.GetType() != typeof(UnsetValueType)) {
-                try {
-                    UiObjectGraph uiNode = (UiObjectGraph)value;
-                    Type? type = uiNode.Type;
-                    FieldInfo? fieldInfo = uiNode.FieldInfo;
-                    object? nodeVal = uiNode.Value;
-                    if (type == typeof(int) && fieldInfo != null && nodeVal != null) {
-                        int val = (int)nodeVal;
-                        string fieldName = fieldInfo.Name;
-                        if (fieldName == "ItemId") {
-                            return Items.ItemIdToEnglishName[val];
-                        }
-                    }
-                } catch (Exception) {
-                    // This converter is called potentially thousands of times.
-                    // Make sure no exceptions are thrown.
-                }
-            }
-            return "";
-        }
-
-        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
 
     public class DisplayUiObjectGraphItemIdToImageConverter : IValueConverter
     {
@@ -209,7 +150,7 @@ namespace Eliza.Avalonia.ValueConverters
         {
             int val = 0;
             try {
-                if (value != null) {
+                if (value != null && value != AvaloniaProperty.UnsetValue && value.GetType().IsPrimitive) {
                     val = (int)value;
                     if(! Items.ItemIds.Contains(val)) {
                         val = 0;
@@ -237,7 +178,7 @@ namespace Eliza.Avalonia.ValueConverters
         {
             int val = 0;
             try {
-                if (value != null) {
+                if (value != null && value != AvaloniaProperty.UnsetValue && value.GetType().IsPrimitive) {
                     val = (int)value;
                     if (!Items.ItemIds.Contains(val)) {
                         val = 0;
@@ -261,7 +202,7 @@ namespace Eliza.Avalonia.ValueConverters
         {
             int val = 0;
             try {
-                if (value != null) {
+                if (value != null && value != AvaloniaProperty.UnsetValue && value.GetType().IsPrimitive) {
                     val = (int)value;
                     if (!Items.ItemIds.Contains(val)) {
                         val = 0;
@@ -285,7 +226,7 @@ namespace Eliza.Avalonia.ValueConverters
         {
             int val = 0;
             try {
-                if (value != null) {
+                if (value != null && value != AvaloniaProperty.UnsetValue && value.GetType().IsPrimitive) {
                     val = (int)value;
                     if (!Items.ItemIds.Contains(val)) {
                         val = 0;
@@ -303,7 +244,36 @@ namespace Eliza.Avalonia.ValueConverters
         }
     }
 
+    public class TypeToTreeViewVisibilityConverter : IValueConverter
+    {
+        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool val = false;
+            try {
+                if (value != null && value != AvaloniaProperty.UnsetValue) {
+                    Type type = (Type)value;
+                    if ((type == typeof(ItemData))
+                        || (type == typeof(AmountItemData))
+                        || (type == typeof(SeedItemData))
+                        || (type == typeof(EquipItemData))
+                        || (type == typeof(FishItemData))
+                        || (type == typeof(FoodItemData))
+                        || (type == typeof(PotToolItemData))
+                        || (type == typeof(RuneAbilityItemData))) {
+                        val = true;
+                    }
+                }
+            } catch (Exception) {
+                // Do nothing
+            }
+            return val;
+        }
 
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 
 
 

@@ -32,16 +32,14 @@
 	<Application.Resources>
 		
 		<!-- Value converters -->
-		<ValueConverters:DisplayUiObjectGraphItemIdToJapaneseNameConverter x:Key="DisplayUiObjectGraphItemIdToJapaneseNameConverter"/>
-		<ValueConverters:DisplayUiObjectGraphItemIdToEnglishNameConverter x:Key="DisplayUiObjectGraphItemIdToEnglishNameConverter"/>
-		<ValueConverters:DisplayUiObjectGraphItemIdToImageConverter x:Key="DisplayUiObjectGraphItemIdToImageConverter"/>
-		<ValueConverters:DisplayUiObjectGraphItemIdToVisibilityConverter x:Key="DisplayUiObjectGraphItemIdToVisibilityConverter"/>
 		<ValueConverters:DisplayArrayIndexConverter x:Key="DisplayArrayIndexConverter"/>
 		<ValueConverters:VisibilityValueConverter x:Key="VisibilityValueConverter"/>
+		
 		<ValueConverters:ItemIdToImageConverter x:Key="ItemIdToImageConverter"/>
 		<ValueConverters:ItemIdToJapaneseNameConverter x:Key="ItemIdToJapaneseNameConverter"/>
 		<ValueConverters:ItemIdToEnglishNameConverter x:Key="ItemIdToEnglishNameConverter"/>
 		<ValueConverters:ItemIdToVisibilityConverter x:Key="ItemIdToVisibilityConverter"/>
+		<ValueConverters:TypeToTreeViewVisibilityConverter x:Key="TypeToTreeViewVisibilityConverter"/>
 		
 		<ValueConverters:BoolToNumConverter x:Key="BoolToNumConverter"/>
 		<ValueConverters:CharToStringConverter x:Key="CharToStringConverter"/>

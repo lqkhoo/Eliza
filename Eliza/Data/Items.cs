@@ -1192,7 +1192,7 @@ namespace Eliza.Data
         };
 
         public static readonly Dictionary<int, string> ItemIdToEnglishName = new() {
-            { 0, "(None)" },
+            { 0, "None" },
             { 1, "Cabbage" },
             { 2, "King Cabbage" },
             { 3, "Pink Turnip" },
@@ -2372,7 +2372,7 @@ namespace Eliza.Data
         };
 
         public static readonly Dictionary<int, string> ItemIdToJapaneseName = new() {
-            { 0, "（なし）" },
+            { 0, "なし" },
             { 1, "キャベツ" },
             { 2, "キングキャベツ" },
             { 3, "サクラカブ" },

@@ -33,7 +33,7 @@
 		xmlns:Eliza.Avalonia.ViewModels="using:Eliza.Avalonia.ViewModels"
 		xmlns:ValueConverters="using:Eliza.Avalonia.ValueConverters"
 		>
-	
+
 	<Design.DataContext>
 		<vm:MainWindowViewModel/>
 	</Design.DataContext>
@@ -42,46 +42,39 @@
 		<!-- https://stackoverflow.com/questions/61435806/how-to-create-a-separate-file-for-styles-in-avalonia -->
 		<StyleInclude Source="avares://Eliza.Avalonia/Styles/MainWindowStyle.axaml"/>
 	</Window.Styles>
-		
+
 
 	<Window.DataTemplates>
 		<!--x:Type Eliza.Avalonia.ViewModels:UiObjectGraph -->
 		<TreeDataTemplate DataType="{x:Type Eliza.Avalonia.ViewModels:UiObjectGraph}" ItemsSource="{Binding Children}">
-				<StackPanel Orientation="Horizontal">
-					<Image Classes="treeImage"
-						   Source="{MultiBinding Children[0], Converter={StaticResource DisplayUiObjectGraphItemIdToImageConverter}}"
-						   IsVisible="{Binding Children[0], Converter={StaticResource DisplayUiObjectGraphItemIdToVisibilityConverter}}"
-						   />
-					<TextBlock Classes="treeText treeType" Text="{Binding Type.Name}"/>
-					<TextBlock Classes="treeText treeArrayIndex" Text="{Binding ArrayIndex, Converter={StaticResource DisplayArrayIndexConverter}}"/>
-					<TextBlock Classes="treeText treeItemName"
-							   Text="{Binding Children[0], Converter={StaticResource DisplayUiObjectGraphItemIdToJapaneseNameConverter}}"
-							   IsVisible="{Binding Children[0], Converter={StaticResource DisplayUiObjectGraphItemIdToVisibilityConverter}}"
-							   />
-					<TextBlock Classes="treeText treeItemName"
-							   Text="{Binding Children[0], Converter={StaticResource DisplayUiObjectGraphItemIdToEnglishNameConverter}}"
-							   IsVisible="{Binding Children[0], Converter={StaticResource DisplayUiObjectGraphItemIdToVisibilityConverter}}"
-							   />
-					<!--
-					<Grid ColumnDefinitions="Auto Auto" RowDefinitions="Auto Auto">
-						<Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Source="{Binding Children[0].ItemId}, Converter={StaticResource ItemIdToImageConverter}}"/>
-						<TextBlock Grid.Row="0" Grid.Column="1" Classes="treeText treeItemName" Text="{Binding Children[0], Converter={StaticResource DisplayUiObjectGraphItemIdToJapaneseNameConverter}}"/>
-						<TextBlock Grid.Row="1" Grid.Column="1" Classes="treeText treeItemName" Text="{Binding Children[0], Converter={StaticResource DisplayUiObjectGraphItemIdToEnglishNameConverter}}"/>
+			<StackPanel Orientation="Horizontal">
+				<Image Classes="treeImage"
+					   DataContext="{Binding This}"
+					   IsVisible="{Binding Type, Converter={StaticResource TypeToTreeViewVisibilityConverter}}"
+					   Source="{Binding Children[0].Value, Converter={StaticResource ItemIdToImageConverter}}"/>
+				<TextBlock Classes="treeText treeType" Text="{Binding Type.Name}"/>
+				<TextBlock Classes="treeText treeArrayIndex" Text="{Binding ArrayIndex, Converter={StaticResource DisplayArrayIndexConverter}}"/>
+					<Grid RowDefinitions="Auto Auto" ColumnDefinitions="Auto">
+						<TextBlock Grid.Row="0" Grid.Column="0" Classes="treeText treeItemName"
+								   Text="{Binding Children[0].Value, Converter={StaticResource ItemIdToJapaneseNameConverter}}"
+								   IsVisible="{Binding Type, Converter={StaticResource TypeToTreeViewVisibilityConverter}}"/>
+						<TextBlock Grid.Row="1" Grid.Column="0" Classes="treeText treeItemName"
+								   Text="{Binding Children[0].Value, Converter={StaticResource ItemIdToEnglishNameConverter}}"
+								   IsVisible="{Binding Type, Converter={StaticResource TypeToTreeViewVisibilityConverter}}"/>
 					</Grid>
-					-->
-					<TextBlock Classes="treeText treeFieldName" Text="{Binding DisplayFieldName}"></TextBlock>
-					<Border Classes="treeValueBorder">
-						<TextBlock Classes="treeText treeValue" IsVisible="{Binding This, Converter={StaticResource VisibilityValueConverter}}" Text="{Binding Value}"/>
-					</Border>
-				</StackPanel>
+				<TextBlock Classes="treeText treeFieldName" Text="{Binding DisplayFieldName}"></TextBlock>
+				<Border Classes="treeValueBorder">
+					<TextBlock Classes="treeText treeValue" IsVisible="{Binding This, Converter={StaticResource VisibilityValueConverter}}" Text="{Binding Value}"/>
+				</Border>
+			</StackPanel>
 		</TreeDataTemplate>
-	
+
 	</Window.DataTemplates>
-	
-	
+
+
 
 	<Grid RowDefinitions="Auto *" ColumnDefinitions="*">
-		
+
 		<DockPanel Grid.Row="0" Grid.Column="0" LastChildFill="true">
 			<Border Classes="menuBorder">
 				<Menu DockPanel.Dock="Top" Background="#EEEEEE">
@@ -122,7 +115,7 @@
 				</Menu>
 			</Border>
 		</DockPanel>
-		
+
 		<Grid Grid.Row="1" Grid.Column="0" ShowGridLines="false" ColumnDefinitions="*">
 			<Grid.RowDefinitions>
 				<RowDefinition MinHeight="100" Height="*"/>
@@ -131,30 +124,30 @@
 			</Grid.RowDefinitions>
 
 			<Grid ShowGridLines="false" RowDefinitions="*">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition MinWidth="300" Width="Auto"/>
-				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition MinWidth="250" Width="*"/>
-			</Grid.ColumnDefinitions>
-				
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition MinWidth="300" Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition MinWidth="250" Width="*"/>
+				</Grid.ColumnDefinitions>
+
 				<ScrollViewer Grid.Row="0" Grid.Column="0" HorizontalScrollBarVisibility="Auto">
 					<TreeView x:Name="TreeView_MainTree" Items="{Binding OBSV_Graph}"></TreeView>
 				</ScrollViewer>
-				
+
 				<GridSplitter Grid.Row="0" Grid.Column="1"></GridSplitter>
 
-					<Grid Grid.Row="0" Grid.Column="2" ColumnDefinitions="*" RowDefinitions="30 *" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-						<Border Grid.Row="0" Grid.Column="0" Classes="editorContextBorder" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-							<TextBlock Classes="editorContext" Text="{Binding STRING_EditorContext}"/>
-						</Border>
-						<ScrollViewer Grid.Row="1" Grid.Column="0" Classes="editorMainScrollViewer">
-							<UserControl Content="{Binding SUBVIEW_EditorPane}"/>
-						</ScrollViewer>
-					</Grid>
+				<Grid Grid.Row="0" Grid.Column="2" ColumnDefinitions="*" RowDefinitions="30 *" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+					<Border Grid.Row="0" Grid.Column="0" Classes="editorContextBorder" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+						<TextBlock Classes="editorContext" Text="{Binding STRING_EditorContext}"/>
+					</Border>
+					<ScrollViewer Grid.Row="1" Grid.Column="0" Classes="editorMainScrollViewer">
+						<UserControl Content="{Binding SUBVIEW_EditorPane}"/>
+					</ScrollViewer>
+				</Grid>
 
 
 			</Grid>
-			
+
 			<GridSplitter Grid.Row="1" Grid.Column="0"/>
 			<ScrollViewer Grid.Row="2" Grid.Column="0">
 				<TextBox x:Name="TextBox_Log" Classes="console" IsReadOnly="True" Text="{Binding OBSV_Log}"/>
