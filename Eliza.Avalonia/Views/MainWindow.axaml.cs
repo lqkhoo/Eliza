@@ -93,7 +93,8 @@ namespace Eliza.Avalonia.Views
         {
             var source = e.Source as Control;
             if(source != null && source.DataContext != null && this.ViewModel != null) {
-                Type contextType = source.DataContext.GetType();
+                object dataContext = source.DataContext;
+                Type contextType = dataContext.GetType();
                 if (contextType == typeof(UiObjectGraph)) {
                     // Reset previously-used editor context to blank.
                     UserControl? previousEditor = this.ViewModel.SUBVIEW_EditorPane;
@@ -101,13 +102,14 @@ namespace Eliza.Avalonia.Views
                         previousEditor.DataContext = null;
                     }
                     // Configure new editor.
-                    UiObjectGraph node = (UiObjectGraph)source.DataContext; // Context
+                    UiObjectGraph node = (UiObjectGraph)dataContext; // Context
                     UserControl editorView = this.GetEditorView(node);
                     if(editorView.GetType() != typeof(ItemDataEditorView)) {
-                        editorView.DataContext = source.DataContext;
+                        editorView.DataContext = node;
                     } else {
-                        ((ItemDataEditorView)editorView).LoadContext(
-                            new ItemDataEditorViewModel((UiObjectGraph)source.DataContext,
+                        ItemDataEditorView itemEditorView = (ItemDataEditorView)editorView;
+                        itemEditorView.LoadContext(
+                            new ItemDataEditorViewModel(itemEditorView, ref node,
                                     this.ViewModel.RequestedLocale,
                                     this.ViewModel.RequestedVersion)
                         );

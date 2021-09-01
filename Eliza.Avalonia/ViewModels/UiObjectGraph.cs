@@ -10,30 +10,17 @@ using ReactiveUI;
 using System.Reflection;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using Avalonia.Collections;
 
 namespace Eliza.Avalonia.ViewModels
 {
     // Wrapper for Eliza.Core.Serialization.ObjectGraph
     // Can't inherit from ObjectGraph as we need to inherit from ViewModelBase
-    // for reactive proprties.
+    // for reactive properties.
     public class UiObjectGraph : ViewModelBase
     {
-        // public Type Type;
-        // public object Value;
-        // public TypeCode LengthType; // For arrays only
-        // public int ArrayIndex = NULL_ARRAY_INDEX; // For array members only
 
         protected UiObjectGraph _This;
-
-        /*
-        // For storing the original contents of this node.
-        // Used to undo from item editing.
-        // Cache(), RestoreFromCache(), and ClearChildren() governs behavior of this field.
-        // Note that the cache is a shallow copy, so if we want to overwrite this
-        // node, make sure we clear the children and populate it with new UiObjectGraph
-        // instances, otherwise operations will modify items inside this cache.
-        protected UiObjectGraph _ShallowCache;
-        */
 
         public UiObjectGraph This
         {
@@ -62,8 +49,8 @@ namespace Eliza.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref this._Parent, value);
         }
 
-        protected List<UiObjectGraph> _Children = new List<UiObjectGraph>();
-        public List<UiObjectGraph> Children
+        protected AvaloniaList<UiObjectGraph> _Children = new AvaloniaList<UiObjectGraph>();
+        public AvaloniaList<UiObjectGraph> Children
         {
             get => this._Children;
             set => this.RaiseAndSetIfChanged(ref this._Children, value);

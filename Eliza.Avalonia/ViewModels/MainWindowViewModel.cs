@@ -25,15 +25,15 @@ namespace Eliza.Avalonia.ViewModels
 
     public class MainWindowViewModel : ViewModelBase
     {
-        // protected ViewModelBase Content; // Shouldn't be necessary. We only have one view.
-        protected MainWindow? MainWindowView;
 
+        protected MainWindow? MainWindowView; // View of viewmodel
 
         public SaveData.LOCALE RequestedLocale;
         public int RequestedVersion;
-        protected SaveData? _SaveData;
 
+        protected SaveData? _SaveData;
         protected UserControl? _EditorPane;
+
         public UserControl? SUBVIEW_EditorPane
         {
             get => this._EditorPane;

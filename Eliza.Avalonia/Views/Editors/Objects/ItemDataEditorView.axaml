@@ -60,7 +60,7 @@
 		<TextBlock     Grid.Row="3" Grid.Column="1" Classes="itemEditorHeader">Levels</TextBlock>
 
 		<NumericUpDown Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Value="{Binding ItemId}" Classes="itemEditor itemId"/>
-		<Button        Grid.Row="1" Grid.Column="5" Grid.ColumnSpan="2">Apply Changes</Button>
+		<Button        Grid.Row="1" Grid.Column="5" Grid.ColumnSpan="2" Name="Button_ApplyChanges">Apply Changes</Button>
 
 		<NumericUpDown Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Classes="itemEditor level" Value="{Binding Level}" Maximum="10" Minimum="1"/>
 
@@ -153,6 +153,9 @@
 		<NumericUpDown Grid.Row="14" Grid.Column="5"  Value="{Binding SourceItems4}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
 		<NumericUpDown Grid.Row="14" Grid.Column="6"  Value="{Binding SourceItems5}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
 
+		<TextBlock     Grid.Row="11" Grid.Column="8" Grid.ColumnSpan="1" Grid.RowSpan="4" Classes="itemEditorHeader">IsArrange</TextBlock>
+		<CheckBox      Grid.Row="11" Grid.Column="9" Grid.RowSpan="4" Classes="itemEditorCheckbox" IsChecked="{Binding IsArrange}"></CheckBox>
+
 		<Border        Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="10" Classes="itemEditorHline"></Border>
 		
 		<TextBlock     Grid.Row="16" Grid.Column="0" Grid.RowSpan="4" Classes="itemEditorHeader">ArrangeItems</TextBlock>
@@ -173,13 +176,10 @@
 		<NumericUpDown Grid.Row="19" Grid.Column="3"  Value="{Binding ArrangeItems2}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
 		
 		<TextBlock     Grid.Row="16" Grid.Column="4" Grid.ColumnSpan="2" Grid.RowSpan="4" Classes="itemEditorHeader">ArrangeOverride</TextBlock>
-		<Image         Grid.Row="16" Grid.Column="6" Classes="itemEditorImage" Source="{Binding ArrangeItems0, Converter={StaticResource ItemIdToImageConverter}}"/>
-		<TextBlock     Grid.Row="17" Grid.Column="6" Classes="itemEditorName" Text="{Binding ArrangeItems0, Converter={StaticResource ItemIdToJapaneseNameConverter}}"/>
-		<TextBlock     Grid.Row="18" Grid.Column="6" Classes="itemEditorName" Text="{Binding ArrangeItems0, Converter={StaticResource ItemIdToEnglishNameConverter}}"/>
+		<Image         Grid.Row="16" Grid.Column="6" Classes="itemEditorImage" Source="{Binding ArrangeOverride, Converter={StaticResource ItemIdToImageConverter}}"/>
+		<TextBlock     Grid.Row="17" Grid.Column="6" Classes="itemEditorName" Text="{Binding ArrangeOverride, Converter={StaticResource ItemIdToJapaneseNameConverter}}"/>
+		<TextBlock     Grid.Row="18" Grid.Column="6" Classes="itemEditorName" Text="{Binding ArrangeOverride, Converter={StaticResource ItemIdToEnglishNameConverter}}"/>
 		<NumericUpDown Grid.Row="19" Grid.Column="6"  Value="{Binding ArrangeOverride}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
-
-		<TextBlock     Grid.Row="16" Grid.Column="7" Grid.ColumnSpan="2" Grid.RowSpan="4" Classes="itemEditorHeader">IsArrange</TextBlock>
-		<CheckBox      Grid.Row="16" Grid.Column="9" Grid.RowSpan="4" Classes="itemEditorCheckbox" IsChecked="{Binding IsArrange}"></CheckBox>
 
 		<TextBlock     Grid.Row="20" Grid.Column="1" Grid.ColumnSpan="2" Classes="itemEditorHeader">BaseLevel</TextBlock>
 		<NumericUpDown Grid.Row="21" Grid.Column="1"  Value="{Binding BaseLevel}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>

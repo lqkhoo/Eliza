@@ -7,11 +7,15 @@ using System.Text;
 using System.Threading.Tasks;
 using Eliza.Model;
 using Eliza.Model.Item;
+using System.Reactive;
+using Eliza.Avalonia.Views.Editors;
+using Avalonia.Controls;
 
 namespace Eliza.Avalonia.ViewModels
 {
     public class ItemDataEditorViewModel : ViewModelBase
     {
+        protected ItemDataEditorView? ItemDataEditorView; // View of viewmodel
 
         public readonly SaveData.LOCALE Locale;
         public readonly int Version;
@@ -19,7 +23,7 @@ namespace Eliza.Avalonia.ViewModels
         public const int InputMax = Int32.MaxValue;
         public const int InputMin = -1;
 
-        protected UiObjectGraph OriginalContext;
+        protected UiObjectGraph? OriginalContext;
 
         // Break everything down. We'll leverage the serializers to
         // reassemble a UiObjectGraph afterwards.
@@ -45,14 +49,22 @@ namespace Eliza.Avalonia.ViewModels
 
         protected Dictionary<string, Action<UiObjectGraph>> UnwrapMethodDispatcher = new() { };
 
+        public ReactiveCommand<Unit, Unit> CMD_ApplyChanges { get; }
+
         public ItemDataEditorViewModel() {
+
+            this.CMD_ApplyChanges = ReactiveCommand.Create(() => { this.ReplaceContext(); }); // This is just a stub to prevent nulls
             this.Init();
         }
 
-        public ItemDataEditorViewModel(UiObjectGraph context, SaveData.LOCALE locale, int version)
+        public ItemDataEditorViewModel(ItemDataEditorView view, ref UiObjectGraph context, SaveData.LOCALE locale, int version)
         {
+            this.ItemDataEditorView = view;
             this.Locale = locale;
             this.Version = version;
+
+            this.CMD_ApplyChanges = ReactiveCommand.Create(() => { this.ReplaceContext(); });
+            this.ItemDataEditorView.FindControl<Button>("Button_ApplyChanges").Command = this.CMD_ApplyChanges;
             this.Init();
             this.LoadContext(context);
         }
@@ -74,7 +86,6 @@ namespace Eliza.Avalonia.ViewModels
             this.UnwrapMethodDispatcher.Add("DualWorkParam", (x) => this.UnwrapDualWorkParam(x));
             this.UnwrapMethodDispatcher.Add("Capacity", (x) => this.UnwrapCapacity(x));
             this.UnwrapMethodDispatcher.Add("Size", (x) => this.UnwrapSize(x));
-
         }
 
 
@@ -92,6 +103,51 @@ namespace Eliza.Avalonia.ViewModels
             }
         }
 
+        public void ReplaceContext()
+        {
+            if (this.OriginalContext != null) {
+                Type itemType = Eliza.Data.Items.ItemIdToItemType[ItemId];
+                ObjectGraph node = this.GetObjectGraph(itemType);
+                UiObjectGraph uiNode = new(node);
+
+                // Wipe original context
+                this.OriginalContext.Children.Clear();
+                /*
+                for (int i = 0; i < this.OriginalContext.Children.Count; i++) {
+                    this.OriginalContext.Children[i] = null;
+                }
+                */
+
+                /*
+                Type itemType = Eliza.Data.Items.ItemIdToItemType[ItemId];
+                ObjectGraph node = this.GetObjectGraph(itemType);
+                UiObjectGraph uiNode = new(node);
+                this.OriginalContext.Children.Add(uiNode);
+                */
+                this.OriginalContext.Type = uiNode.Type;
+                this.OriginalContext.Value = uiNode.Value;
+
+                foreach(UiObjectGraph child in uiNode.Children) {
+                    this.OriginalContext.Children.Add(child);
+                }
+
+
+
+
+
+                /*
+                uiNode.Parent = this.OriginalContext.Parent; // New node's parent is original's
+                int arrayIndex = this.OriginalContext.ArrayIndex;
+                if (this.OriginalContext.Parent != null) {
+                    this.OriginalContext.Parent.Children[arrayIndex] = uiNode; // New node replaces original node.
+                    // this.OriginalContext.Parent = null;
+                }
+                */
+            }
+        }
+
+        #region Unwrappers
+
         protected int ReadIntHelper(UiObjectGraph uiNode)
         {
             int val;
@@ -102,8 +158,6 @@ namespace Eliza.Avalonia.ViewModels
             }
             return val;
         }
-
-        #region Unwrappers
 
         protected void UnwrapItemId(UiObjectGraph x) { this.ItemId = this.ReadIntHelper(x); }
 
@@ -201,14 +255,8 @@ namespace Eliza.Avalonia.ViewModels
 
         #endregion Unwrappers
 
-        public UiObjectGraph GetEditedContext()
-        {
 
-            Type itemType = Eliza.Data.Items.ItemIdToItemType[ItemId];
-            ObjectGraph node = this.GetObjectGraph(itemType);
-            // TODO
-            return null;
-        }
+        #region Reconstruction
 
         protected ObjectGraph GetObjectGraph(Type itemType)
         {
@@ -233,76 +281,180 @@ namespace Eliza.Avalonia.ViewModels
             }
         }
 
+        protected List<int> ConstructLevelAmount()
+        {
+            List<int> levelAmount = new();
+            foreach(int val in this._LevelAmount) {
+                if(val != 0) {
+                    levelAmount.Add(val);
+                }
+            }
+            return levelAmount;
+        }
+
+        protected int[] ConstructArrayHelper(int[] sourceArray, int maxLength)
+        {
+            int[] arr = new int[maxLength];
+            for (int idx = 0; idx < maxLength; idx++) {
+                arr[idx] = sourceArray[idx];
+            }
+            return arr;
+        }
+        protected int[] ConstructSourceItems()
+        {
+            return this.ConstructArrayHelper(this._SourceItems, maxLength: 6);
+        }
+        protected int[] ConstructAddedItems()
+        {
+            return this.ConstructArrayHelper(this._AddedItems, maxLength: 9);
+        }
+        protected int[] ConstructArrangeItems()
+        {
+            return this.ConstructArrayHelper(this._ArrangeItems, maxLength: 3);
+        }
+
+        protected ObjectGraph SerializeToObjectGraph(object obj)
+        {
+            return new GraphSerializer(this.Locale, this.Version).WriteObject(obj);
+        }
+
         protected ObjectGraph GetItemDataGraph()
         {
-            return null;
+            // Can't serialize from abstract class since it
+            // serializes to a null node. Construct it manually.
+            ObjectGraph node = new ObjectGraph(
+                type: typeof(ItemData),
+                value: null, parent: null,
+                children: new List<ObjectGraph>(),
+                lengthType: ObjectGraph.NULL_LENGTH_TYPE,
+                arrayIndex: ObjectGraph.NULL_ARRAY_INDEX,
+                isUtf16UuidString: false,
+                maxLength: ObjectGraph.NULL_MAX_LENGTH,
+                fieldInfo: null,
+                attrs: null
+            );
+            return node;
         }
 
         protected ObjectGraph GetAmountItemDataGraph()
         {
-            return null;
+            // Key0 = ItemId
+            // Key1 = LevelAmount
+            AmountItemData item = new();
+            item.ItemId = this.ItemId;
+            item.LevelAmount = this.ConstructLevelAmount();
+            return this.SerializeToObjectGraph(item);
         }
 
         protected ObjectGraph GetSeedItemDataGraph()
         {
-            return null;
+            // Same as AmountItemData. We just follow what the game does.
+            SeedItemData item = new();
+            item.ItemId = this.ItemId;
+            item.LevelAmount = this.ConstructLevelAmount();
+            return this.SerializeToObjectGraph(item);
         }
 
         protected ObjectGraph GetEquipItemDataGraph()
         {
-            return null;
+            // Key0 = ItemId
+            // Key1 = Level
+            // Key2 = SourceItems
+            // Key3 = AddedItems
+            // Key4 = ArrangeItems
+            // Key5 = ArrangeOverride
+            // Key6 = BaseLevel
+            // Key7 = SozaiLevel
+            // Key8 = DualWorkSmithBonusType
+            // Key9 = DualWorkLoveLevel
+            // Key10 = DualWorkActor
+            // Key11 = DualWorkParam
+            EquipItemData item = new();
+            item.ItemId = this.ItemId;
+            item.Level = this.Level;
+            item.SourceItems = this.ConstructSourceItems();
+            item.AddedItems = this.ConstructAddedItems();
+            item.ArrangeItems = this.ConstructArrangeItems();
+            item.ArrangeOverride = this.ArrangeOverride;
+            item.BaseLevel = this.BaseLevel;
+            item.SozaiLevel = this.SozaiLevel;
+            item.DualWorkSmithBonusType = this.DualWorkSmithBonusType;
+            item.DualWorkLoveLevel = this.DualWorkLoveLevel;
+            item.DualWorkActor = this.DualWorkActor;
+            item.DualWorkParam = this.DualWorkParam;
+            return this.SerializeToObjectGraph(item);
         }
 
         protected ObjectGraph GetFishItemDataGraph()
         {
-            return null;
+            // Key0 = ItemId
+            // Key1 = Level
+            // Key2 = Size
+            FishItemData item = new();
+            item.ItemId = this.ItemId;
+            item.Level = this.Level;
+            item.Size = this.Size;
+            return this.SerializeToObjectGraph(item);
         }
 
         protected ObjectGraph GetFoodItemDataGraph()
         {
-            return null;
+            // Key0 = ItemId
+            // Key1 = Level
+            // Key2 = SourceItems
+            // Key3 = IsArrange
+            FoodItemData item = new();
+            item.ItemId = this.ItemId;
+            item.Level = this.Level;
+            item.SourceItems = this.ConstructSourceItems();
+            item.IsArrange = this.IsArrange;
+            return this.SerializeToObjectGraph(item);
         }
 
         protected ObjectGraph GetPotToolItemDataGraph()
         {
-            return null;
+            // Key0 = ItemId
+            // Key1 = Level
+            // Key2 = SourceItems
+            // Key3 = AddedItems
+            // Key4 = ArrangeItems
+            // Key5 = ArrangeOverride
+            // Key6 = BaseLevel
+            // Key7 = SozaiLevel
+            // Key8 = DualWorkSmithBonusType
+            // Key9 = DualWorkLoveLevel
+            // Key10 = DualWorkActor
+            // Key11 = DualWorkParam
+            // Key12 = Capacity
+            PotToolItemData item = new();
+            item.ItemId = this.ItemId;
+            item.Level = this.Level;
+            item.SourceItems = this.ConstructSourceItems();
+            item.AddedItems = this.ConstructAddedItems();
+            item.ArrangeItems = this.ConstructArrangeItems();
+            item.ArrangeOverride = this.ArrangeOverride;
+            item.BaseLevel = this.BaseLevel;
+            item.SozaiLevel = this.SozaiLevel;
+            item.DualWorkSmithBonusType = this.DualWorkSmithBonusType;
+            item.DualWorkLoveLevel = this.DualWorkLoveLevel;
+            item.DualWorkActor = this.DualWorkActor;
+            item.DualWorkParam = this.DualWorkParam;
+            item.Capacity = this.Capacity;
+            return this.SerializeToObjectGraph(item);
         }
 
         protected ObjectGraph GetRuneAbilityItemDataGraph()
         {
-            return null;
+            // Key0 = ItemId
+            // Key1 = Level
+            RuneAbilityItemData item = new();
+            item.ItemId = this.ItemId;
+            item.Level = this.Level;
+            return this.SerializeToObjectGraph(item);
         }
 
+        #endregion Reconstruction
 
-        /*
-        protected int _LevelAmount0 = 0;
-        protected int _LevelAmount1 = 0;
-        protected int _LevelAmount2 = 0;
-        protected int _LevelAmount3 = 0;
-        protected int _LevelAmount4 = 0;
-        protected int _LevelAmount5 = 0;
-        protected int _LevelAmount6 = 0;
-        protected int _LevelAmount7 = 0;
-        protected int _LevelAmount8 = 0;
-        protected int _SourceItem0 = 0;
-        protected int _SourceItem1 = 0;
-        protected int _SourceItem2 = 0;
-        protected int _SourceItem3 = 0;
-        protected int _SourceItem4 = 0;
-        protected int _SourceItem5 = 0;
-        protected int _AddedItems0 = 0;
-        protected int _AddedItems1 = 0;
-        protected int _AddedItems2 = 0;
-        protected int _AddedItems3 = 0;
-        protected int _AddedItems4 = 0;
-        protected int _AddedItems5 = 0;
-        protected int _AddedItems6 = 0;
-        protected int _AddedItems7 = 0;
-        protected int _AddedItems8 = 0;
-        protected int _ArrangeItems0 = 0;
-        protected int _ArrangeItems1 = 0;
-        protected int _ArrangeItems2 = 0;
-        */
 
         #region Reactive properties
 

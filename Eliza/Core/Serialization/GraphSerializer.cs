@@ -162,7 +162,7 @@ namespace Eliza.Core.Serialization
             return node;
         }
 
-        protected ObjectGraph WriteObject(object objectValue, FieldInfo fieldInfo=null)
+        public ObjectGraph WriteObject(object objectValue, FieldInfo fieldInfo=null)
         {
             ObjectGraph node;
             if(objectValue == null) {

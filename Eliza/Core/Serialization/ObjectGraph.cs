@@ -106,9 +106,12 @@ namespace Eliza.Core.Serialization
 
         public void AppendChild(ObjectGraph child, int arrayIndex=NULL_ARRAY_INDEX)
         {
+            /*
             if(arrayIndex != NULL_ARRAY_INDEX) {
                 child.ArrayIndex = arrayIndex;
             }
+            */
+            child.ArrayIndex = arrayIndex;
             child.Parent = this;
             this.Children.Add(child);
         }
