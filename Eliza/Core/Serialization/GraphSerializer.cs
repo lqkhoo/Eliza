@@ -73,8 +73,6 @@ namespace Eliza.Core.Serialization
                     node = this.WriteList((IList)value, fieldInfo: fieldInfo);
                 } else if (type == typeof(string)) {
                     node = this.WriteString((string)value, fieldInfo: fieldInfo);
-                // } else if (type == typeof(SaveFlagStorage)) {
-                //     node = this.WriteSaveFlagStorage((SaveFlagStorage)value, fieldInfo);
                 } else if (IsDictionary(type)) {
                     node = this.WriteDictionary((IDictionary)value, fieldInfo);
                 } else {
@@ -129,13 +127,6 @@ namespace Eliza.Core.Serialization
             node.isUtf16UuidString = isUtf16Uuid;
             return node;
         }
-
-        /*
-        protected ObjectGraph WriteSaveFlagStorage(SaveFlagStorage saveFlagStorage, FieldInfo fieldInfo=null)
-        {
-            return this.WriteObject(saveFlagStorage, fieldInfo);
-        }
-        */
 
         // Note that we simply interleave key and value nodes.
         // Packing as a tuple makes UI binding difficult.

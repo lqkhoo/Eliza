@@ -104,7 +104,7 @@ namespace Eliza.Avalonia.ValueConverters
     {
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if(value != null) {
+            if(value != null && value.GetType() != typeof(UnsetValueType)) {
                 int val = (int)value;
                 if(val != ObjectGraph.NULL_ARRAY_INDEX) {
                     return val.ToString();
@@ -150,8 +150,10 @@ namespace Eliza.Avalonia.ValueConverters
         {
             int val = 0;
             try {
-                if (value != null && value != AvaloniaProperty.UnsetValue && value.GetType().IsPrimitive) {
-                    val = (int)value;
+                if(value == null) {
+                    val = 0; // ItemId == 0
+                } else if (value != AvaloniaProperty.UnsetValue && value.GetType().IsPrimitive) {
+                    val = (int)value; // Let exception handle doubles and uint64s. Those are rare.
                     if(! Items.ItemIds.Contains(val)) {
                         val = 0;
                     }
@@ -178,13 +180,15 @@ namespace Eliza.Avalonia.ValueConverters
         {
             int val = 0;
             try {
-                if (value != null && value != AvaloniaProperty.UnsetValue && value.GetType().IsPrimitive) {
+                if (value == null) {
+                    val = 0; // ItemId == 0
+                } else if (value != AvaloniaProperty.UnsetValue && value.GetType().IsPrimitive) {
                     val = (int)value;
                     if (!Items.ItemIds.Contains(val)) {
                         val = 0;
                     }
                 }
-            } catch (Exception e) {
+            } catch (Exception) {
                 // Do nothing
             }
             return Items.ItemIdToJapaneseName[val];
@@ -202,13 +206,15 @@ namespace Eliza.Avalonia.ValueConverters
         {
             int val = 0;
             try {
-                if (value != null && value != AvaloniaProperty.UnsetValue && value.GetType().IsPrimitive) {
+                if (value == null) {
+                    val = 0; // ItemId == 0
+                } else if (value != AvaloniaProperty.UnsetValue && value.GetType().IsPrimitive) {
                     val = (int)value;
                     if (!Items.ItemIds.Contains(val)) {
                         val = 0;
                     }
                 }
-            } catch (Exception e) {
+            } catch (Exception) {
                 // Do nothing
             }
             return Items.ItemIdToEnglishName[val];
@@ -226,13 +232,15 @@ namespace Eliza.Avalonia.ValueConverters
         {
             int val = 0;
             try {
-                if (value != null && value != AvaloniaProperty.UnsetValue && value.GetType().IsPrimitive) {
+                if (value == null) {
+                    val = 0;
+                } else if (value != AvaloniaProperty.UnsetValue && value.GetType().IsPrimitive) {
                     val = (int)value;
                     if (!Items.ItemIds.Contains(val)) {
                         val = 0;
                     }
                 }
-            } catch (Exception e) {
+            } catch (Exception) {
                 // Do nothing
             }
             return (val == 0) ? false : true;
@@ -252,14 +260,14 @@ namespace Eliza.Avalonia.ValueConverters
             try {
                 if (value != null && value != AvaloniaProperty.UnsetValue) {
                     Type type = (Type)value;
-                    if ((type == typeof(ItemData))
-                        || (type == typeof(AmountItemData))
-                        || (type == typeof(SeedItemData))
-                        || (type == typeof(EquipItemData))
-                        || (type == typeof(FishItemData))
-                        || (type == typeof(FoodItemData))
-                        || (type == typeof(PotToolItemData))
-                        || (type == typeof(RuneAbilityItemData))) {
+                    if (// type == typeof(ItemData)
+                        type == typeof(AmountItemData)
+                        || type == typeof(SeedItemData)
+                        || type == typeof(EquipItemData)
+                        || type == typeof(FishItemData)
+                        || type == typeof(FoodItemData)
+                        || type == typeof(PotToolItemData)
+                        || type == typeof(RuneAbilityItemData)) {
                         val = true;
                     }
                 }

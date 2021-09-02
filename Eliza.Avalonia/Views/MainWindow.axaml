@@ -48,8 +48,8 @@
 		<!--x:Type Eliza.Avalonia.ViewModels:UiObjectGraph -->
 		<TreeDataTemplate DataType="{x:Type Eliza.Avalonia.ViewModels:UiObjectGraph}" ItemsSource="{Binding Children}">
 			<StackPanel Orientation="Horizontal">
+				<!-- We need the IsVisible bindings because if it's ItemId 0, Children[0] won't be there. -->
 				<Image Classes="treeImage"
-					   DataContext="{Binding This}"
 					   IsVisible="{Binding Type, Converter={StaticResource TypeToTreeViewVisibilityConverter}}"
 					   Source="{Binding Children[0].Value, Converter={StaticResource ItemIdToImageConverter}}"/>
 				<TextBlock Classes="treeText treeType" Text="{Binding Type.Name}"/>
@@ -93,17 +93,17 @@
 						<Separator/>
 						<MenuItem Header="_Developer">
 							<MenuItem Header="Open JP">
-								<MenuItem Header="1.0.10"/>
-								<MenuItem Header="1.0.9"/>
-								<MenuItem Header="1.0.8"/>
-								<MenuItem Header="1.0.7"/>
-								<MenuItem Header="1.0.6"/>
-								<MenuItem Header="1.0.5"/>
-								<MenuItem Header="1.0.4"/>
-								<MenuItem Header="1.0.3"/>
-								<MenuItem Header="1.0.2"/>
-								<MenuItem Header="1.0.1"/>
-								<MenuItem Header="1.0.0"/>
+								<MenuItem x:Name="MenuItem_Open_JP_1.0.10" Header="1.0.10"/>
+								<MenuItem x:Name="MenuItem_Open_JP_1.0.9" Header="1.0.9"/>
+								<MenuItem x:Name="MenuItem_Open_JP_1.0.8" Header="1.0.8"/>
+								<MenuItem x:Name="MenuItem_Open_JP_1.0.7" Header="1.0.7"/>
+								<MenuItem x:Name="MenuItem_Open_JP_1.0.6" Header="1.0.6"/>
+								<MenuItem x:Name="MenuItem_Open_JP_1.0.5" Header="1.0.5"/>
+								<MenuItem x:Name="MenuItem_Open_JP_1.0.4" Header="1.0.4"/>
+								<MenuItem x:Name="MenuItem_Open_JP_1.0.3" Header="1.0.3"/>
+								<MenuItem x:Name="MenuItem_Open_JP_1.0.2" Header="1.0.2"/>
+								<MenuItem x:Name="MenuItem_Open_JP_1.0.1" Header="1.0.1"/>
+								<MenuItem x:Name="MenuItem_Open_JP_1.0.0" Header="1.0.0"/>
 							</MenuItem>
 							<MenuItem Header="Open EN">
 								<MenuItem Header="(None)"/>

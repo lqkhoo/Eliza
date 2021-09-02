@@ -49,7 +49,7 @@ namespace Eliza.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref this._Parent, value);
         }
 
-        protected AvaloniaList<UiObjectGraph> _Children = new AvaloniaList<UiObjectGraph>();
+        protected AvaloniaList<UiObjectGraph> _Children = new();
         public AvaloniaList<UiObjectGraph> Children
         {
             get => this._Children;
@@ -220,11 +220,6 @@ namespace Eliza.Avalonia.ViewModels
 
         }
 
-        protected UiObjectGraph()
-        {
-
-        }
-
         public static UiObjectGraph Wrap(ObjectGraph root)
         {
             return new UiObjectGraph(root);
@@ -258,13 +253,6 @@ namespace Eliza.Avalonia.ViewModels
             }
             return node;
         }
-
-
-
-
-
-
-
 
 
 

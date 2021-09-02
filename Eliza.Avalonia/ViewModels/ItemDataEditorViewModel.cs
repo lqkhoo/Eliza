@@ -10,6 +10,7 @@ using Eliza.Model.Item;
 using System.Reactive;
 using Eliza.Avalonia.Views.Editors;
 using Avalonia.Controls;
+using Avalonia.Collections;
 
 namespace Eliza.Avalonia.ViewModels
 {
@@ -20,6 +21,20 @@ namespace Eliza.Avalonia.ViewModels
         public readonly SaveData.LOCALE Locale;
         public readonly int Version;
 
+
+
+
+
+        public AvaloniaList<string> _AutoCompleteStrings = new();
+
+        public AvaloniaList<string> AutoCompleteStrings
+        {
+            get => this._AutoCompleteStrings;
+            set => this.RaiseAndSetIfChanged(ref this._AutoCompleteStrings, value);
+        }
+
+
+
         public const int InputMax = Int32.MaxValue;
         public const int InputMin = -1;
 
@@ -29,10 +44,11 @@ namespace Eliza.Avalonia.ViewModels
         // reassemble a UiObjectGraph afterwards.
 
         protected int _ItemId = 0; // Key 0 ItemData
-        protected int _Level = 0;  // Key 1 NotAmountItemData : ItemData
+        protected int _Level = 1;  // Key 1 NotAmountItemData : ItemData
 
-        // Remember to serlialize this back into int List<int>
-        protected int[] _LevelAmount = new int[9];  // Key 1 AmountItemData
+        // Remember to serlialize this one back into List<int>
+        protected int[] _LevelAmount = new int[9] { 1, 0, 0, 0, 0, 0, 0, 0, 0 }; 
+                                                    // Key 1 AmountItemData
         protected int[] _SourceItems = new int[6];  // Key 2 SynthesisItemData : NotAmountItemData
         protected int[] _AddedItems = new int[9];   // Key 3 EquipItemData
         protected bool _IsArrange = false;          // Key 3 FoodItemData : SynthesisItemData
@@ -112,18 +128,7 @@ namespace Eliza.Avalonia.ViewModels
 
                 // Wipe original context
                 this.OriginalContext.Children.Clear();
-                /*
-                for (int i = 0; i < this.OriginalContext.Children.Count; i++) {
-                    this.OriginalContext.Children[i] = null;
-                }
-                */
 
-                /*
-                Type itemType = Eliza.Data.Items.ItemIdToItemType[ItemId];
-                ObjectGraph node = this.GetObjectGraph(itemType);
-                UiObjectGraph uiNode = new(node);
-                this.OriginalContext.Children.Add(uiNode);
-                */
                 this.OriginalContext.Type = uiNode.Type;
                 this.OriginalContext.Value = uiNode.Value;
 
@@ -131,18 +136,6 @@ namespace Eliza.Avalonia.ViewModels
                     this.OriginalContext.Children.Add(child);
                 }
 
-
-
-
-
-                /*
-                uiNode.Parent = this.OriginalContext.Parent; // New node's parent is original's
-                int arrayIndex = this.OriginalContext.ArrayIndex;
-                if (this.OriginalContext.Parent != null) {
-                    this.OriginalContext.Parent.Children[arrayIndex] = uiNode; // New node replaces original node.
-                    // this.OriginalContext.Parent = null;
-                }
-                */
             }
         }
 
@@ -171,6 +164,7 @@ namespace Eliza.Avalonia.ViewModels
                     UiObjectGraph child = x.Children[idx];
                     if (child.Value != null) {
                         this._LevelAmount[idx] = (int)child.Value;
+
                     } else {
                         this._LevelAmount[idx] = 0;
                     }
@@ -288,6 +282,9 @@ namespace Eliza.Avalonia.ViewModels
                 if(val != 0) {
                     levelAmount.Add(val);
                 }
+            }
+            if(levelAmount.Count == 0) {
+                levelAmount.Add(1); // Ensure at least one nonzero.
             }
             return levelAmount;
         }

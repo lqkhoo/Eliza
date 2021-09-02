@@ -111,7 +111,8 @@ namespace Eliza.Avalonia.Views
                         itemEditorView.LoadContext(
                             new ItemDataEditorViewModel(itemEditorView, ref node,
                                     this.ViewModel.RequestedLocale,
-                                    this.ViewModel.RequestedVersion)
+                                    this.ViewModel.RequestedVersion
+                            )
                         );
                     }
                     

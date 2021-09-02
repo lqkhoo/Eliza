@@ -10,7 +10,7 @@
     <None Remove="Model\EventData\**" />
   </ItemGroup>
 
-
+	<!-- Required by Eliza.Avalonia -->
 	<ItemGroup>
 		<None Remove="Data\Images\**"/>
 		<EmbeddedResource Include="Data\Images\**"/>

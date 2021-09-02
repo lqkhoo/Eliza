@@ -235,7 +235,9 @@ namespace Eliza.Avalonia.ValueConverters
         {
             string str = (string)value;
             if(str.Length == 0) {
+                #pragma warning disable CS8603 // Possible null reference return.
                 return null;
+                #pragma warning restore CS8603 // Possible null reference return.
             } else {
                 return str[0];
             }

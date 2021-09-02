@@ -9,7 +9,7 @@ namespace Eliza.Avalonia.Views.Editors
     public partial class ItemDataEditorView : BaseEditorView
     {
 
-        protected ItemDataEditorViewModel ViewModel;
+        protected ItemDataEditorViewModel? ViewModel;
 
         public ItemDataEditorView() { }
 
@@ -24,12 +24,6 @@ namespace Eliza.Avalonia.Views.Editors
             this.ViewModel = context;
             this.DataContext = this.ViewModel;
         }
-
-        protected void StartEditing()
-        {
-
-        }
-
 
         private void InitializeComponent()
         {
