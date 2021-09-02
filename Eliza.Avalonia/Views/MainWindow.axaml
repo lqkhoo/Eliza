@@ -140,7 +140,7 @@
 					<Border Grid.Row="0" Grid.Column="0" Classes="editorContextBorder" HorizontalAlignment="Stretch" VerticalAlignment="Top">
 						<TextBlock Classes="editorContext" Text="{Binding STRING_EditorContext}"/>
 					</Border>
-					<ScrollViewer Grid.Row="1" Grid.Column="0" Classes="editorMainScrollViewer">
+					<ScrollViewer Grid.Row="1" Grid.Column="0" Classes="editorMainScrollViewer" HorizontalScrollBarVisibility="Auto">
 						<UserControl Content="{Binding SUBVIEW_EditorPane}"/>
 					</ScrollViewer>
 				</Grid>

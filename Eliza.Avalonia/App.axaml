@@ -57,6 +57,9 @@
 		<ValueConverters:StringToHexConverter x:Key="StringToHexConverter"/>
 		<ValueConverters:AsciiStringToHexConverter x:Key="AsciiStringToHexConverter"/>
 		<ValueConverters:IntToStringConverter x:Key="IntToStringConverter"/>
+		<!--
+		<ValueConverters:AutoCompleteItemIdConverter x:Key="AutoCompleteItemIdConverter"/>
+		-->
 
 	</Application.Resources>
 	

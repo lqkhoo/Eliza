@@ -105,9 +105,9 @@ namespace Eliza.Avalonia.ValueConverters
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if(value != null && value.GetType() != typeof(UnsetValueType)) {
-                int val = (int)value;
-                if(val != ObjectGraph.NULL_ARRAY_INDEX) {
-                    return val.ToString();
+                int arrayIndex = (int)value;
+                if(arrayIndex != ObjectGraph.NULL_ARRAY_INDEX) {
+                    return arrayIndex.ToString();
                 }
             }
             return "";
@@ -127,10 +127,10 @@ namespace Eliza.Avalonia.ValueConverters
     {
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            UiObjectGraph val = (UiObjectGraph)value;
-            if (val.Type == typeof(string)) {
+            UiObjectGraph uiNode = (UiObjectGraph)value;
+            if (uiNode.Type == typeof(string)) {
                 return true;
-            } else if (val.Type == null || !val.Type.IsPrimitive) {
+            } else if (uiNode.Type == null || !uiNode.Type.IsPrimitive) {
                 return false;
             } else {
                 return true;
@@ -148,20 +148,20 @@ namespace Eliza.Avalonia.ValueConverters
     {
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            int val = 0;
+            int itemId = 0;
             try {
                 if(value == null) {
-                    val = 0; // ItemId == 0
+                    itemId = 0; // ItemId == 0
                 } else if (value != AvaloniaProperty.UnsetValue && value.GetType().IsPrimitive) {
-                    val = (int)value; // Let exception handle doubles and uint64s. Those are rare.
-                    if(! Items.ItemIds.Contains(val)) {
-                        val = 0;
+                    itemId = (int)value; // Let exception handle doubles and uint64s. Those are rare.
+                    if(! Items.ItemIds.Contains(itemId)) {
+                        itemId = 0;
                     }
                 }
             } catch (Exception) {
                 // Do nothing
             }
-            string str = Items.ItemIdToAssemblyResourceUri[val];
+            string str = Items.ItemIdToAssemblyResourceUri[itemId];
             var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
             var asset = assets.Open(new Uri(str));
             return new Bitmap(asset);
@@ -178,20 +178,20 @@ namespace Eliza.Avalonia.ValueConverters
     {
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            int val = 0;
+            int itemId = 0;
             try {
                 if (value == null) {
-                    val = 0; // ItemId == 0
+                    itemId = 0; // ItemId == 0
                 } else if (value != AvaloniaProperty.UnsetValue && value.GetType().IsPrimitive) {
-                    val = (int)value;
-                    if (!Items.ItemIds.Contains(val)) {
-                        val = 0;
+                    itemId = (int)value;
+                    if (!Items.ItemIds.Contains(itemId)) {
+                        itemId = 0;
                     }
                 }
             } catch (Exception) {
                 // Do nothing
             }
-            return Items.ItemIdToJapaneseName[val];
+            return Items.ItemIdToJapaneseName[itemId];
         }
 
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -204,20 +204,20 @@ namespace Eliza.Avalonia.ValueConverters
     {
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            int val = 0;
+            int itemId = 0;
             try {
                 if (value == null) {
-                    val = 0; // ItemId == 0
+                    itemId = 0; // ItemId == 0
                 } else if (value != AvaloniaProperty.UnsetValue && value.GetType().IsPrimitive) {
-                    val = (int)value;
-                    if (!Items.ItemIds.Contains(val)) {
-                        val = 0;
+                    itemId = (int)value;
+                    if (!Items.ItemIds.Contains(itemId)) {
+                        itemId = 0;
                     }
                 }
             } catch (Exception) {
                 // Do nothing
             }
-            return Items.ItemIdToEnglishName[val];
+            return Items.ItemIdToEnglishName[itemId];
         }
 
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -230,20 +230,20 @@ namespace Eliza.Avalonia.ValueConverters
     {
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            int val = 0;
+            int itemId = 0;
             try {
                 if (value == null) {
-                    val = 0;
+                    itemId = 0;
                 } else if (value != AvaloniaProperty.UnsetValue && value.GetType().IsPrimitive) {
-                    val = (int)value;
-                    if (!Items.ItemIds.Contains(val)) {
-                        val = 0;
+                    itemId = (int)value;
+                    if (!Items.ItemIds.Contains(itemId)) {
+                        itemId = 0;
                     }
                 }
             } catch (Exception) {
                 // Do nothing
             }
-            return (val == 0) ? false : true;
+            return (itemId == 0) ? false : true;
         }
 
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -256,7 +256,7 @@ namespace Eliza.Avalonia.ValueConverters
     {
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            bool val = false;
+            bool isVisible = false;
             try {
                 if (value != null && value != AvaloniaProperty.UnsetValue) {
                     Type type = (Type)value;
@@ -268,13 +268,13 @@ namespace Eliza.Avalonia.ValueConverters
                         || type == typeof(FoodItemData)
                         || type == typeof(PotToolItemData)
                         || type == typeof(RuneAbilityItemData)) {
-                        val = true;
+                        isVisible = true;
                     }
                 }
             } catch (Exception) {
                 // Do nothing
             }
-            return val;
+            return isVisible;
         }
 
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -284,6 +284,52 @@ namespace Eliza.Avalonia.ValueConverters
     }
 
 
+    /*
+    public class AutoCompleteItemIdConverter : IValueConverter
+    {
+        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            // int --> display
+            string? str = null;
+            try {
+                if (value != null && value != AvaloniaProperty.UnsetValue) {
+                    int itemId = (int)value;
+                    str = itemId.ToString(); // prevent bounce
+                }
+            } catch (Exception e) {
+                var foo = 3;
+                // Do nothing
+            }
+            return str;
+            
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+
+            // (str) display --> int
+
+            int itemId;
+            try {
+                if (value != null && value != AvaloniaProperty.UnsetValue) {
+                    string inputString = (string)value;
+                    if (ItemDataEditorViewModel._AutoCompleteStringToIdMap.ContainsKey(inputString)) {
+                        itemId = ItemDataEditorViewModel._AutoCompleteStringToIdMap[inputString];
+                    } else {
+                        int tryItemId = int.Parse(inputString);
+                        if(Eliza.Data.Items.ItemIds.Contains(tryItemId)) {
+                            itemId = tryItemId;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                var foo = 3;
+                // Do nothing
+            }
+            return itemId;
+        }
+    }
+    */
 
 
 }

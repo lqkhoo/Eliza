@@ -16,7 +16,7 @@ namespace Eliza.Avalonia.ViewModels
 {
     public class ItemDataEditorViewModel : ViewModelBase
     {
-        protected ItemDataEditorView? ItemDataEditorView; // View of viewmodel
+        protected ItemDataEditorView? View; // View of viewmodel
 
         public readonly SaveData.LOCALE Locale;
         public readonly int Version;
@@ -24,15 +24,29 @@ namespace Eliza.Avalonia.ViewModels
 
 
 
-
-        public AvaloniaList<string> _AutoCompleteStrings = new();
+        public static Dictionary<int, string> _AutoCompleteIdToStringMap = new();
+        public static Dictionary<string, int> _AutoCompleteStringToIdMap = new();
+        public static AvaloniaList<string> _AutoCompleteStrings = new();
 
         public AvaloniaList<string> AutoCompleteStrings
         {
-            get => this._AutoCompleteStrings;
-            set => this.RaiseAndSetIfChanged(ref this._AutoCompleteStrings, value);
+            get => ItemDataEditorViewModel._AutoCompleteStrings;
+            set => this.RaiseAndSetIfChanged(ref ItemDataEditorViewModel._AutoCompleteStrings, value);
         }
 
+        public int _testInt;
+        public int TestInt
+        {
+            get => _testInt;
+            set => this.RaiseAndSetIfChanged(ref _testInt, value);
+        }
+
+        public string _testString;
+        public string TestString
+        {
+            get => _testString;
+            set => this.RaiseAndSetIfChanged(ref _testString, value);
+        }
 
 
         public const int InputMax = Int32.MaxValue;
@@ -46,9 +60,9 @@ namespace Eliza.Avalonia.ViewModels
         protected int _ItemId = 0; // Key 0 ItemData
         protected int _Level = 1;  // Key 1 NotAmountItemData : ItemData
 
-        // Remember to serlialize this one back into List<int>
-        protected int[] _LevelAmount = new int[9] { 1, 0, 0, 0, 0, 0, 0, 0, 0 }; 
                                                     // Key 1 AmountItemData
+                                                    // Remember to serlialize this one back into List<int>
+        protected int[] _LevelAmount = new int[9] { 1, 0, 0, 0, 0, 0, 0, 0, 0 };
         protected int[] _SourceItems = new int[6];  // Key 2 SynthesisItemData : NotAmountItemData
         protected int[] _AddedItems = new int[9];   // Key 3 EquipItemData
         protected bool _IsArrange = false;          // Key 3 FoodItemData : SynthesisItemData
@@ -75,18 +89,21 @@ namespace Eliza.Avalonia.ViewModels
 
         public ItemDataEditorViewModel(ItemDataEditorView view, ref UiObjectGraph context, SaveData.LOCALE locale, int version)
         {
-            this.ItemDataEditorView = view;
+            this.View = view;
             this.Locale = locale;
             this.Version = version;
 
             this.CMD_ApplyChanges = ReactiveCommand.Create(() => { this.ReplaceContext(); });
-            this.ItemDataEditorView.FindControl<Button>("Button_ApplyChanges").Command = this.CMD_ApplyChanges;
+            this.View.FindControl<Button>("Button_ApplyChanges").Command = this.CMD_ApplyChanges;
             this.Init();
             this.LoadContext(context);
         }
 
         public void Init()
         {
+            // We don't call these often enough to warrant method dispatch.
+            // This is more for relocating all the string bindings all to one place.
+
             this.UnwrapMethodDispatcher.Add("ItemId", (x) => this.UnwrapItemId(x));
             this.UnwrapMethodDispatcher.Add("Level", (x) => this.UnwrapLevel(x));
             this.UnwrapMethodDispatcher.Add("LevelAmount", (x) => this.UnwrapLevelAmount(x));
@@ -102,6 +119,24 @@ namespace Eliza.Avalonia.ViewModels
             this.UnwrapMethodDispatcher.Add("DualWorkParam", (x) => this.UnwrapDualWorkParam(x));
             this.UnwrapMethodDispatcher.Add("Capacity", (x) => this.UnwrapCapacity(x));
             this.UnwrapMethodDispatcher.Add("Size", (x) => this.UnwrapSize(x));
+
+            ItemDataEditorViewModel.LoadAutoCompleteStrings();
+        }
+
+        protected static void LoadAutoCompleteStrings()
+        {
+            if (ItemDataEditorViewModel._AutoCompleteStrings.Count == 0) {
+                foreach (int itemId in Eliza.Data.Items.ItemIds) {
+                    string str = String.Format("{0} - {1} {2}",
+                                                itemId,
+                                                Eliza.Data.Items.ItemIdToJapaneseName[itemId],
+                                                Eliza.Data.Items.ItemIdToEnglishName[itemId]
+                                              );
+                    ItemDataEditorViewModel._AutoCompleteStrings.Add(str);
+                    ItemDataEditorViewModel._AutoCompleteIdToStringMap[itemId] = str;
+                    ItemDataEditorViewModel._AutoCompleteStringToIdMap[str] = itemId;
+                }
+            }
         }
 
 
@@ -138,6 +173,7 @@ namespace Eliza.Avalonia.ViewModels
 
             }
         }
+
 
         #region Unwrappers
 
