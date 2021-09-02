@@ -57,10 +57,14 @@
 		<ValueConverters:StringToHexConverter x:Key="StringToHexConverter"/>
 		<ValueConverters:AsciiStringToHexConverter x:Key="AsciiStringToHexConverter"/>
 		<ValueConverters:IntToStringConverter x:Key="IntToStringConverter"/>
-		<!--
-		<ValueConverters:AutoCompleteItemIdConverter x:Key="AutoCompleteItemIdConverter"/>
-		-->
-
+		<ValueConverters:ItemIdToIsLevelDisabledConverter x:Key="ItemIdToIsLevelDisabledConverter"/>
+		<ValueConverters:ItemIdToIsLevelAmountDisabledConverter x:Key="ItemIdToIsLevelAmountDisabledConverter"/>
+		<ValueConverters:ItemIdToIsSourceItemsDisabledConverter x:Key="ItemIdToIsSourceItemsDisabledConverter"/>
+		<ValueConverters:ItemIdToIsEquipDisabledConverter x:Key="ItemIdToIsEquipDisabledConverter"/>
+		<ValueConverters:ItemIdToIsArrangeDisabledConverter x:Key="ItemIdToIsArrangeDisabledConverter"/>
+		<ValueConverters:ItemIdToIsCapacityDisabledConverter x:Key="ItemIdToIsCapacityDisabledConverter"/>
+		<ValueConverters:ItemIdToIsSizeDisabledConverter  x:Key="ItemIdToIsSizeDisabledConverter"/>
+		
 	</Application.Resources>
 	
 	

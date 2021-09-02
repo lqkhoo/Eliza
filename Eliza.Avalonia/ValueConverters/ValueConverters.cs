@@ -354,20 +354,6 @@ namespace Eliza.Avalonia.ValueConverters
         }
     }
 
-    public class UuidStringToHexConverter : IValueConverter
-    {
-        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-
-        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-
 
     public class IntToStringConverter : IValueConverter
     {

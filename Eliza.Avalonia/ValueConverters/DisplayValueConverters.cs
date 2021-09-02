@@ -25,7 +25,6 @@ namespace Eliza.Avalonia.ValueConverters
 
 
     // Input is UiObjectGraph. If node.Child[0].ItemId is int, return item's name as string.
-
     public class DisplayUiObjectGraphItemIdToImageConverter : IValueConverter
     {
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -284,52 +283,216 @@ namespace Eliza.Avalonia.ValueConverters
     }
 
 
+
     /*
-    public class AutoCompleteItemIdConverter : IValueConverter
+    public class TestButtonStyleConverter : IValueConverter
     {
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            // int --> display
-            string? str = null;
-            try {
-                if (value != null && value != AvaloniaProperty.UnsetValue) {
-                    int itemId = (int)value;
-                    str = itemId.ToString(); // prevent bounce
+            if(value != null) {
+                int val = (int)value;
+                if(val == 1) {
+                    return true;
                 }
-            } catch (Exception e) {
-                var foo = 3;
-                // Do nothing
             }
-            return str;
-            
+            return false;
         }
 
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-
-            // (str) display --> int
-
-            int itemId;
-            try {
-                if (value != null && value != AvaloniaProperty.UnsetValue) {
-                    string inputString = (string)value;
-                    if (ItemDataEditorViewModel._AutoCompleteStringToIdMap.ContainsKey(inputString)) {
-                        itemId = ItemDataEditorViewModel._AutoCompleteStringToIdMap[inputString];
-                    } else {
-                        int tryItemId = int.Parse(inputString);
-                        if(Eliza.Data.Items.ItemIds.Contains(tryItemId)) {
-                            itemId = tryItemId;
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                var foo = 3;
-                // Do nothing
-            }
-            return itemId;
+            throw new NotImplementedException();
         }
     }
     */
+
+
+
+    public abstract class ItemEditorFieldIsDisabledConverter : IValueConverter
+    {
+        public abstract object Convert(object value, Type targetType, object parameter, CultureInfo culture);
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    // Level
+    public class ItemIdToIsLevelDisabledConverter : ItemEditorFieldIsDisabledConverter
+    {
+        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool isDisabled = true;
+            if(value != null) {
+                int itemId = (int)value;
+                if(
+                    // || Eliza.Data.Items.IsAmountItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsSeedItemData.Contains(itemId)
+                    Eliza.Data.Items.IsEquipItemData.Contains(itemId)
+                    || Eliza.Data.Items.IsFishItemData.Contains(itemId)
+                    || Eliza.Data.Items.IsFoodItemData.Contains(itemId)
+                    || Eliza.Data.Items.IsPotToolItemData.Contains(itemId)
+                    || Eliza.Data.Items.IsRuneAbilityItemData.Contains(itemId)
+                    ) {
+                    isDisabled = false;
+                }
+            }
+            return isDisabled;
+        }
+    }
+
+    // LevelAmount
+    public class ItemIdToIsLevelAmountDisabledConverter : ItemEditorFieldIsDisabledConverter
+    {
+        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool isDisabled = true;
+            if (value != null) {
+                int itemId = (int)value;
+                if (
+                    Eliza.Data.Items.IsAmountItemData.Contains(itemId)
+                    || Eliza.Data.Items.IsSeedItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsEquipItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsFishItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsFoodItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsPotToolItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsRuneAbilityItemData.Contains(itemId)
+                    ) {
+                    isDisabled = false;
+                }
+            }
+            return isDisabled;
+        }
+    }
+
+    // SourceItems
+    public class ItemIdToIsSourceItemsDisabledConverter : ItemEditorFieldIsDisabledConverter
+    {
+        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool isDisabled = true;
+            if (value != null) {
+                int itemId = (int)value;
+                if (
+                    // || Eliza.Data.Items.IsAmountItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsSeedItemData.Contains(itemId)
+                    Eliza.Data.Items.IsEquipItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsFishItemData.Contains(itemId)
+                    || Eliza.Data.Items.IsFoodItemData.Contains(itemId)
+                    || Eliza.Data.Items.IsPotToolItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsRuneAbilityItemData.Contains(itemId)
+                    ) {
+                    isDisabled = false;
+                }
+            }
+            return isDisabled;
+        }
+    }
+
+    // AddedItems
+    // ArrangeItems
+    // ArrangeOverride
+    // BaseLevel
+    // SozaiLevel
+    // DualWorkSmithBonusType
+    // DualWorkLoveLevel
+    // DualWorkActor
+    // DualWorkParam
+    public class ItemIdToIsEquipDisabledConverter : ItemEditorFieldIsDisabledConverter
+    {
+        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool isDisabled = true;
+            if (value != null) {
+                int itemId = (int)value;
+                if (
+                    // || Eliza.Data.Items.IsAmountItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsSeedItemData.Contains(itemId)
+                    Eliza.Data.Items.IsEquipItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsFishItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsFoodItemData.Contains(itemId)
+                    || Eliza.Data.Items.IsPotToolItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsRuneAbilityItemData.Contains(itemId)
+                    ) {
+                    isDisabled = false;
+                }
+            }
+            return isDisabled;
+        }
+    }
+
+    // IsArrange
+    public class ItemIdToIsArrangeDisabledConverter : ItemEditorFieldIsDisabledConverter
+    {
+        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool isDisabled = true;
+            if (value != null) {
+                int itemId = (int)value;
+                if (
+                    // || Eliza.Data.Items.IsAmountItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsSeedItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsEquipItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsFishItemData.Contains(itemId)
+                    Eliza.Data.Items.IsFoodItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsPotToolItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsRuneAbilityItemData.Contains(itemId)
+                    ) {
+                    isDisabled = false;
+                }
+            }
+            return isDisabled;
+        }
+    }
+
+    // Capacity
+    public class ItemIdToIsCapacityDisabledConverter : ItemEditorFieldIsDisabledConverter
+    {
+        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool isDisabled = true;
+            if (value != null) {
+                int itemId = (int)value;
+                if (
+                    // || Eliza.Data.Items.IsAmountItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsSeedItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsEquipItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsFishItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsFoodItemData.Contains(itemId)
+                    Eliza.Data.Items.IsPotToolItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsRuneAbilityItemData.Contains(itemId)
+                    ) {
+                    isDisabled = false;
+                }
+            }
+            return isDisabled;
+        }
+    }
+
+    // Size
+    public class ItemIdToIsSizeDisabledConverter : ItemEditorFieldIsDisabledConverter
+    {
+        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool isDisabled = true;
+            if (value != null) {
+                int itemId = (int)value;
+                if (
+                    // || Eliza.Data.Items.IsAmountItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsSeedItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsEquipItemData.Contains(itemId)
+                    Eliza.Data.Items.IsFishItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsFoodItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsPotToolItemData.Contains(itemId)
+                    // || Eliza.Data.Items.IsRuneAbilityItemData.Contains(itemId)
+                    ) {
+                    isDisabled = false;
+                }
+            }
+            return isDisabled;
+        }
+    }
+
 
 
 }

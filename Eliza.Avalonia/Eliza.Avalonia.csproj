@@ -9,6 +9,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="Assets\Icon_Item_Collection_001.png" />
+    <None Remove="Assets\rf5-logo.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.7" />

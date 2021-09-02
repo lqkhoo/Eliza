@@ -56,31 +56,29 @@
         <TextBlock       Grid.Row="3" Grid.Column="1" Classes="itemEditorHeader">Levels</TextBlock>
 
 		<AutoCompleteBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Classes="itemEditor" Name="AutoBox_ItemId" Items="{Binding AutoCompleteStrings}" FilterMode="Contains"/>
-		<!--
-        <NumericUpDown   Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Value="{Binding ItemId}" Classes="itemEditor itemId"/>
-		-->
-        <Button          Grid.Row="1" Grid.Column="5" Grid.ColumnSpan="2" Name="Button_ApplyChanges">Apply Changes</Button>       
-
-        <NumericUpDown   Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Classes="itemEditor level" Value="{Binding Level}" Maximum="10" Minimum="1"/>
+        <Button          Grid.Row="1" Grid.Column="5" Grid.ColumnSpan="2" Name="Button_ApplyChanges">Apply Changes</Button>
+        <NumericUpDown   Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2"
+						 Classes="itemEditor level" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsLevelDisabledConverter}}"
+						 Value="{Binding Level}" Maximum="10" Minimum="1"/>
 
         <StackPanel      Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="7" Orientation="Horizontal">
-            <NumericUpDown Value="{Binding LevelAmount0}" Classes="itemEditor levelAmount" Maximum="10" Minimum="0"/><!-- code enforces at least one. Let min be zero here -->
-            <NumericUpDown Value="{Binding LevelAmount1}" Classes="itemEditor levelAmount" Maximum="10" Minimum="0"/>
-            <NumericUpDown Value="{Binding LevelAmount2}" Classes="itemEditor levelAmount" Maximum="10" Minimum="0"/>
-            <NumericUpDown Value="{Binding LevelAmount3}" Classes="itemEditor levelAmount" Maximum="10" Minimum="0"/>
-            <NumericUpDown Value="{Binding LevelAmount4}" Classes="itemEditor levelAmount" Maximum="10" Minimum="0"/>
-            <NumericUpDown Value="{Binding LevelAmount5}" Classes="itemEditor levelAmount" Maximum="10" Minimum="0"/>
-            <NumericUpDown Value="{Binding LevelAmount6}" Classes="itemEditor levelAmount" Maximum="10" Minimum="0"/>
-            <NumericUpDown Value="{Binding LevelAmount7}" Classes="itemEditor levelAmount" Maximum="10" Minimum="0"/>
-            <NumericUpDown Value="{Binding LevelAmount8}" Classes="itemEditor levelAmount" Maximum="10" Minimum="0"/>
+            <NumericUpDown Value="{Binding LevelAmount0}" Classes="itemEditor levelAmount" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsLevelAmountDisabledConverter}}" Maximum="10" Minimum="0"/><!-- code enforces at least one. Let min be zero here -->
+            <NumericUpDown Value="{Binding LevelAmount1}" Classes="itemEditor levelAmount" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsLevelAmountDisabledConverter}}" Maximum="10" Minimum="0"/>
+            <NumericUpDown Value="{Binding LevelAmount2}" Classes="itemEditor levelAmount" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsLevelAmountDisabledConverter}}" Maximum="10" Minimum="0"/>
+            <NumericUpDown Value="{Binding LevelAmount3}" Classes="itemEditor levelAmount" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsLevelAmountDisabledConverter}}" Maximum="10" Minimum="0"/>
+            <NumericUpDown Value="{Binding LevelAmount4}" Classes="itemEditor levelAmount" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsLevelAmountDisabledConverter}}" Maximum="10" Minimum="0"/>
+            <NumericUpDown Value="{Binding LevelAmount5}" Classes="itemEditor levelAmount" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsLevelAmountDisabledConverter}}" Maximum="10" Minimum="0"/>
+            <NumericUpDown Value="{Binding LevelAmount6}" Classes="itemEditor levelAmount" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsLevelAmountDisabledConverter}}" Maximum="10" Minimum="0"/>
+            <NumericUpDown Value="{Binding LevelAmount7}" Classes="itemEditor levelAmount" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsLevelAmountDisabledConverter}}" Maximum="10" Minimum="0"/>
+            <NumericUpDown Value="{Binding LevelAmount8}" Classes="itemEditor levelAmount" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsLevelAmountDisabledConverter}}" Maximum="10" Minimum="0"/>
         </StackPanel>
         
         <TextBlock	     Grid.Row="4" Grid.Column="1" Classes="itemEditorHeader">Size</TextBlock>
-        <NumericUpDown   Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" Value="{Binding Size}" Classes="itemEditor"/>
+        <NumericUpDown   Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" Value="{Binding Size}" Classes="itemEditor" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsSizeDisabledConverter}}"/>
 
         <Border          Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="10" Classes="itemEditorHline"></Border>
         
-		<StackPanel 	Grid.Row="6" Grid.Column="0" Grid.RowSpan="4" Orientation="Vertical" Classes="itemEditorHeader">
+		<StackPanel 	Grid.Row="6" Grid.Column="0" Grid.RowSpan="4" Orientation="Vertical" Classes="itemEditorHeader" HorizontalAlignment="Center">
 			<TextBlock Classes="itemEditorHeader">強化アイテム</TextBlock>
 			<TextBlock Classes="itemEditorHeader">Added Items</TextBlock>
 		</StackPanel>
@@ -114,15 +112,15 @@
         <TextBlock       Grid.Row="8" Grid.Column="8" Classes="itemEditorName" Text="{Binding AddedItems7, Converter={StaticResource ItemIdToEnglishNameConverter}}"/>
         <TextBlock       Grid.Row="8" Grid.Column="9" Classes="itemEditorName" Text="{Binding AddedItems8, Converter={StaticResource ItemIdToEnglishNameConverter}}"/>
         
-		<AutoCompleteBox Grid.Row="9" Grid.Column="1" Classes="itemEditor subEq" Name="AutoBox_AddedItems0" Items="{Binding AutoCompleteStrings}" FilterMode="Contains"/>
-		<AutoCompleteBox Grid.Row="9" Grid.Column="2" Classes="itemEditor subEq" Name="AutoBox_AddedItems1" Items="{Binding AutoCompleteStrings}" FilterMode="Contains"/>
-		<AutoCompleteBox Grid.Row="9" Grid.Column="3" Classes="itemEditor subEq" Name="AutoBox_AddedItems2" Items="{Binding AutoCompleteStrings}" FilterMode="Contains"/>
-		<AutoCompleteBox Grid.Row="9" Grid.Column="4" Classes="itemEditor subEq" Name="AutoBox_AddedItems3" Items="{Binding AutoCompleteStrings}" FilterMode="Contains"/>
-		<AutoCompleteBox Grid.Row="9" Grid.Column="5" Classes="itemEditor subEq" Name="AutoBox_AddedItems4" Items="{Binding AutoCompleteStrings}" FilterMode="Contains"/>
-		<AutoCompleteBox Grid.Row="9" Grid.Column="6" Classes="itemEditor subEq" Name="AutoBox_AddedItems5" Items="{Binding AutoCompleteStrings}" FilterMode="Contains"/>
-		<AutoCompleteBox Grid.Row="9" Grid.Column="7" Classes="itemEditor subEq" Name="AutoBox_AddedItems6" Items="{Binding AutoCompleteStrings}" FilterMode="Contains"/>
-		<AutoCompleteBox Grid.Row="9" Grid.Column="8" Classes="itemEditor subEq" Name="AutoBox_AddedItems7" Items="{Binding AutoCompleteStrings}" FilterMode="Contains"/>
-		<AutoCompleteBox Grid.Row="9" Grid.Column="9" Classes="itemEditor subEq" Name="AutoBox_AddedItems8" Items="{Binding AutoCompleteStrings}" FilterMode="Contains"/>
+		<AutoCompleteBox Grid.Row="9" Grid.Column="1" Classes="itemEditor subEq" Name="AutoBox_AddedItems0" Items="{Binding AutoCompleteStrings}" FilterMode="Contains" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsEquipDisabledConverter}}"/>
+		<AutoCompleteBox Grid.Row="9" Grid.Column="2" Classes="itemEditor subEq" Name="AutoBox_AddedItems1" Items="{Binding AutoCompleteStrings}" FilterMode="Contains" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsEquipDisabledConverter}}"/>
+		<AutoCompleteBox Grid.Row="9" Grid.Column="3" Classes="itemEditor subEq" Name="AutoBox_AddedItems2" Items="{Binding AutoCompleteStrings}" FilterMode="Contains" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsEquipDisabledConverter}}"/>
+		<AutoCompleteBox Grid.Row="9" Grid.Column="4" Classes="itemEditor subEq" Name="AutoBox_AddedItems3" Items="{Binding AutoCompleteStrings}" FilterMode="Contains" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsEquipDisabledConverter}}"/>
+		<AutoCompleteBox Grid.Row="9" Grid.Column="5" Classes="itemEditor subEq" Name="AutoBox_AddedItems4" Items="{Binding AutoCompleteStrings}" FilterMode="Contains" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsEquipDisabledConverter}}"/>
+		<AutoCompleteBox Grid.Row="9" Grid.Column="6" Classes="itemEditor subEq" Name="AutoBox_AddedItems5" Items="{Binding AutoCompleteStrings}" FilterMode="Contains" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsEquipDisabledConverter}}"/>
+		<AutoCompleteBox Grid.Row="9" Grid.Column="7" Classes="itemEditor subEq" Name="AutoBox_AddedItems6" Items="{Binding AutoCompleteStrings}" FilterMode="Contains" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsEquipDisabledConverter}}"/>
+		<AutoCompleteBox Grid.Row="9" Grid.Column="8" Classes="itemEditor subEq" Name="AutoBox_AddedItems7" Items="{Binding AutoCompleteStrings}" FilterMode="Contains" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsEquipDisabledConverter}}"/>
+		<AutoCompleteBox Grid.Row="9" Grid.Column="9" Classes="itemEditor subEq" Name="AutoBox_AddedItems8" Items="{Binding AutoCompleteStrings}" FilterMode="Contains" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsEquipDisabledConverter}}"/>
 		<!--
         <NumericUpDown Grid.Row="9" Grid.Column="1"  Value="{Binding AddedItems0}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
         <NumericUpDown Grid.Row="9" Grid.Column="2"  Value="{Binding AddedItems1}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
@@ -137,7 +135,7 @@
 
         <Border          Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="10" Classes="itemEditorHline"></Border>
 
-		<StackPanel 	 Grid.Row="11" Grid.Column="0" Grid.RowSpan="4" Orientation="Vertical" Classes="itemEditorHeader">
+		<StackPanel 	 Grid.Row="11" Grid.Column="0" Grid.RowSpan="4" Orientation="Vertical" Classes="itemEditorHeader" HorizontalAlignment="Center">
 			<TextBlock Classes="itemEditorHeader">素材アイテム</TextBlock>
 			<TextBlock Classes="itemEditorHeader">Source Items</TextBlock>
 		</StackPanel>
@@ -162,12 +160,12 @@
         <TextBlock       Grid.Row="13" Grid.Column="5" Classes="itemEditorName" Text="{Binding SourceItems4, Converter={StaticResource ItemIdToEnglishNameConverter}}"/>
         <TextBlock       Grid.Row="13" Grid.Column="6" Classes="itemEditorName" Text="{Binding SourceItems5, Converter={StaticResource ItemIdToEnglishNameConverter}}"/>
         
-		<AutoCompleteBox Grid.Row="14" Grid.Column="1" Classes="itemEditor subEq" Name="AutoBox_SourceItems0" Items="{Binding AutoCompleteStrings}" FilterMode="Contains"/>
-		<AutoCompleteBox Grid.Row="14" Grid.Column="2" Classes="itemEditor subEq" Name="AutoBox_SourceItems1" Items="{Binding AutoCompleteStrings}" FilterMode="Contains"/>
-		<AutoCompleteBox Grid.Row="14" Grid.Column="3" Classes="itemEditor subEq" Name="AutoBox_SourceItems2" Items="{Binding AutoCompleteStrings}" FilterMode="Contains"/>
-		<AutoCompleteBox Grid.Row="14" Grid.Column="4" Classes="itemEditor subEq" Name="AutoBox_SourceItems3" Items="{Binding AutoCompleteStrings}" FilterMode="Contains"/>
-		<AutoCompleteBox Grid.Row="14" Grid.Column="5" Classes="itemEditor subEq" Name="AutoBox_SourceItems4" Items="{Binding AutoCompleteStrings}" FilterMode="Contains"/>
-		<AutoCompleteBox Grid.Row="14" Grid.Column="6" Classes="itemEditor subEq" Name="AutoBox_SourceItems5" Items="{Binding AutoCompleteStrings}" FilterMode="Contains"/>
+		<AutoCompleteBox Grid.Row="14" Grid.Column="1" Classes="itemEditor subEq" Name="AutoBox_SourceItems0" Items="{Binding AutoCompleteStrings}" FilterMode="Contains" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsSourceItemsDisabledConverter}}"/>
+		<AutoCompleteBox Grid.Row="14" Grid.Column="2" Classes="itemEditor subEq" Name="AutoBox_SourceItems1" Items="{Binding AutoCompleteStrings}" FilterMode="Contains" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsSourceItemsDisabledConverter}}"/>
+		<AutoCompleteBox Grid.Row="14" Grid.Column="3" Classes="itemEditor subEq" Name="AutoBox_SourceItems2" Items="{Binding AutoCompleteStrings}" FilterMode="Contains" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsSourceItemsDisabledConverter}}"/>
+		<AutoCompleteBox Grid.Row="14" Grid.Column="4" Classes="itemEditor subEq" Name="AutoBox_SourceItems3" Items="{Binding AutoCompleteStrings}" FilterMode="Contains" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsSourceItemsDisabledConverter}}"/>
+		<AutoCompleteBox Grid.Row="14" Grid.Column="5" Classes="itemEditor subEq" Name="AutoBox_SourceItems4" Items="{Binding AutoCompleteStrings}" FilterMode="Contains" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsSourceItemsDisabledConverter}}"/>
+		<AutoCompleteBox Grid.Row="14" Grid.Column="6" Classes="itemEditor subEq" Name="AutoBox_SourceItems5" Items="{Binding AutoCompleteStrings}" FilterMode="Contains" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsSourceItemsDisabledConverter}}"/>
 		<!--
         <NumericUpDown Grid.Row="14" Grid.Column="1"  Value="{Binding SourceItems0}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
         <NumericUpDown Grid.Row="14" Grid.Column="2"  Value="{Binding SourceItems1}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
@@ -181,11 +179,11 @@
 			<TextBlock Classes="itemEditorHeader">アレンジあり</TextBlock>
 			<TextBlock Classes="itemEditorHeader">Is Arrange</TextBlock>
 		</StackPanel>
-        <CheckBox        Grid.Row="11" Grid.Column="9" Grid.RowSpan="4" Classes="itemEditorCheckbox" IsChecked="{Binding IsArrange}"></CheckBox>
+        <CheckBox        Grid.Row="11" Grid.Column="9" Grid.RowSpan="4" Classes="itemEditorCheckbox" IsChecked="{Binding IsArrange}" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsArrangeDisabledConverter}}"></CheckBox>
 
         <Border          Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="10" Classes="itemEditorHline"></Border>
         
-		<StackPanel 	 Grid.Row="16" Grid.Column="0" Grid.RowSpan="4" Orientation="Vertical" Classes="itemEditorHeader">
+		<StackPanel 	 Grid.Row="16" Grid.Column="0" Grid.RowSpan="4" Orientation="Vertical" Classes="itemEditorHeader" HorizontalAlignment="Center">
 			<TextBlock Classes="itemEditorHeader">アレンジアイテム</TextBlock>
 			<TextBlock Classes="itemEditorHeader">Arrange Items</TextBlock>
 		</StackPanel>
@@ -201,9 +199,9 @@
         <TextBlock       Grid.Row="18" Grid.Column="2" Classes="itemEditorName" Text="{Binding ArrangeItems1, Converter={StaticResource ItemIdToEnglishNameConverter}}"/>
         <TextBlock       Grid.Row="18" Grid.Column="3" Classes="itemEditorName" Text="{Binding ArrangeItems2, Converter={StaticResource ItemIdToEnglishNameConverter}}"/>
         
-		<AutoCompleteBox Grid.Row="19" Grid.Column="1" Classes="itemEditor subEq" Name="AutoBox_ArrangeItems0" Items="{Binding AutoCompleteStrings}" FilterMode="Contains"/>
-		<AutoCompleteBox Grid.Row="19" Grid.Column="2" Classes="itemEditor subEq" Name="AutoBox_ArrangeItems1" Items="{Binding AutoCompleteStrings}" FilterMode="Contains"/>
-		<AutoCompleteBox Grid.Row="19" Grid.Column="3" Classes="itemEditor subEq" Name="AutoBox_ArrangeItems2" Items="{Binding AutoCompleteStrings}" FilterMode="Contains"/>
+		<AutoCompleteBox Grid.Row="19" Grid.Column="1" Classes="itemEditor subEq" Name="AutoBox_ArrangeItems0" Items="{Binding AutoCompleteStrings}" FilterMode="Contains" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsEquipDisabledConverter}}"/>
+		<AutoCompleteBox Grid.Row="19" Grid.Column="2" Classes="itemEditor subEq" Name="AutoBox_ArrangeItems1" Items="{Binding AutoCompleteStrings}" FilterMode="Contains" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsEquipDisabledConverter}}"/>
+		<AutoCompleteBox Grid.Row="19" Grid.Column="3" Classes="itemEditor subEq" Name="AutoBox_ArrangeItems2" Items="{Binding AutoCompleteStrings}" FilterMode="Contains" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsEquipDisabledConverter}}"/>
 		<!--
         <NumericUpDown Grid.Row="19" Grid.Column="1"  Value="{Binding ArrangeItems0}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
         <NumericUpDown Grid.Row="19" Grid.Column="2"  Value="{Binding ArrangeItems1}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
@@ -217,7 +215,7 @@
         <Image           Grid.Row="16" Grid.Column="6" Classes="itemEditorImage" Source="{Binding ArrangeOverride, Converter={StaticResource ItemIdToImageConverter}}"/>
         <TextBlock       Grid.Row="17" Grid.Column="6" Classes="itemEditorName" Text="{Binding ArrangeOverride, Converter={StaticResource ItemIdToJapaneseNameConverter}}"/>
         <TextBlock       Grid.Row="18" Grid.Column="6" Classes="itemEditorName" Text="{Binding ArrangeOverride, Converter={StaticResource ItemIdToEnglishNameConverter}}"/>
-		<AutoCompleteBox Grid.Row="19" Grid.Column="6" Classes="itemEditor subEq" Name="AutoBox_ArrangeOverride" Items="{Binding AutoCompleteStrings}" FilterMode="Contains"/>
+		<AutoCompleteBox Grid.Row="19" Grid.Column="6" Classes="itemEditor subEq" Name="AutoBox_ArrangeOverride" Items="{Binding AutoCompleteStrings}" FilterMode="Contains" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsEquipDisabledConverter}}"/>
 		<!--
         <NumericUpDown Grid.Row="19" Grid.Column="6"  Value="{Binding ArrangeOverride}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
 		-->
@@ -226,43 +224,43 @@
 			<TextBlock Classes="itemEditorHeader">総アイテムLv</TextBlock>
 			<TextBlock Classes="itemEditorHeader">Base Level</TextBlock>
 		</StackPanel>
-        <NumericUpDown   Grid.Row="21" Grid.Column="1"  Value="{Binding BaseLevel}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+        <NumericUpDown   Grid.Row="21" Grid.Column="1"  Value="{Binding BaseLevel}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsEquipDisabledConverter}}"/>
 
 		<StackPanel 	 Grid.Row="20" Grid.Column="3" Grid.ColumnSpan="2" Orientation="Vertical" Classes="itemEditorHeader">
 			<TextBlock Classes="itemEditorHeader">総素材Lv</TextBlock>
 			<TextBlock Classes="itemEditorHeader">Material Level</TextBlock>
 		</StackPanel>
-        <NumericUpDown   Grid.Row="21" Grid.Column="3"  Value="{Binding SozaiLevel}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+        <NumericUpDown   Grid.Row="21" Grid.Column="3"  Value="{Binding SozaiLevel}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsEquipDisabledConverter}}"/>
 
 		<StackPanel 	 Grid.Row="20" Grid.Column="5" Grid.ColumnSpan="2" Orientation="Vertical" Classes="itemEditorHeader">
 			<TextBlock Classes="itemEditorHeader">容量</TextBlock>
 			<TextBlock Classes="itemEditorHeader">Capacity</TextBlock>
 		</StackPanel>
-        <NumericUpDown   Grid.Row="21" Grid.Column="5"  Value="{Binding Capacity}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+        <NumericUpDown   Grid.Row="21" Grid.Column="5"  Value="{Binding Capacity}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsCapacityDisabledConverter}}"/>
         
 		<StackPanel 	 Grid.Row="22" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Vertical" Classes="itemEditorHeader">
 			<TextBlock Classes="itemEditorHeader">一緒鍛治ボーナス</TextBlock>
 			<TextBlock Classes="itemEditorHeader">DualSmith Bonus Type</TextBlock>
 		</StackPanel>
-        <NumericUpDown   Grid.Row="23" Grid.Column="1"  Value="{Binding DualWorkSmithBonusType}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+        <NumericUpDown   Grid.Row="23" Grid.Column="1"  Value="{Binding DualWorkSmithBonusType}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsEquipDisabledConverter}}"/>
 
 		<StackPanel 	 Grid.Row="22" Grid.Column="3" Grid.ColumnSpan="2" Orientation="Vertical" Classes="itemEditorHeader">
 			<TextBlock Classes="itemEditorHeader">一緒鍛治仲良し度</TextBlock>
 			<TextBlock Classes="itemEditorHeader">DualSmith Love Lvl</TextBlock>
 		</StackPanel>
-        <NumericUpDown   Grid.Row="23" Grid.Column="3"  Value="{Binding DualWorkLoveLevel}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+        <NumericUpDown   Grid.Row="23" Grid.Column="3"  Value="{Binding DualWorkLoveLevel}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsEquipDisabledConverter}}"/>
 
 		<StackPanel 	 Grid.Row="22" Grid.Column="5" Grid.ColumnSpan="2" Orientation="Vertical" Classes="itemEditorHeader">
 			<TextBlock Classes="itemEditorHeader">一緒鍛治協力者</TextBlock>
 			<TextBlock Classes="itemEditorHeader">DualSmith Partner</TextBlock>
 		</StackPanel>
-        <NumericUpDown   Grid.Row="23" Grid.Column="5"  Value="{Binding DualWorkActor}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+        <NumericUpDown   Grid.Row="23" Grid.Column="5"  Value="{Binding DualWorkActor}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsEquipDisabledConverter}}"/>
 
 		<StackPanel 	 Grid.Row="22" Grid.Column="7" Grid.ColumnSpan="2" Orientation="Vertical" Classes="itemEditorHeader">
 			<TextBlock Classes="itemEditorHeader">一緒鍛治パラメーター</TextBlock>
 			<TextBlock Classes="itemEditorHeader">DualSmith WorkParam</TextBlock>
 		</StackPanel>
-        <NumericUpDown   Grid.Row="23" Grid.Column="7"  Value="{Binding DualWorkParam}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+        <NumericUpDown   Grid.Row="23" Grid.Column="7"  Value="{Binding DualWorkParam}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsEquipDisabledConverter}}"/>
 
 		<!--
         <ScrollViewer Grid.Row="0" Grid.Column="10" Grid.RowSpan="24">

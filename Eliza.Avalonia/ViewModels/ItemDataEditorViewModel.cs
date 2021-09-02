@@ -34,19 +34,23 @@ namespace Eliza.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref ItemDataEditorViewModel._AutoCompleteStrings, value);
         }
 
-        public int _testInt;
-        public int TestInt
+
+
+
+        protected bool _ButtonStyle;
+        public bool ButtonStyle
         {
-            get => _testInt;
-            set => this.RaiseAndSetIfChanged(ref _testInt, value);
+            get => _ButtonStyle;
+            set => this.RaiseAndSetIfChanged(ref _ButtonStyle, value);
         }
 
-        public string _testString;
-        public string TestString
-        {
-            get => _testString;
-            set => this.RaiseAndSetIfChanged(ref _testString, value);
-        }
+
+
+
+
+
+
+
 
 
         public const int InputMax = Int32.MaxValue;
