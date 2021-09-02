@@ -31,13 +31,12 @@
 		xmlns:Eliza.Model.Status="using:Eliza.Model.Status"
 		xmlns:Eliza.Model.World="using:Eliza.Model.World"
 		xmlns:Eliza.Avalonia.ViewModels="using:Eliza.Avalonia.ViewModels"
-		xmlns:ValueConverters="using:Eliza.Avalonia.ValueConverters"
 		>
-
+	
 	<Design.DataContext>
 		<vm:MainWindowViewModel/>
 	</Design.DataContext>
-
+	
 	<Window.Styles>
 		<!-- https://stackoverflow.com/questions/61435806/how-to-create-a-separate-file-for-styles-in-avalonia -->
 		<StyleInclude Source="avares://Eliza.Avalonia/Styles/MainWindowStyle.axaml"/>

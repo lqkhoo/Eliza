@@ -5,13 +5,6 @@ VisualStudioVersion = 16.0.31624.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eliza.Linux", "Eliza.Linux\Eliza.Linux.csproj", "{C4480F78-9014-4C44-8BE5-62855A1AE4D9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eliza.Mac", "Eliza.Mac\Eliza.Mac.csproj", "{A2227C89-B9FE-49F2-B8F4-6DE1565D90CA}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eliza.Windows", "Eliza.Windows\Eliza.Windows.csproj", "{04AC34A8-F18B-41D4-AE64-30C1C30ACF55}"
-	ProjectSection(ProjectDependencies) = postProject
-		{7D939974-68E3-4C0A-80FF-43D7FD857BF9} = {7D939974-68E3-4C0A-80FF-43D7FD857BF9}
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eliza.UI", "Eliza.UI\Eliza.UI.csproj", "{7D939974-68E3-4C0A-80FF-43D7FD857BF9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eliza", "Eliza\Eliza.csproj", "{4FACE973-3783-484F-BD60-01A844A7BFB1}"
@@ -33,6 +26,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eliza.Avalonia", "Eliza.Ava
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Eliza.PythonUtils", "Eliza.PythonUtils\Eliza.PythonUtils.pyproj", "{AAA84766-F3E0-49D1-9D9C-A7593FE6FEF1}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eliza.Windows", "Eliza.Windows\Eliza.Windows.csproj", "{E2A46659-03CA-42F4-9235-9C019DC1A9ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eliza.Mac", "Eliza.Mac\Eliza.Mac.csproj", "{E1D201B9-2A36-4DAA-8D37-64017879375A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,14 +40,6 @@ Global
 		{C4480F78-9014-4C44-8BE5-62855A1AE4D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4480F78-9014-4C44-8BE5-62855A1AE4D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4480F78-9014-4C44-8BE5-62855A1AE4D9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A2227C89-B9FE-49F2-B8F4-6DE1565D90CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A2227C89-B9FE-49F2-B8F4-6DE1565D90CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A2227C89-B9FE-49F2-B8F4-6DE1565D90CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A2227C89-B9FE-49F2-B8F4-6DE1565D90CA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{04AC34A8-F18B-41D4-AE64-30C1C30ACF55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{04AC34A8-F18B-41D4-AE64-30C1C30ACF55}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{04AC34A8-F18B-41D4-AE64-30C1C30ACF55}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{04AC34A8-F18B-41D4-AE64-30C1C30ACF55}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7D939974-68E3-4C0A-80FF-43D7FD857BF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7D939974-68E3-4C0A-80FF-43D7FD857BF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D939974-68E3-4C0A-80FF-43D7FD857BF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -69,14 +58,22 @@ Global
 		{4CF45C62-9B32-461B-8356-CC0E736F147E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AAA84766-F3E0-49D1-9D9C-A7593FE6FEF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AAA84766-F3E0-49D1-9D9C-A7593FE6FEF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2A46659-03CA-42F4-9235-9C019DC1A9ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2A46659-03CA-42F4-9235-9C019DC1A9ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2A46659-03CA-42F4-9235-9C019DC1A9ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2A46659-03CA-42F4-9235-9C019DC1A9ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1D201B9-2A36-4DAA-8D37-64017879375A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1D201B9-2A36-4DAA-8D37-64017879375A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1D201B9-2A36-4DAA-8D37-64017879375A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1D201B9-2A36-4DAA-8D37-64017879375A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C4480F78-9014-4C44-8BE5-62855A1AE4D9} = {817AB7EE-E104-4893-84E0-26D764DF3378}
-		{A2227C89-B9FE-49F2-B8F4-6DE1565D90CA} = {817AB7EE-E104-4893-84E0-26D764DF3378}
-		{04AC34A8-F18B-41D4-AE64-30C1C30ACF55} = {817AB7EE-E104-4893-84E0-26D764DF3378}
+		{E2A46659-03CA-42F4-9235-9C019DC1A9ED} = {817AB7EE-E104-4893-84E0-26D764DF3378}
+		{E1D201B9-2A36-4DAA-8D37-64017879375A} = {817AB7EE-E104-4893-84E0-26D764DF3378}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4DD8D595-CAE7-4762-A12E-DB610E6A6158}

@@ -1,0 +1,41 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					
+					xmlns:ValueConverters="using:Eliza.Avalonia.ValueConverters"
+					>
+	
+	<!-- Value converters -->
+	<ValueConverters:DisplayArrayIndexConverter x:Key="DisplayArrayIndexConverter"/>
+	<ValueConverters:VisibilityValueConverter x:Key="VisibilityValueConverter"/>
+
+	<ValueConverters:ItemIdToImageConverter x:Key="ItemIdToImageConverter"/>
+	<ValueConverters:ItemIdToJapaneseNameConverter x:Key="ItemIdToJapaneseNameConverter"/>
+	<ValueConverters:ItemIdToEnglishNameConverter x:Key="ItemIdToEnglishNameConverter"/>
+	<ValueConverters:ItemIdToVisibilityConverter x:Key="ItemIdToVisibilityConverter"/>
+	<ValueConverters:TypeToTreeViewVisibilityConverter x:Key="TypeToTreeViewVisibilityConverter"/>
+
+	<ValueConverters:BoolToNumConverter x:Key="BoolToNumConverter"/>
+	<ValueConverters:CharToStringConverter x:Key="CharToStringConverter"/>
+	<ValueConverters:CharToHexConverter x:Key="CharToHexConverter"/>
+	<ValueConverters:ByteToHexConverter x:Key="ByteToHexConverter"/>
+	<ValueConverters:UInt16ToHexConverter x:Key="UInt16ToHexConverter"/>
+	<ValueConverters:UInt32ToHexConverter x:Key="UInt32ToHexConverter"/>
+	<ValueConverters:UInt64ToHexConverter x:Key="UInt64ToHexConverter"/>
+	<ValueConverters:SByteToHexConverter x:Key="SByteToHexConverter"/>
+	<ValueConverters:Int16ToHexConverter x:Key="Int16ToHexConverter"/>
+	<ValueConverters:Int32ToHexConverter x:Key="Int32ToHexConverter"/>
+	<ValueConverters:Int64ToHexConverter x:Key="Int64ToHexConverter"/>
+	<ValueConverters:SingleToHexConverter x:Key="SingleToHexConverter"/>
+	<ValueConverters:DoubleToHexConverter x:Key="DoubleToHexConverter"/>
+	<ValueConverters:StringToHexConverter x:Key="StringToHexConverter"/>
+	<ValueConverters:AsciiStringToHexConverter x:Key="AsciiStringToHexConverter"/>
+	<ValueConverters:IntToStringConverter x:Key="IntToStringConverter"/>
+	<ValueConverters:ItemIdToIsLevelDisabledConverter x:Key="ItemIdToIsLevelDisabledConverter"/>
+	<ValueConverters:ItemIdToIsLevelAmountDisabledConverter x:Key="ItemIdToIsLevelAmountDisabledConverter"/>
+	<ValueConverters:ItemIdToIsSourceItemsDisabledConverter x:Key="ItemIdToIsSourceItemsDisabledConverter"/>
+	<ValueConverters:ItemIdToIsEquipDisabledConverter x:Key="ItemIdToIsEquipDisabledConverter"/>
+	<ValueConverters:ItemIdToIsArrangeDisabledConverter x:Key="ItemIdToIsArrangeDisabledConverter"/>
+	<ValueConverters:ItemIdToIsCapacityDisabledConverter x:Key="ItemIdToIsCapacityDisabledConverter"/>
+	<ValueConverters:ItemIdToIsSizeDisabledConverter  x:Key="ItemIdToIsSizeDisabledConverter"/>
+	
+</ResourceDictionary>

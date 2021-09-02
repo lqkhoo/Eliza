@@ -1,21 +1,20 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:Eliza.Avalonia"
-             x:Class="Eliza.Avalonia.App"
-
-		     xmlns:ValueConverters="using:Eliza.Avalonia.ValueConverters"
+             xmlns:local="using:Eliza.Windows"
+             x:Class="Eliza.Windows.App"
+			 xmlns:Eliza.Avalonia="using:Eliza.Avalonia"
 			 >
 
 	<Application.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
-				<ResourceInclude Source="/Resources/ResourceDictionary.axaml"/>
+				<ResourceInclude Source="avares://Eliza.Avalonia/Resources/ResourceDictionary.axaml"/>
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Application.Resources>
 	
     <Application.DataTemplates>
-        <local:ViewLocator/>
+        <Eliza.Avalonia:ViewLocator/>
     </Application.DataTemplates>
 	
     <Application.Styles>

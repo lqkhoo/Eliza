@@ -10,13 +10,16 @@
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia" Version="0.10.7" />
+		<PackageReference Include="Avalonia.Desktop" Version="0.10.7" />
+		<PackageReference Include="Avalonia.Diagnostics" Version="0.10.7" />
+		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.7" />
+	</ItemGroup>
 	
   <ItemGroup>
-    <PackageReference Include="Eto.Platform.Mac64" Version="2.5.11" />
-  </ItemGroup>
-	
-  <ItemGroup>
-    <ProjectReference Include="..\Eliza.UI\Eliza.UI.csproj" />
+    <ProjectReference Include="..\Eliza.Avalonia\Eliza.Avalonia.csproj" />
   </ItemGroup>
 	
 </Project>

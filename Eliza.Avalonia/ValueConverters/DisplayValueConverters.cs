@@ -283,30 +283,6 @@ namespace Eliza.Avalonia.ValueConverters
     }
 
 
-
-    /*
-    public class TestButtonStyleConverter : IValueConverter
-    {
-        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if(value != null) {
-                int val = (int)value;
-                if(val == 1) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-    */
-
-
-
     public abstract class ItemEditorFieldIsDisabledConverter : IValueConverter
     {
         public abstract object Convert(object value, Type targetType, object parameter, CultureInfo culture);
