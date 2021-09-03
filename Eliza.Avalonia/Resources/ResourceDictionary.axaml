@@ -20,10 +20,12 @@
 	<ValueConverters:ByteToHexConverter x:Key="ByteToHexConverter"/>
 	<ValueConverters:UInt16ToHexConverter x:Key="UInt16ToHexConverter"/>
 	<ValueConverters:UInt32ToHexConverter x:Key="UInt32ToHexConverter"/>
+	<ValueConverters:UInt64ToStringConverter x:Key="UInt64ToStringConverter"/>
 	<ValueConverters:UInt64ToHexConverter x:Key="UInt64ToHexConverter"/>
 	<ValueConverters:SByteToHexConverter x:Key="SByteToHexConverter"/>
 	<ValueConverters:Int16ToHexConverter x:Key="Int16ToHexConverter"/>
 	<ValueConverters:Int32ToHexConverter x:Key="Int32ToHexConverter"/>
+	<ValueConverters:Int64ToStringConverter x:Key="Int64ToStringConverter"/>
 	<ValueConverters:Int64ToHexConverter x:Key="Int64ToHexConverter"/>
 	<ValueConverters:SingleToHexConverter x:Key="SingleToHexConverter"/>
 	<ValueConverters:DoubleToHexConverter x:Key="DoubleToHexConverter"/>

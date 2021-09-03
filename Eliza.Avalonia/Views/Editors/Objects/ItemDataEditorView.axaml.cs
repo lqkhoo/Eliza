@@ -11,7 +11,7 @@ namespace Eliza.Avalonia.Views.Editors
 {
     public partial class ItemDataEditorView : BaseEditorView
     {
-
+        protected MainWindow? ParentView;
         protected ItemDataEditorViewModel? ViewModel;
 
         protected List<AutoCompleteBox> AutoCompleteBoxes = new();
@@ -19,8 +19,9 @@ namespace Eliza.Avalonia.Views.Editors
 
         public ItemDataEditorView() { }
 
-        public ItemDataEditorView(ItemDataEditorViewModel viewModel)
+        public ItemDataEditorView(MainWindow parentView, ItemDataEditorViewModel viewModel)
         {
+            this.ParentView = parentView;
             this.ViewModel = viewModel;
             InitializeComponent();
             this.InitAutoboxes();
@@ -146,6 +147,7 @@ namespace Eliza.Avalonia.Views.Editors
             }
         }
 
+        /*
         public void AutoCompleteLostFocusHandler(object? sender, RoutedEventArgs args)
         {
             if (sender != null && args != null && this.ViewModel != null) {
@@ -169,6 +171,7 @@ namespace Eliza.Avalonia.Views.Editors
                 }
             }
         }
+        */
 
 
 

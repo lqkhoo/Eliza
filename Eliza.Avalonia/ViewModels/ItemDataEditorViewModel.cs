@@ -34,25 +34,6 @@ namespace Eliza.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref ItemDataEditorViewModel._AutoCompleteStrings, value);
         }
 
-
-
-
-        protected bool _ButtonStyle;
-        public bool ButtonStyle
-        {
-            get => _ButtonStyle;
-            set => this.RaiseAndSetIfChanged(ref _ButtonStyle, value);
-        }
-
-
-
-
-
-
-
-
-
-
         public const int InputMax = Int32.MaxValue;
         public const int InputMin = -1;
 
@@ -86,7 +67,6 @@ namespace Eliza.Avalonia.ViewModels
         public ReactiveCommand<Unit, Unit> CMD_ApplyChanges { get; }
 
         public ItemDataEditorViewModel() {
-
             this.CMD_ApplyChanges = ReactiveCommand.Create(() => { this.ReplaceContext(); }); // This is just a stub to prevent nulls
             this.Init();
         }

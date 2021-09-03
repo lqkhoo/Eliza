@@ -47,10 +47,10 @@ namespace Eliza.Avalonia.Views
         protected StringEditorView StringEditorView = new();
         protected UnsafeStringEditorView UnsafeStringEditorView = new();
         protected UuidStringEditorView UuidStringEditorView = new();
-        protected ItemDataEditorView ItemDataEditorView = new(new ItemDataEditorViewModel());
+        protected ItemDataEditorView ItemDataEditorView;
 
-        protected Dictionary<TypeCode, UserControl> PrimitiveEditorMap = new();
-        protected Dictionary<Type, UserControl> ObjectEditorMap = new();
+        protected Dictionary<TypeCode, BaseEditorView> PrimitiveEditorMap = new();
+        protected Dictionary<Type, BaseEditorView> ObjectEditorMap = new();
 
         // Commands. See https://www.reactiveui.net/docs/handbook/commands/
         protected ReactiveCommand<Unit, Unit> CMD_Open_JP_100 { get; }
@@ -86,6 +86,8 @@ namespace Eliza.Avalonia.Views
             this.PrimitiveEditorMap.Add(TypeCode.Double, this.DoubleEditorView);
 
             this.ObjectEditorMap.Add(typeof(string), this.StringEditorView);
+
+            this.ItemDataEditorView = new(this, new ItemDataEditorViewModel());
             this.ObjectEditorMap.Add(typeof(ItemData), this.ItemDataEditorView);
             this.ObjectEditorMap.Add(typeof(EquipItemData), this.ItemDataEditorView);
             this.ObjectEditorMap.Add(typeof(SeedItemData), this.ItemDataEditorView);
@@ -133,10 +135,6 @@ namespace Eliza.Avalonia.Views
             this.LogWrite("Ready.");
 
 
-
-
-
-
             #if DEBUG
             this.AttachDevTools();
             #endif
@@ -159,9 +157,9 @@ namespace Eliza.Avalonia.Views
                     }
                     // Configure new editor.
                     UiObjectGraph node = (UiObjectGraph)dataContext; // Context
-                    UserControl editorView = this.GetEditorView(node);
+                    BaseEditorView editorView = this.GetEditorView(node);
                     if(editorView.GetType() != typeof(ItemDataEditorView)) {
-                        editorView.DataContext = node;
+                        editorView.LoadContext(node);
                     } else {
                         ItemDataEditorView itemEditorView = (ItemDataEditorView)editorView;
                         itemEditorView.LoadContext(
@@ -180,7 +178,7 @@ namespace Eliza.Avalonia.Views
             e.Handled = true;
         }
 
-        protected UserControl GetEditorView(UiObjectGraph node)
+        protected BaseEditorView GetEditorView(UiObjectGraph node)
         {
             if(node.Type != null) {
                 Type nodeType = node.Type;

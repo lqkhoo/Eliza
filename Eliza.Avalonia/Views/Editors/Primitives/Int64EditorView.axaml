@@ -10,15 +10,15 @@
 		<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorFieldName" Text="{Binding FieldInfo.Name}"/>
 		<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto Auto" Grid.Row="0" Grid.Column="1">
 			<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorType" Text="Int64"></TextBlock>
-			<NumericUpDown Grid.Row="0" Grid.Column="1" Classes="editorNumericUpDown" Value="{Binding Value}" Maximum="{Binding PrimitiveMax}" Minimum="{Binding PrimitiveMin}"/>
+			<TextBox Grid.Row="0" Grid.Column="1" Classes="editorNumericUpDown" Text="{Binding Value, Converter={StaticResource Int64ToStringConverter}}"/>
 			<Grid RowDefinitions="Auto Auto" ColumnDefinitions="Auto" Grid.Row="0" Grid.Column="2">
 				<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto" Grid.Row="0">
 					<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorMax" Text="Max"/>
-					<TextBlock Grid.Row="1" Grid.Column="1" Classes="editorMax" Text="{Binding PrimitiveMax}"/>
+					<TextBlock Grid.Row="1" Grid.Column="1" Classes="editorMax" Text="9,223,372,036,854,775,807"/>
 				</Grid>
 				<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto" Grid.Row="1">
 					<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorMin" Text="Min"/>
-					<TextBlock Grid.Row="0" Grid.Column="1" Classes="editorMin" Text="{Binding PrimitiveMin}"/>
+					<TextBlock Grid.Row="0" Grid.Column="1" Classes="editorMin" Text="-9,223,372,036,854,775,808"/>
 				</Grid>
 			</Grid>
 		</Grid>
@@ -28,11 +28,11 @@
 			<Grid RowDefinitions="Auto Auto" ColumnDefinitions="Auto" Grid.Row="0" Grid.Column="2">
 				<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto" Grid.Row="0">
 					<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorMax" Text="Max"/>
-					<TextBlock Grid.Row="1" Grid.Column="1" Classes="editorMax" Text="{Binding PrimitiveMax, Converter={StaticResource Int64ToHexConverter}}"/>
+					<TextBlock Grid.Row="1" Grid.Column="1" Classes="editorMax" Text="7FFFFFFFFFFFFFFF"/>
 				</Grid>
 				<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto" Grid.Row="1">
 					<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorMin" Text="Min"/>
-					<TextBlock Grid.Row="1" Grid.Column="1" Classes="editorMin" Text="{Binding PrimitiveMin, Converter={StaticResource Int64ToHexConverter}}"/>
+					<TextBlock Grid.Row="1" Grid.Column="1" Classes="editorMin" Text="8000000000000000"/>
 				</Grid>
 			</Grid>
 		</Grid>

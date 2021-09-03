@@ -27,7 +27,7 @@ namespace Eliza.Avalonia.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
 
-        protected MainWindow? MainWindowView; // View of viewmodel
+        protected MainWindow? View; // View of viewmodel
 
         public SaveData.LOCALE RequestedLocale { get; protected set; }
         public int RequestedVersion { get; protected set; }
@@ -66,7 +66,7 @@ namespace Eliza.Avalonia.ViewModels
 
         public MainWindowViewModel() : base()
         {
-            this.MainWindowView = MainWindow.Instance;
+            this.View = MainWindow.Instance;
             this.GenerateObjectGraph();
         }
 

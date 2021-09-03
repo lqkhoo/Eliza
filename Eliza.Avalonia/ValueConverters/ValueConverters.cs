@@ -8,6 +8,8 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Numerics;
+using System.Text.RegularExpressions;
 
 namespace Eliza.Avalonia.ValueConverters
 {
@@ -16,6 +18,24 @@ namespace Eliza.Avalonia.ValueConverters
     // The direction is:
     // Convert means model type --> UI type
     // Convert Back: UI type --> model type
+
+
+
+    // References:
+    // https://docs.microsoft.com/en-us/dotnet/api/system.numerics.biginteger.-ctor?view=net-5.0
+
+    public class PrimitiveConverter
+    {
+        public static byte[] HexStringToByteArray(String hex)
+        {
+            int NumberChars = hex.Length;
+            byte[] bytes = new byte[NumberChars / 2];
+            for (int i = 0; i < NumberChars; i += 2)
+                bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+            return bytes;
+        }
+    }
+
 
     public class BoolToNumConverter : IValueConverter
     {
@@ -90,7 +110,30 @@ namespace Eliza.Avalonia.ValueConverters
         }
     }
 
-    public class UInt64ToHexConverter : IValueConverter
+    public class UInt64ToStringConverter : PrimitiveConverter, IValueConverter
+    {
+        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return Convert.ToUInt64(value).ToString();
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            string str = (string)value;
+            str = Regex.Replace(str, @"[^0-9]", "");
+            if (str == "") {
+                return 0;
+            }
+            BigInteger bigInt = BigInteger.Parse(str);
+            UInt64 val;
+            if      (bigInt > UInt64.MaxValue) { val = UInt64.MaxValue; }
+            else if (bigInt < UInt64.MinValue) { val = UInt64.MinValue; }
+            else { val = (UInt64)bigInt; }
+            return val;
+        }
+    }
+
+    public class UInt64ToHexConverter : PrimitiveConverter, IValueConverter
     {
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -105,6 +148,30 @@ namespace Eliza.Avalonia.ValueConverters
             } catch (Exception) {
             }
             return val;
+
+            /*
+            UInt64 val;
+            string hexStr = (string)value;
+            hexStr = Regex.Replace(hexStr, @"[^0-9^A-F^a-f]", "");
+            if (hexStr == "") {
+                return 0;
+            }
+            if (hexStr.Length % 2 != 0) {
+                hexStr = "0" + hexStr;
+            }
+            hexStr.PadLeft(8 * 2, '0');
+            byte[] bytes = PrimitiveConverter.HexStringToByteArray(hexStr);
+            if ((bytes[bytes.Length - 1] & 0x80) > 0) {
+                byte[] temp = new byte[bytes.Length];
+                Array.Copy(bytes, temp, bytes.Length);
+                bytes = new byte[temp.Length + 1];
+                Array.Copy(temp, bytes, temp.Length);
+            }
+            // Array.Reverse(bytes);
+            BigInteger bigInt = new BigInteger(bytes);
+            if (bigInt > UInt64.MaxValue) { val = UInt64.MaxValue; } else if (bigInt < UInt64.MinValue) { val = UInt64.MinValue; } else { val = (UInt64)bigInt; }
+            return val;
+            */
         }
     }
 
@@ -158,6 +225,28 @@ namespace Eliza.Avalonia.ValueConverters
                 val = Int32.Parse((string)value, System.Globalization.NumberStyles.HexNumber);
             } catch (Exception) {
             }
+            return val;
+        }
+    }
+
+
+    public class Int64ToStringConverter : PrimitiveConverter, IValueConverter
+    {
+        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return Convert.ToInt64(value).ToString();
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            string str = (string)value;
+            str = Regex.Replace(str, @"[^0-9]", "");
+            if (str == "") {
+                return 0;
+            }
+            BigInteger bigInt = BigInteger.Parse(str);
+            Int64 val;
+            if (bigInt > Int64.MaxValue) { val = Int64.MaxValue; } else if (bigInt < Int64.MinValue) { val = Int64.MinValue; } else { val = (Int64)bigInt; }
             return val;
         }
     }
@@ -221,9 +310,11 @@ namespace Eliza.Avalonia.ValueConverters
     }
 
 
-    // Char conversions are nasty. It's only used in the header, so what works works.
+    // Char conversions are nasty. It's only used in the header, so whatever works, works.
     // Force UI to ASCII to disable 2-byte entries e.g. Japanese characters.
     // ASCII is all we ever see in char fields i.e. RF5\0.
+    // We could create dedicated widgets for these but there are so few of these fields that 
+    // it's not worth the effort. Just let the exceptions happen.
     public class CharToStringConverter : IValueConverter
     {
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -249,14 +340,17 @@ namespace Eliza.Avalonia.ValueConverters
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             #pragma warning disable CS8603 // Possible null reference return.
+            #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+            #pragma warning disable CS8604 // Possible null reference argument.
             try {
-                
                 string str = value.ToString();
-                byte[] bytes = Encoding.ASCII.GetBytes((string)str);
+                byte[] bytes = Encoding.ASCII.GetBytes(str);
                 return BitConverter.ToString(bytes).Replace("-", "");
             } catch (Exception) {
                 return null;
             }
+            #pragma warning restore CS8604 // Possible null reference argument.
+            #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
             #pragma warning restore CS8603 // Possible null reference return.
 
         }

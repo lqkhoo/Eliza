@@ -4,31 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Eliza.Avalonia.Views.Editors.ItemDataEditorView"
-            xmlns:Eliza.Core.Serialization="using:Eliza.Core.Serialization"
-            xmlns:Eliza.Model="using:Eliza.Model"
-            xmlns:Eliza.Model.Battle="using:Eliza.Model.Battle"
-            xmlns:Eliza.Model.Build="using:Eliza.Model.Build"
-            xmlns:Eliza.Model.Event="using:Eliza.Model.Event"
-            xmlns:Eliza.Model.Farm="using:Eliza.Model.Farm"
-            xmlns:Eliza.Model.FarmSupportMonster="using:Eliza.Model.FarmSupportMonster"
-            xmlns:Eliza.Model.Fishing="using:Eliza.Model.Fishing"
-            xmlns:Eliza.Model.Furniture="using:Eliza.Model.Furniture"
-            xmlns:Eliza.Model.Item="using:Eliza.Model.Item"
-            xmlns:Eliza.Model.ItemFlag="using:Eliza.Model.ItemFlag"
-            xmlns:Eliza.Model.Lpocket="using:Eliza.Model.Lpocket"
-            xmlns:Eliza.Model.Making="using:Eliza.Model.Making"
-            xmlns:Eliza.Model.Name="using:Eliza.Model.Name"
-            xmlns:Eliza.Model.Npc="using:Eliza.Model.Npc"
-            xmlns:Eliza.Model.Order="using:Eliza.Model.Order"
-            xmlns:Eliza.Model.Player="using:Eliza.Model.Player"
-            xmlns:Eliza.Model.PoliceBatch="using:Eliza.Model.PoliceBatch"
-            xmlns:Eliza.Model.Save="using:Eliza.Model.Save"
-            xmlns:Eliza.Model.Shipping="using:Eliza.Model.Shipping"
-            xmlns:Eliza.Model.Stamp="using:Eliza.Model.Stamp"
-            xmlns:Eliza.Model.Status="using:Eliza.Model.Status"
-            xmlns:Eliza.Model.World="using:Eliza.Model.World"
-            xmlns:Eliza.Avalonia.ViewModels="using:Eliza.Avalonia.ViewModels"
-            xmlns:ValueConverters="using:Eliza.Avalonia.ValueConverters"
             >
 
     <UserControl.Styles>
@@ -175,13 +150,17 @@
         <NumericUpDown Grid.Row="14" Grid.Column="6"  Value="{Binding SourceItems5}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
 		-->
 
-		<StackPanel 	 Grid.Row="11" Grid.Column="8" Grid.RowSpan="4" Orientation="Vertical" Classes="itemEditorHeader">
-			<TextBlock Classes="itemEditorHeader">アレンジあり</TextBlock>
-			<TextBlock Classes="itemEditorHeader">Is Arrange</TextBlock>
-		</StackPanel>
-        <CheckBox        Grid.Row="11" Grid.Column="9" Grid.RowSpan="4" Classes="itemEditorCheckbox" IsChecked="{Binding IsArrange}" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsArrangeDisabledConverter}}"></CheckBox>
+		<Border         Grid.Row="12" Grid.Column="8" Grid.RowSpan="2" Grid.ColumnSpan="2" Classes="isArrange" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsArrangeDisabledConverter}}">
+			<StackPanel 	 Orientation="Horizontal" Classes="itemEditorHeader">
+				<StackPanel Orientation="Vertical">
+					<TextBlock Classes="itemEditorHeader">アレンジあり</TextBlock>
+					<TextBlock Classes="itemEditorHeader">Is Arrange</TextBlock>
+				</StackPanel>
+				<CheckBox Classes="itemEditorCheckbox" IsChecked="{Binding IsArrange}" Margin="26 0 0 0"></CheckBox>
+			</StackPanel>
+		</Border>
 
-        <Border          Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="10" Classes="itemEditorHline"></Border>
+		<Border          Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="10" Classes="itemEditorHline"></Border>
         
 		<StackPanel 	 Grid.Row="16" Grid.Column="0" Grid.RowSpan="4" Orientation="Vertical" Classes="itemEditorHeader" HorizontalAlignment="Center">
 			<TextBlock Classes="itemEditorHeader">アレンジアイテム</TextBlock>
@@ -208,16 +187,16 @@
         <NumericUpDown Grid.Row="19" Grid.Column="3"  Value="{Binding ArrangeItems2}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
 		-->
         
-		<StackPanel 	 Grid.Row="16" Grid.Column="4" Grid.RowSpan="4" Grid.ColumnSpan="2" Orientation="Vertical" Classes="itemEditorHeader">
+		<StackPanel 	 Grid.Row="16" Grid.Column="5" Grid.RowSpan="4" Grid.ColumnSpan="2" Orientation="Vertical" Classes="itemEditorHeader">
 			<TextBlock Classes="itemEditorHeader">性能継承アイテム</TextBlock>
 			<TextBlock Classes="itemEditorHeader">Arrange Override</TextBlock>
 		</StackPanel>
-        <Image           Grid.Row="16" Grid.Column="6" Classes="itemEditorImage" Source="{Binding ArrangeOverride, Converter={StaticResource ItemIdToImageConverter}}"/>
-        <TextBlock       Grid.Row="17" Grid.Column="6" Classes="itemEditorName" Text="{Binding ArrangeOverride, Converter={StaticResource ItemIdToJapaneseNameConverter}}"/>
-        <TextBlock       Grid.Row="18" Grid.Column="6" Classes="itemEditorName" Text="{Binding ArrangeOverride, Converter={StaticResource ItemIdToEnglishNameConverter}}"/>
-		<AutoCompleteBox Grid.Row="19" Grid.Column="6" Classes="itemEditor subEq" Name="AutoBox_ArrangeOverride" Items="{Binding AutoCompleteStrings}" FilterMode="Contains" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsEquipDisabledConverter}}"/>
+        <Image           Grid.Row="16" Grid.Column="7" Classes="itemEditorImage" Source="{Binding ArrangeOverride, Converter={StaticResource ItemIdToImageConverter}}"/>
+        <TextBlock       Grid.Row="17" Grid.Column="7" Classes="itemEditorName" Text="{Binding ArrangeOverride, Converter={StaticResource ItemIdToJapaneseNameConverter}}"/>
+        <TextBlock       Grid.Row="18" Grid.Column="7" Classes="itemEditorName" Text="{Binding ArrangeOverride, Converter={StaticResource ItemIdToEnglishNameConverter}}"/>
+		<AutoCompleteBox Grid.Row="19" Grid.Column="7" Classes="itemEditor subEq" Name="AutoBox_ArrangeOverride" Items="{Binding AutoCompleteStrings}" FilterMode="Contains" Classes.disabled="{Binding ItemId, Converter={StaticResource ItemIdToIsEquipDisabledConverter}}"/>
 		<!--
-        <NumericUpDown Grid.Row="19" Grid.Column="6"  Value="{Binding ArrangeOverride}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
+        <NumericUpDown Grid.Row="19" Grid.Column="7"  Value="{Binding ArrangeOverride}" Classes="itemEditor subEq" Maximum="{Binding InputMax}" Minimum="{Binding InputMin}"/>
 		-->
 
 		<StackPanel 	 Grid.Row="20" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Vertical" Classes="itemEditorHeader">
