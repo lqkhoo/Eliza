@@ -47,11 +47,13 @@ namespace Eliza.Core
             // It's nice to preserve the property inputSize == outputSize.
             // However, to keep things consistent with the game,
             // we truncate the last block.
+            /*
             if (isEncrypting) {
                 var destArray = new byte[output.Length - 0x20];
                 Array.Copy(output, destArray, destArray.Length);
                 output = destArray;
             }
+            */
 
             return output;
         }

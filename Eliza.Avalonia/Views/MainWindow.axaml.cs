@@ -147,11 +147,7 @@ namespace Eliza.Avalonia.Views
                 object dataContext = source.DataContext;
                 Type contextType = dataContext.GetType();
                 if (contextType == typeof(UiObjectGraph)) {
-                    // Reset previously-used editor context to blank.
-                    UserControl? previousEditor = this.ViewModel.SUBVIEW_EditorPane;
-                    if(previousEditor != null) {
-                        previousEditor.DataContext = null;
-                    }
+                    this.ClearEditorView(); // Reset previously-used editor context to blank.
                     // Configure new editor.
                     UiObjectGraph node = (UiObjectGraph)dataContext; // Context
                     BaseEditorView editorView = this.GetEditorView(node);
@@ -173,6 +169,17 @@ namespace Eliza.Avalonia.Views
             }
             // if(this.ViewModel != null) { this.ViewModel.LogWrite("Treeview clicked."); }
             e.Handled = true;
+        }
+
+        protected void ClearEditorView()
+        {
+            if(this.ViewModel != null) {
+                UserControl? previousEditor = this.ViewModel.SUBVIEW_EditorPane;
+                if (previousEditor != null) {
+                    previousEditor.DataContext = null;
+                }
+            }
+
         }
 
         protected BaseEditorView GetEditorView(UiObjectGraph node)
@@ -214,6 +221,7 @@ namespace Eliza.Avalonia.Views
                     string[] inputPaths = await dialog.ShowAsync(this);
                     if(inputPaths.Length > 0) { // This happens if dialog is cancelled.
                         this.ViewModel.OpenEncryptedFile(inputPaths[0], locale, version);
+                        this.ClearEditorView();
                         this.LogWrite(String.Format("Loaded file from {0}. Target locale: {1}, version: {2}.", inputPaths[0], locale, version));
                     }
                 }

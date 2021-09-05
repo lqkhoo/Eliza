@@ -69,9 +69,9 @@ namespace Eliza.Model
         public RF5SaveData saveData;
         public RF5SaveDataFooter footer;
 
-        public readonly byte[] _originalHeader;
-        public readonly byte[] _originalSaveData;
-        public readonly byte[] _originalFooter;
+        public byte[] _originalHeader;
+        public byte[] _originalSaveData;
+        public byte[] _originalFooter;
 
         /// <summary>
         /// Calling this constructor should be considered carefully, as we do not preserve
@@ -192,7 +192,9 @@ namespace Eliza.Model
                 serializer.WriteSaveData(this.saveData);
                 long bodyLength = serializer.BaseStream.Position;
                 long paddedLength = ((bodyLength - 0x20 + 0x1F) & ~0x1F) + 0x20;
-                serializer.BaseStream.CopyTo(buffer);
+                serializer.BaseStream.Position = 0x0;
+                serializer.BaseStream.CopyTo(buffer, (int)bodyLength);
+                serializer.BaseStream.Position = bodyLength;
 
                 int headerLength = SaveData.HEADER_NBYTES;
                 buffer.Position = 0x0;

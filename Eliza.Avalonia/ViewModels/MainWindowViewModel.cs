@@ -94,20 +94,26 @@ namespace Eliza.Avalonia.ViewModels
 
         public void SaveEncryptedFile(string outputPath)
         {
-            if(this._UiBaseNode != null) {
+            if(this._UiBaseNode != null && this._SaveData != null) {
                 ObjectGraph baseNode = UiObjectGraph.Unwrap(this._UiBaseNode);
                 GraphDeserializer deserializer = new(this.RequestedLocale, this.RequestedVersion);
                 SaveData modifiedSaveData = deserializer.ReadRF5Save(baseNode);
+                modifiedSaveData._originalHeader = this._SaveData._originalHeader;
+                modifiedSaveData._originalSaveData = this._SaveData._originalSaveData;
+                modifiedSaveData._originalFooter = this._SaveData._originalFooter;
                 modifiedSaveData.ToEncryptedFile(outputPath);
             }
         }
 
         public void SaveDecryptedFile(string outputPath)
         {
-            if(this._UiBaseNode != null) {
+            if(this._UiBaseNode != null && this._SaveData != null) {
                 ObjectGraph baseNode = UiObjectGraph.Unwrap(this._UiBaseNode);
                 GraphDeserializer deserializer = new(this.RequestedLocale, this.RequestedVersion);
                 SaveData modifiedSaveData = deserializer.ReadRF5Save(baseNode);
+                modifiedSaveData._originalHeader = this._SaveData._originalHeader;
+                modifiedSaveData._originalSaveData = this._SaveData._originalSaveData;
+                modifiedSaveData._originalFooter = this._SaveData._originalFooter;
                 modifiedSaveData.ToDecryptedFile(outputPath);
             }
         }
