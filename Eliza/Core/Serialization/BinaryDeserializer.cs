@@ -154,6 +154,11 @@ namespace Eliza.Core.Serialization
             } else {
                 // This handles the stringIds in the FURNITUREDATA struct.
                 // These are most likely UUIDs encoded as UTF-16.
+                // Sometimes they are NOT UUIDs. In that case they take the form: FD 00 FF 00 00 00.
+                // In either case, they always end in 00 00.
+
+                // This handles the stringIds in the FURNITUREDATA struct.
+                // These are most likely UUIDs encoded as UTF-16.
                 // Since UUIDs only have ASCII bytes, every other byte will be zero.
                 // We only extract every other (first) byte.
                 // See: https://stackoverflow.com/q/50070289
@@ -162,13 +167,17 @@ namespace Eliza.Core.Serialization
                     byte nullCharacter = this.Reader.ReadByte();
                     if (character != 0 & nullCharacter == 0) {
                         dataString.Add(character);
+                        dataString.Add(nullCharacter);
                     } else if (character == 0 & nullCharacter == 0) {
                         break;
                     }
                 } while (true);
 
-                // Note ASCII
-                return Encoding.ASCII.GetString(dataString.ToArray());
+                // If it's a valid UUID, ascii would do. However, when it's not a
+                // UUID, it has bytes 0xFD and 0xFF, which are not valid ASCII.
+                // See the FurnitureSaveData struct.
+                // return Encoding.ASCII.GetString(dataString.ToArray());
+                return Encoding.Unicode.GetString(dataString.ToArray());
   
             }
         }

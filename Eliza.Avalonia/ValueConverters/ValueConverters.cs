@@ -415,11 +415,11 @@ namespace Eliza.Avalonia.ValueConverters
         }
     }
 
-    public class AsciiStringToHexConverter : IValueConverter
+    public class Utf8StringToHexConverter : IValueConverter
     {
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            byte[] bytes = Encoding.ASCII.GetBytes((string)value);
+            byte[] bytes = Encoding.UTF8.GetBytes((string)value);
             return BitConverter.ToString(bytes).Replace("-", "");
         }
 
@@ -434,7 +434,7 @@ namespace Eliza.Avalonia.ValueConverters
                     byte[] bytes = new byte[numChars / 2];
                     for (int i = 0; i < numChars; i += 2)
                         bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
-                    return Encoding.ASCII.GetString(bytes);
+                    return Encoding.UTF8.GetString(bytes);
                 } else {
                     #pragma warning disable CS8603 // Possible null reference return.
                     return null;

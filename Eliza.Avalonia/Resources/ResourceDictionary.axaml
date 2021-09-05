@@ -30,7 +30,7 @@
 	<ValueConverters:SingleToHexConverter x:Key="SingleToHexConverter"/>
 	<ValueConverters:DoubleToHexConverter x:Key="DoubleToHexConverter"/>
 	<ValueConverters:StringToHexConverter x:Key="StringToHexConverter"/>
-	<ValueConverters:AsciiStringToHexConverter x:Key="AsciiStringToHexConverter"/>
+	<ValueConverters:Utf8StringToHexConverter x:Key="Utf8StringToHexConverter"/>
 	<ValueConverters:IntToStringConverter x:Key="IntToStringConverter"/>
 	<ValueConverters:ItemIdToIsLevelDisabledConverter x:Key="ItemIdToIsLevelDisabledConverter"/>
 	<ValueConverters:ItemIdToIsLevelAmountDisabledConverter x:Key="ItemIdToIsLevelAmountDisabledConverter"/>

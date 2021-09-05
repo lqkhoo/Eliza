@@ -176,6 +176,11 @@ namespace Eliza.Model
         {
             using (FileStream fs = new(path, FileMode.Create, FileAccess.ReadWrite))
             {
+
+                // 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   <-- Farm[15]
+                // 00 00 00 00 00 00 00|9C EE 38 57 FA AB D6 54 B9   <-- junk data
+                // 37 A3 04 00 40 A3 04 00 0A 1D DA 16 09 00 00 00   <-- footer
+
                 using MemoryStream buffer = new();
 
                 // Write old unencrypted data including junk

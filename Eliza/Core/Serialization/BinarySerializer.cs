@@ -141,14 +141,18 @@ namespace Eliza.Core.Serialization
                 }
 
             } else {
-                // Note ASCII
-                data = Encoding.ASCII.GetBytes(value);
+                // See the FurnitureData struct.
+                // data = Encoding.ASCII.GetBytes(value);
+                data = Encoding.Unicode.GetBytes(value);
+                this.Writer.Write(data);
 
+                /*
                 // No length information for UUIDs.
                 for (int index=0; index<data.Length; index++) {
                     this.Writer.Write(data[index]);
                     this.Writer.Write((byte)0x0);
                 }
+                */
                 // Write the terminator
                 this.Writer.Write((byte)0x0);
                 this.Writer.Write((byte)0x0);
