@@ -59,7 +59,7 @@ namespace Eliza.Avalonia.Views.Editors
 
             foreach (AutoCompleteBox autobox in this.AutoCompleteBoxes) {
                 autobox.TextChanged += this.AutoCompleteTextChangedHandler;
-                // autobox.LostFocus += this.AutoCompleteLostFocusHandler;
+                autobox.LostFocus += this.AutoCompleteLostFocusHandler;
             }
 
             if(this.ViewModel != null) {
@@ -128,7 +128,7 @@ namespace Eliza.Avalonia.Views.Editors
                         // Otherwise, try to see if it's a numeric input and match it against itemIds.
                         try {
                             int tryItemId = int.Parse(text);
-                            if (Eliza.Data.Items.ItemIds.Contains(itemId)) {
+                            if (Eliza.Data.Items.ItemIds.Contains(tryItemId)) {
                                 itemId = tryItemId;
                             }
                         } catch (Exception) {
@@ -147,7 +147,6 @@ namespace Eliza.Avalonia.Views.Editors
             }
         }
 
-        /*
         public void AutoCompleteLostFocusHandler(object? sender, RoutedEventArgs args)
         {
             if (sender != null && args != null && this.ViewModel != null) {
@@ -159,7 +158,7 @@ namespace Eliza.Avalonia.Views.Editors
                 } else {
                     try {
                         int tryItemId = int.Parse(text);
-                        if (Eliza.Data.Items.ItemIds.Contains(itemId)) {
+                        if (Eliza.Data.Items.ItemIds.Contains(tryItemId)) {
                             itemId = tryItemId;
                         }
                     } catch (Exception) { }
@@ -168,11 +167,11 @@ namespace Eliza.Avalonia.Views.Editors
                     if(source.Name != null) {
                         this.AutoboxValueDispatcher[source.Name](itemId);
                     }
+                    source.Text = itemId.ToString();
                 }
+                args.Handled = true;
             }
         }
-        */
-
 
 
         private void InitializeComponent()

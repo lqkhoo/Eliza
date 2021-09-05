@@ -32,7 +32,7 @@ namespace Eliza.Avalonia.ViewModels
         public SaveData.LOCALE RequestedLocale { get; protected set; }
         public int RequestedVersion { get; protected set; }
 
-        protected SaveData? _SaveData;
+        public SaveData? _SaveData { get; protected set; }
         protected UserControl? _EditorPane;
 
         public UserControl? SUBVIEW_EditorPane
@@ -48,7 +48,7 @@ namespace Eliza.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref this._EditorContext, value);
         }
 
-        protected UiObjectGraph? _UiBaseNode;
+        public UiObjectGraph? _UiBaseNode { get; protected set; }
         protected AvaloniaList<UiObjectGraph>? _ObsvObjectGraph; // ObjectGraph generated from savedata
         public AvaloniaList<UiObjectGraph>? OBSV_Graph
         {

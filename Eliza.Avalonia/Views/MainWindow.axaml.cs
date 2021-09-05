@@ -178,6 +178,7 @@ namespace Eliza.Avalonia.Views
                 if (previousEditor != null) {
                     previousEditor.DataContext = null;
                 }
+                this.ViewModel.SUBVIEW_EditorPane = null;
             }
 
         }
@@ -244,11 +245,14 @@ namespace Eliza.Avalonia.Views
                     };
                     string? outputPath = await dialog.ShowAsync(this);
                     if(outputPath != null) {
-                        this.ViewModel.SaveEncryptedFile(outputPath);
-                        this.LogWrite(String.Format("Saved file to {0}. Target locale: {1}, version: {2}.", outputPath,
-                            this.ViewModel.RequestedLocale, this.ViewModel.RequestedVersion));
+                        if(this.ViewModel._UiBaseNode != null && this.ViewModel._SaveData != null) {
+                            this.ViewModel.SaveEncryptedFile(outputPath);
+                            this.LogWrite(String.Format("Saved file to {0}. Target locale: {1}, version: {2}.", outputPath,
+                                this.ViewModel.RequestedLocale, this.ViewModel.RequestedVersion));
+                        } else {
+                            this.LogWrite("Nothing to save!");
+                        }
                     }
-
                 }
             } catch (Exception e) {
                 if(this.ViewModel != null) {
@@ -271,11 +275,14 @@ namespace Eliza.Avalonia.Views
                     };
                     string? outputPath = await dialog.ShowAsync(this);
                     if(outputPath != null) {
-                        this.ViewModel.SaveDecryptedFile(outputPath);
-                        this.LogWrite(String.Format("Saved file without encryption to {0}. Target locale: {1}, version: {2}.", outputPath,
-                            this.ViewModel.RequestedLocale, this.ViewModel.RequestedVersion));
+                        if (this.ViewModel._UiBaseNode != null && this.ViewModel._SaveData != null) {
+                            this.ViewModel.SaveDecryptedFile(outputPath);
+                            this.LogWrite(String.Format("Saved file without encryption to {0}. Target locale: {1}, version: {2}.", outputPath,
+                                this.ViewModel.RequestedLocale, this.ViewModel.RequestedVersion));
+                        } else {
+                            this.LogWrite("Nothing to save!");
+                        }
                     }
-
                 }
             } catch (Exception e) {
                 if (this.ViewModel != null) {

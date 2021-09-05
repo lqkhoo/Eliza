@@ -51,7 +51,7 @@
 			</Grid>
 			<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto Auto" Grid.Row="0" Grid.Column="2">
 				<TextBlock Grid.Row="0" Grid.Column="0" Classes="editorHexType" Text="Hex"></TextBlock>
-				<TextBox Grid.Row="0" Grid.Column="1" Classes="editorHexString" MaxLength="64" Text="{Binding Value, Converter={StaticResource Utf8StringToHexConverter}}"/>
+				<TextBox Grid.Row="0" Grid.Column="1" Classes="editorHexString" MaxLength="64" Text="{Binding Value, Converter={StaticResource StringToHexConverter}}"/>
 				<!--
 				<Grid RowDefinitions="Auto Auto" ColumnDefinitions="Auto" Grid.Row="0" Grid.Column="2">
 					<Grid RowDefinitions="Auto" ColumnDefinitions="Auto Auto" Grid.Row="0">
