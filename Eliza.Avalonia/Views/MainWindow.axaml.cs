@@ -140,9 +140,6 @@ namespace Eliza.Avalonia.Views
             #endif
         }
 
-        // Rather than work with arcane rules of what could be bound to what,
-        // We capture the click event at the window level and dispatch the event
-        // to whatever we see fit.
         public void OnTreeViewClickHandler(object? sender, RoutedEventArgs e)
         {
             var source = e.Source as Control;
@@ -207,48 +204,80 @@ namespace Eliza.Avalonia.Views
 
         protected async Task Cmd_OpenAsync(SaveData.LOCALE locale, int version)
         {
-            if(this.ViewModel != null) {
-                OpenFileDialog dialog = new() {
-                    Title = String.Format("Open File ({0} ver {1})", locale, version),
-                    AllowMultiple = false,
-                    // Filters = new List<FileDialogFilter> { }, // Nothing to filter
-                };
-                string[] inputPaths = await dialog.ShowAsync(this);
-
-                this.ViewModel.OpenEncryptedFile(inputPaths[0], locale, version);
-                this.LogWrite(String.Format("Loaded file from {0}.", inputPaths[0]));
+            try {
+                if (this.ViewModel != null) {
+                    OpenFileDialog dialog = new() {
+                        Title = String.Format("Open File ({0} ver {1})", locale, version),
+                        AllowMultiple = false,
+                        // Filters = new List<FileDialogFilter> { }, // Nothing to filter
+                    };
+                    string[] inputPaths = await dialog.ShowAsync(this);
+                    if(inputPaths.Length > 0) { // This happens if dialog is cancelled.
+                        this.ViewModel.OpenEncryptedFile(inputPaths[0], locale, version);
+                        this.LogWrite(String.Format("Loaded file from {0}. Target locale: {1}, version: {2}.", inputPaths[0], locale, version));
+                    }
+                }
+            } catch (Exception e) {
+                this.LogWrite(e.ToString());
+                this.LogWrite(String.Format("Error opening file. Target locale: {0}, version: {1}." +
+                    "Maybe try opening with an older version number.", locale, version));
             }
+
         }
 
 
         protected async Task Cmd_SaveEncrypted()
         {
-            if(this.ViewModel != null) {
+            try {
+                if (this.ViewModel != null) {
+                    SaveFileDialog dialog = new() {
+                        Title = String.Format("Open File ({0} ver {1})", this.ViewModel.RequestedLocale, this.ViewModel.RequestedVersion)
+                        // Filters = new List<FileDialogFilter> { }, // Nothing to filter
+                    };
+                    string? outputPath = await dialog.ShowAsync(this);
+                    if(outputPath != null) {
+                        this.ViewModel.SaveEncryptedFile(outputPath);
+                        this.LogWrite(String.Format("Saved file to {0}. Target locale: {1}, version: {2}.", outputPath,
+                            this.ViewModel.RequestedLocale, this.ViewModel.RequestedVersion));
+                    }
 
-                SaveFileDialog dialog = new() {
-                    Title = String.Format("Open File ({0} ver {1})", this.ViewModel.RequestedLocale, this.ViewModel.RequestedVersion)
-                    // Filters = new List<FileDialogFilter> { }, // Nothing to filter
-                };
-                string outputPath = await dialog.ShowAsync(this);
-                // this.ViewModel.SaveEncryptedFile(outputPath);
-                // this.LogWrite(String.Format("Saved file to {0}", outputPath));
-                //TODO
+                }
+            } catch (Exception e) {
+                if(this.ViewModel != null) {
+                    this.LogWrite(e.ToString());
+                    this.LogWrite(String.Format("Error saving file. Target locale: {0}, version: {1}. " +
+                        "Make sure file isn't being locked by another process.",
+                        this.ViewModel.RequestedLocale, this.ViewModel.RequestedVersion));
+                }
             }
+
         }
 
         protected async Task Cmd_SaveDecrypted()
         {
-            if(this.ViewModel != null) {
-                SaveFileDialog dialog = new() {
-                    Title = String.Format("Open File ({0} ver {1})", this.ViewModel.RequestedLocale, this.ViewModel.RequestedVersion)
-                    // Filters = new List<FileDialogFilter> { }, // Nothing to filter
-                };
-                string outputPath = await dialog.ShowAsync(this);
-                // this.ViewModel.SaveDecryptedFile(outputPath);
-                // this.LogWrite(String.Format("Saved file without encryption to {0}", outputPath));
+            try {
+                if (this.ViewModel != null) {
+                    SaveFileDialog dialog = new() {
+                        Title = String.Format("Open File ({0} ver {1})", this.ViewModel.RequestedLocale, this.ViewModel.RequestedVersion)
+                        // Filters = new List<FileDialogFilter> { }, // Nothing to filter
+                    };
+                    string? outputPath = await dialog.ShowAsync(this);
+                    if(outputPath != null) {
+                        this.ViewModel.SaveDecryptedFile(outputPath);
+                        this.LogWrite(String.Format("Saved file without encryption to {0}. Target locale: {1}, version: {2}.", outputPath,
+                            this.ViewModel.RequestedLocale, this.ViewModel.RequestedVersion));
+                    }
 
-                //TODO
+                }
+            } catch (Exception e) {
+                if (this.ViewModel != null) {
+                    this.LogWrite(e.ToString());
+                    this.LogWrite(String.Format("Error saving file. Target locale: {0}, version: {1}. " +
+                        "Make sure file isn't being locked by another process.",
+                        this.ViewModel.RequestedLocale, this.ViewModel.RequestedVersion));
+                }
             }
+
         }
 
         public void LogWrite(string str)

@@ -85,6 +85,8 @@ namespace Eliza.Avalonia.ViewModels
 
         public void OpenEncryptedFile(string inputPath, SaveData.LOCALE locale, int version)
         {
+            this.RequestedLocale = locale;
+            this.RequestedVersion = version;
             this._SaveData = SaveData.FromEncryptedFile(path: inputPath, version: version, locale: locale);
             this.GenerateObjectGraph();
         }

@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Eliza.Avalonia\Eliza.Avalonia.csproj" />
-    <ProjectReference Include="..\Eliza.UI\Eliza.UI.csproj" />
   </ItemGroup>
 
   <ItemGroup>

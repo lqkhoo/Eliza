@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using Eliza.Model;
 using Eliza.Model.Save;
+using Eliza.Model.Event;
 
 namespace Eliza.Core.Serialization
 {

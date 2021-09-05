@@ -1,4 +1,5 @@
-﻿using MessagePack;
+﻿using Eliza.Core.Serialization;
+using MessagePack;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,6 +13,7 @@ namespace Eliza.Model.Npc
         public bool forceDisabled;
         public bool isShortPlay;
         public int AnimationState;
+        public byte Unknown;
         public bool AnimationSitting;
         public int NpcGroupId;
         public int CurrentFieldPlaceId;

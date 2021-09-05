@@ -12,7 +12,7 @@
     <OutputPath>.</OutputPath>
     <Name>Eliza.PythonUtils</Name>
     <RootNamespace>Eliza.PythonUtils</RootNamespace>
-    <TestFramework>unittest</TestFramework>
+    <TestFramework>none</TestFramework>
     <UnitTestPattern>test*.py</UnitTestPattern>
     <UnitTestRootDirectory>.</UnitTestRootDirectory>
   </PropertyGroup>
@@ -31,7 +31,9 @@
     <Compile Include="main.py" />
     <Compile Include="model.py" />
     <Compile Include="rf5_save_file.py" />
-    <Compile Include="test.py" />
+    <Compile Include="test.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="__init__.py">
       <SubType>Code</SubType>
     </Compile>

@@ -36,7 +36,7 @@ class TestParrot(unittest.TestCase):
         os.remove(output_path) # Delete the test output
 
     def test_parrot_v102(self):
-        SOURCE_PATH = '../Eliza.Test/saves/data/102/rf5_gm001'
+        SOURCE_PATH = '../Eliza.Test/Saves/102/rf5_gm001'
         OUTPUT_PATH = SOURCE_PATH + '_parrot_test'
         self._test_parrot('1.0.2', SOURCE_PATH, OUTPUT_PATH)
 
@@ -56,13 +56,13 @@ class TestParrot(unittest.TestCase):
             self._test_parrot(path, output_path)
         """
 
-        SOURCE_PATH = '../Eliza.Test/saves/data/106/rf5_gm000'
+        SOURCE_PATH = '../Eliza.Test/Saves/106/rf5_gm000'
         OUTPUT_PATH = SOURCE_PATH + '_parrot_test'
         self._test_parrot('1.0.6', SOURCE_PATH, OUTPUT_PATH)
 
     
     def test_parrot_v107(self):
-        SOURCE_PATH = '../Eliza.Test/saves/data/107/rf5_gm004'
+        SOURCE_PATH = '../Eliza.Test/Saves/107/rf5_gm004'
         OUTPUT_PATH = SOURCE_PATH + '_parrot_test'
         self._test_parrot('1.0.7', SOURCE_PATH, OUTPUT_PATH)
     

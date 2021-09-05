@@ -80,10 +80,14 @@ namespace Eliza.Model
         /// exact reproduction of files (for unit tests, especially), then there are no caveats
         /// with using this method.
         /// </summary>
-        public SaveData() { }
+        public SaveData(LOCALE locale, int version)
+        {
+            this.Locale = locale;
+            this.Version = version;
+        }
 
         protected SaveData(byte[] headerBytes, byte[] decryptedDataBytes, byte[] footerBytes,
-                           int version= LATEST_JP_VER, LOCALE locale=LOCALE.JP)
+                           LOCALE locale = LOCALE.JP, int version= LATEST_JP_VER)
         {
 
             this.Locale = locale;
@@ -131,7 +135,7 @@ namespace Eliza.Model
         public static SaveData FromEncryptedFile(string path, int version, LOCALE locale)
         {
             var (header, data, footer) = DecryptFile(path);
-            return new SaveData(header, data, footer, version, locale);
+            return new SaveData(header, data, footer, locale, version);
         }
 
 
@@ -157,14 +161,14 @@ namespace Eliza.Model
         public void ToDecryptedFile(string outputPath)
         {
             using (FileStream fs = new(outputPath, FileMode.OpenOrCreate, FileAccess.Write)) {
-                using MemoryStream ms = new();
-                BinarySerializer serializer = new(ms, this.Locale, this.Version);
+                // using MemoryStream ms = new();
+
+                fs.SetLength(0);
+                BinarySerializer serializer = new(fs, this.Locale, this.Version);
                 serializer.WriteSaveDataHeader(this.header);
                 serializer.WriteSaveData(this.saveData); // Plain write. No encryption.
                 serializer.WriteSaveDataFooter(this.footer);
                 serializer.BaseStream.SetLength(serializer.BaseStream.Position); // Truncate
-                fs.SetLength(0);
-                ms.CopyTo(fs);
             }
         }
 

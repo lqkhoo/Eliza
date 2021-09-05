@@ -228,7 +228,7 @@ struct RF5EVENTDATA {
     EventSaveParameter eventSaveParameter;
     SaveFlagStorage SaveFlag; // 0x18
     SubEventSaveData SubEventSaveDatas;
-    int m_Talked[24]; // Added in 1.0.7
+    int m_Talked[03]; // Added in 1.0.7
 	int MainScenarioStep; // 0x28
     int PresentSendActorListCount;
     int PresentSendActorList[PresentSendActorListCount]; // 0x30

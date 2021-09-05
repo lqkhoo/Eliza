@@ -21,9 +21,6 @@
     <ProjectReference Include="..\Eliza\Eliza.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="App.axaml.cs">
-      <DependentUpon>App.axaml</DependentUpon>
-    </Compile>
     <Compile Update="Views\ContextView.axaml.cs">
       <DependentUpon>ContextView.axaml</DependentUpon>
     </Compile>

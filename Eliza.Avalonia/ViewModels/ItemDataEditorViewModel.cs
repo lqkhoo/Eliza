@@ -21,9 +21,6 @@ namespace Eliza.Avalonia.ViewModels
         public readonly SaveData.LOCALE Locale;
         public readonly int Version;
 
-
-
-
         public static Dictionary<int, string> _AutoCompleteIdToStringMap = new();
         public static Dictionary<string, int> _AutoCompleteStringToIdMap = new();
         public static AvaloniaList<string> _AutoCompleteStrings = new();
@@ -395,10 +392,10 @@ namespace Eliza.Avalonia.ViewModels
             item.ArrangeOverride = this.ArrangeOverride;
             item.BaseLevel = this.BaseLevel;
             item.SozaiLevel = this.SozaiLevel;
-            item.DualWorkSmithBonusType = this.DualWorkSmithBonusType;
-            item.DualWorkLoveLevel = this.DualWorkLoveLevel;
-            item.DualWorkActor = this.DualWorkActor;
-            item.DualWorkParam = this.DualWorkParam;
+            item.DualWorkSmithBonusType = (this.DualWorkSmithBonusType < 0) ? 0 : this.DualWorkSmithBonusType;
+            item.DualWorkLoveLevel = (this.DualWorkLoveLevel < 0) ? 0 : this.DualWorkLoveLevel;
+            item.DualWorkActor = (this.DualWorkActor < 0) ? 0 : this.DualWorkActor;
+            item.DualWorkParam = (this.DualWorkParam < 0) ? 0 : this.DualWorkParam;
             return this.SerializeToObjectGraph(item);
         }
 
@@ -452,10 +449,10 @@ namespace Eliza.Avalonia.ViewModels
             item.ArrangeOverride = this.ArrangeOverride;
             item.BaseLevel = this.BaseLevel;
             item.SozaiLevel = this.SozaiLevel;
-            item.DualWorkSmithBonusType = this.DualWorkSmithBonusType;
-            item.DualWorkLoveLevel = this.DualWorkLoveLevel;
-            item.DualWorkActor = this.DualWorkActor;
-            item.DualWorkParam = this.DualWorkParam;
+            item.DualWorkSmithBonusType = (this.DualWorkSmithBonusType < 0) ? 0 : this.DualWorkSmithBonusType;
+            item.DualWorkLoveLevel = (this.DualWorkLoveLevel < 0) ? 0 : this.DualWorkLoveLevel;
+            item.DualWorkActor = (this.DualWorkActor < 0) ? 0 : this.DualWorkActor;
+            item.DualWorkParam = (this.DualWorkParam < 0) ? 0 : this.DualWorkParam;
             item.Capacity = this.Capacity;
             return this.SerializeToObjectGraph(item);
         }

@@ -18,7 +18,7 @@ namespace Eliza.Core.Serialization
 
         public SaveData ReadRF5Save(ObjectGraph node)
         {
-            SaveData save = new();
+            SaveData save = new(this.Locale, this.Version);
             save.header = this.ReadSaveDataHeader(node.Children[0]);
             save.saveData = this.ReadSaveData(node.Children[1]);
             save.footer = this.ReadSaveDataFooter(node.Children[2]);
