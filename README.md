@@ -4,6 +4,8 @@ Forked from the original [Eliza project](https://github.com/RF5-Research/Eliza/)
 
 I recently dug this old fork out of the bowels of my old mothballed workstation, so I'm archiving this in case anyone finds it useful. I put on a more usable GUI and fixed a couple of serialization errors and bugs. That's all I remember.
 
+I have moved on from Rune Factory 5 for a long time so I no longer intend to work on this.
+
 # Structure
 1. `Eliza` contains core serialization, crypto, model, and data files.
 2. `Eliza.Avalonia` is the UI component.
