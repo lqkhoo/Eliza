@@ -1,6 +1,8 @@
 # Eliza+
 A cross-platform (RF5) Rune Factory 5 Save Editor.
-Forked from the original [Eliza project](https://github.com/RF5-Research/Eliza/).
+Forked from the original [Eliza project](https://github.com/RF5-Research/Eliza/) as the maintainer (Sloth) was busy with college work. I needed a robust save editor to work on the [Equipment Calculator](https://github.com/lqkhoo/rf-calculator).
+
+I recently dug this old fork out of the bowels of my old mothballed workstation, so I'm archiving this in case anyone finds it useful. I put on a more usable GUI and fixed a couple of serialization errors and bugs. That's all I remember.
 
 # Structure
 1. `Eliza` contains core serialization, crypto, model, and data files.
@@ -35,6 +37,10 @@ Eliza.PythonUtils requires the following:
 1. Python 3.5+ for type hint support. Regular cPython will do. Last tested with Anaconda 3.9.
 2. [construct](https://github.com/construct/construct) for declarative low-level serialization.
 3. [py3rijndael](https://github.com/meyt/py3rijndael) for crypto work.
+
+# Running from Visual Studio
+1. From the Solution Explorer, right click Eliza.Avalonia and set click 'Set as Startup Project'.
+2. Then from the menu bar at the top, click the play button that should now be labeled as 'Eliza.Avalonia'.
 
 # Unit tests
 1. Just run all the tests in Eliza.Test.
